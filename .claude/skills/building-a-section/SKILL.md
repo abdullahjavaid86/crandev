@@ -19,11 +19,15 @@ Work in this order. Skipping step 1 or 2 is what produces sections that need reb
 
 ## Search before you build
 
-**Before creating any component, grep `components/` for it and for similar UI.** We want one `Button`, not five near-duplicates.
+**Before writing any component, hook, helper, type, or piece of logic, search for it.** Not just components — one `cn()`, one date formatter, one slug lookup. Duplication is invisible in review until there are four copies.
 
-1. Search `components/ui/` and `components/motion/` by name and by the UI pattern.
-2. Found it → use it. Close but missing a case → **add a variant or prop to the existing one**, never fork a new file.
+1. Grep `components/`, `hooks/`, `lib/`, and `types/` by name **and** by behaviour — the existing one may not be called what you'd call it.
+2. Found it → use it. Close but missing a case → **add a variant or parameter to the existing one**, never fork a near-copy.
 3. Genuinely absent → create it in the shared location so the next task finds it.
+
+**Before hand-building interactive behaviour, check whether Radix or shadcn already solves it.** Dialog, popover, tooltip, select, and anything involving focus management are hard to get right and easy to get subtly wrong. Buttons and cards stay hand-built — a dependency for those is not worth it.
+
+When adopting a shadcn component: take the behaviour and the ARIA wiring, then **strip its palette and restyle against our tokens**. If it still references `--background`, `--foreground`, or stock Tailwind greys, it isn't adopted — it's pasted, and it will drift from the design system on the first hover state.
 
 This matters most when sections are built in parallel by separate agents (`CLAUDE.md §15`): three agents each needing a quote card will each invent one unless the primitive already exists or is claimed. **Build shared primitives first, sequentially; fan out only over sections that consume them.**
 

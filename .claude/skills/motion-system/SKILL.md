@@ -26,7 +26,7 @@ export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
 
 **The installed package is `motion` (v13), not `framer-motion`.** Framer Motion renamed itself; the `framer-motion` package is a mirror with no `./react` subpath, so `import { motion } from 'motion/react'` only resolves against the `motion` package. Never `npm i framer-motion` — you will get a second copy of the same library and an unresolvable import.
 
-It is the only animation library. No GSAP, AOS, or react-spring.
+It is the default animation library and stays the default. **Another library is permitted only where `motion` genuinely cannot do the job gracefully** — and you must name the specific capability it lacks before adding one, not reach for a familiar API. One extra library for one named reason; never a collection. In practice `motion` covers scroll, layout, gesture, spring, and timeline work, so this should almost never come up.
 
 ## Rules
 

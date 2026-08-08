@@ -30,12 +30,19 @@ Everything below serves that job.
 | Icons | `lucide-react` |
 | HTTP | `axios` (single shared instance — never call `axios` directly from a component) |
 | Fonts | `next/font/google` only |
+| Database | MongoDB via the official `mongodb` driver — **not** Mongoose |
+| Validation | `zod` — one schema library for both JSON content and form input |
+| Content | JSON under `content/`, parsed through a zod schema at the boundary |
 
 **Constraints — do not violate without asking:**
 
-- No backend, no database, no auth, no CMS. Content lives in typed files under `content/`.
-- No UI kit (no shadcn, MUI, Chakra, DaisyUI, Radix). We hand-build components.
-- No animation library other than Framer Motion. No AOS, no GSAP, no react-spring.
+- **Server first.** Server Components by default; `'use client'` only at an interactive leaf. Mutations go through Server Actions, never a client-side write. Anything that *can* run on the server does.
+- **MongoDB stores submitted data only** — contact queries, meeting requests, job applications. It is not a CMS and never serves page content. No auth, no user accounts, no admin UI.
+- **Site content is JSON**, read at build time and validated by a zod schema. Never fetch page content from Mongo.
+- **UI primitives: shadcn or Radix, on demand.** Reach for them where the behaviour is genuinely hard to get right — dialog, popover, tooltip, select, focus management. Do not pull one in for a button or a card; those stay hand-built. **Never MUI, Chakra, DaisyUI, or any kit that ships its own design language.**
+  - shadcn copies source into our repo rather than adding a black box, which is why it is allowed. Adopt it for **behaviour and accessibility only** — strip its default palette and restyle against our tokens (§4). A shadcn component still carrying `--background`/`--foreground` or stock greys has not been adopted, it has been pasted.
+- **Animation: `motion` is the default and stays the default.** Another library is permitted only where motion genuinely cannot do the job gracefully — state the specific thing it can't do before adding one. Never MUI-style breadth: one extra library, for one named reason, not a collection.
+- **No duplication.** Search for an existing component, hook, helper, type, or piece of logic before writing a new one. Extend what exists; do not fork a near-copy (§10).
 - No `<img>` — use `next/image`. No `<a>` for internal routes — use `next/link`.
 - Do not add a dependency without stating why in your message first.
 
@@ -162,7 +169,19 @@ This is the one memorable thing on the page. It earns the GitHub integration, it
 
 ---
 
-## 4.6 Mobile first — the authoring rule
+### 4.6 The scroll-reactive background
+
+One `fixed inset-0 -z-10` layer in `layout.tsx`, below content and below the grain. It is the only element in the site that responds continuously to scroll.
+
+- **One driver.** A single `useScroll()` in one client component feeds everything. Never a second scroll listener; never a per-section listener.
+- **Two or three large radial fields** in `--cyan` and `--ion` at very low opacity, `blur(120px)`, whose position and opacity map to scroll progress through `useTransform`. The hue shifts as sections pass; it never becomes a *different* background.
+- **Transform and opacity only.** Never animate `background-image`, gradient stops, or `backdrop-filter`. Those repaint the whole viewport every frame.
+- **It is ambient, not a feature.** If you notice it while reading, it is too strong. It must never compete with the Ship Log rail or pull attention from a CTA.
+- **Below `md` it is static** — the fields render at their mid-scroll position and stop. Two full-viewport blurred layers tracking scroll on a mid-range phone is the most expensive thing we could ship.
+- **Reduced motion renders it static** at the same mid position. No exceptions.
+- Contrast is measured against the background at its *brightest* scroll position, not its darkest.
+
+## 4.7 Mobile first — the authoring rule
 
 This is a mobile-first build. It is a rule about the order you write CSS in, not a note about testing.
 
@@ -245,6 +264,22 @@ export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
 
 Every route: `metadata` with OG tags, one `h1`, reachable from `Header` or `Footer`, sections registered with the Ship Log rail, ending in the shared CTA band → footer. Per-page recipes live in the `adding-a-page` skill.
 
+Error surfaces are real routes too: `app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx`, plus a segment-level `error.tsx` wherever a route can fail on its own.
+
+### 6.2 Project details open as a modal
+
+`/work/[slug]` is **one route with two presentations**, via parallel + intercepting routes:
+
+```
+app/@modal/default.tsx          → null   (slot renders nothing when inactive)
+app/@modal/(.)work/[slug]/page.tsx      → animated modal
+app/work/[slug]/page.tsx                → full page
+```
+
+Clicking a card in the grid intercepts and opens the modal over the page. A direct visit, a refresh, or a shared link renders the full page. This is not optional polish — a case study URL that only works as a modal is unshareable and invisible to search, and those are the two things a case study is for.
+
+The modal closes on `router.back()`, Escape, and backdrop click; it traps focus, locks body scroll, and returns focus to the originating card. Under reduced motion it appears without travel.
+
 ### 6.1 Home
 
 Top to bottom. Each section states its animation so nothing is improvised.
@@ -253,12 +288,12 @@ Top to bottom. Each section states its animation so nothing is improvised.
 2. **Hero** — the thesis. Left: masked-line headline stating what the agency does in concrete terms, one line of subcopy, primary CTA. Right/behind: the Ship Log commit ticker with the last 5 commits (repo, message, relative time) in mono, sliding up on an interval. Ambient: two slow-drifting radial glows (cyan, ion) at very low opacity, `blur(120px)`, animated with a long infinite `ease.inOut` loop. Kill the loop under reduced motion.
 3. **Proof strip** — 4 stats in mono (e.g. deploys shipped, median time-to-first-release, uptime, years). Count-up on view via `useMotionValue` + `animate`, no counter library. Staggered.
 4. **Services** — the card-stacking section. 3–4 cards: what it is, what you get, typical timeline. Lucide icon in a glass tile per card.
-5. **Work** — staggered grid, 4–6 case studies. Each card: cover image (`next/image`, `object-cover`, subtle scale-on-hover inside `overflow-hidden`), client name, one-line outcome with a real number, mono stack tags. Links to `/work/[slug]`.
+5. **Work** — staggered grid, 4–6 case studies. Each card: cover image (`next/image`, `object-cover`, subtle scale-on-hover inside `overflow-hidden`), client name, one-line outcome with a real number, mono stack tags. Links to `/work/[slug]`, which opens as an animated modal on client-side navigation and as a full page on direct load (§6.2).
 6. **Testimonials** — 3 substantial quotes, each attributed to a real name, role, and company. An unattributed quote reads as fabricated to exactly this audience. Static grid or a manually-driven marquee; no auto-advancing carousel, no star ratings. Staggered reveal.
 7. **Brands / associations** — hairline-bordered logo strip. Monochrome at `--mist`, lifting to `--ice` on hover. Inline SVG or `next/image` with explicit dimensions. Label it honestly — "Teams we've shipped for" is a different claim from "Partners", and the wrong one is a credibility leak. Auto-scroll only if the logos exceed one row.
 8. **Process** — genuinely sequential, so numbering is legitimate here: `01 → 04` in mono, tied to the Ship Log rail. Reveal per step as it enters.
 9. **Open source / Ship Log expanded** — GitHub-fed: pinned repos with stars, language, last-pushed. This is the section the API work exists for.
-10. **Contact** — a real form UI (name, company, what you're building, budget range). Client-side validation only; on submit, resolve a mocked promise and show a success state. No backend. Wire the submit handler through `lib/api/client.ts` so swapping in a real endpoint is a one-line change.
+10. **Contact** — a real form (name, company, what you're building, budget range). Submits through a **Server Action** that re-validates with zod and writes to MongoDB. Client-side validation is a convenience, never the gate.
 11. **CTA band** — one per page, above the footer. It holds that page's single cyan element.
 12. **Footer** — hairline top border, nav columns, mono legal line, socials via lucide.
 
@@ -266,7 +301,22 @@ Top to bottom. Each section states its animation so nothing is improvised.
 
 ## 7. Data layer (axios + GitHub)
 
-Set this up properly from day one even while the data is mocked. The GitHub integration is coming.
+Three separate concerns, and they must not blur into each other:
+
+| Concern | Source | Direction |
+|---|---|---|
+| Page content — projects, team, roles | JSON in `content/`, zod-validated | read, build time |
+| Live decoration — GitHub commits, repos | route handler + axios | read, revalidated |
+| Submissions — contact, meetings, applications | MongoDB via Server Action | **write only** |
+
+**Mongo never serves page content, and JSON never stores a submission.** If a section needs data, it reads JSON. If a form sends data, it writes Mongo.
+
+### 7.0 Content is JSON
+
+- Projects, team, roles, testimonials, brands live as `.json` under `content/`.
+- **JSON has no compile-time type.** Every file is parsed through a zod schema in `lib/content/` at the module boundary, and only the parsed result crosses into the app. A malformed field fails the build, which is exactly where it should fail.
+- Schemas are the single definition — derive TS types with `z.infer`, don't hand-write a parallel interface.
+- **Images cannot be static-imported from a JSON string.** Keep a small TS map of `slug → import('@/public/…')` beside the loader so covers keep their blur placeholder and intrinsic sizing; JSON holds every other field. Revisit `plaiceholder` only if the image set outgrows the map.
 
 ### 7.1 Shared client
 
@@ -292,7 +342,17 @@ api.interceptors.response.use(
 - Every GitHub response is mapped into our own types in `types/index.ts` — no raw GitHub objects cross into components.
 - Rate limits and outages are normal, not exceptional: if the call fails, the section renders the typed fallback from `content/` and logs server-side. The user never sees an error state for decorative data.
 
-### 7.3 States
+### 7.3 MongoDB — submissions only
+
+- Official `mongodb` driver. **Not Mongoose** — we already define shapes in zod, and a second schema system plus model lifecycle is weight this site does not need.
+- One cached client promise in `lib/db/client.ts`, reused across invocations. Never open a connection per request.
+- `MONGODB_URI` and `MONGODB_DB` are server-only. Never `NEXT_PUBLIC_*`. The driver is never imported into a client component — importing it into one is a build-time leak of your connection string.
+- **A Server Action is a public POST endpoint.** Re-validate every field with zod on the server regardless of what the client checked. Cap string lengths. Never interpolate user input into a query.
+- Rate-limit by IP, keep the honeypot, and store a `createdAt` and `source` on every document.
+- Return a discriminated result (`{ ok: true } | { ok: false; error }`) — never let a driver error reach the client. Log the real one server-side.
+- Full procedure in the `data-persistence` skill.
+
+### 7.4 States
 
 Every async surface needs three designed states, built at the same time as the happy path:
 
@@ -318,7 +378,7 @@ Write the copy; don't leave lorem ipsum, and don't leave placeholder brackets in
 
 Not negotiable, and not something to announce in the UI:
 
-- **Mobile first (§4.6).** Base styles are the small-screen implementation; breakpoints only add. Responsive from 360px up, with no upper bound that breaks.
+- **Mobile first (§4.7).** Base styles are the small-screen implementation; breakpoints only add. Responsive from 360px up, with no upper bound that breaks.
 - Test at **360, 390, 768, 1024, 1280, 1440, 1920**, plus one phone in landscape. 360 and 390 are the ones that actually find bugs.
 - Visible `:focus-visible` ring (cyan, 2px, 2px offset) on every interactive element. Full keyboard path through the page.
 - Contrast: body text ≥ 4.5:1 against its actual backdrop — check `--mist` on glass, which is where dark themes usually fail.
@@ -334,7 +394,7 @@ Not negotiable, and not something to announce in the UI:
 - TypeScript strict. **No `any`** — use `unknown` at untrusted boundaries (API bodies, form input) and narrow explicitly. **No `!` non-null assertions** to silence the compiler; handle the null.
 - Props typed with an explicit `interface` above the component, extending the native element: `interface ButtonProps extends React.ComponentProps<'button'>`.
 - **Discriminated unions over boolean flags** for state — `{ status: 'loading' } | { status: 'error'; error: string }`, not `isLoading`/`isError`. Prefer `as const` objects with derived union types over enums.
-- **Search `components/` before creating a component.** One `Button`, not five. Extend the existing primitive with a variant or prop rather than forking.
+- **Search before you write — components, hooks, helpers, types, logic.** One `Button`, not five; one `cn()`, not a second class-joiner; one date formatter. Grep `components/`, `hooks/`, `lib/`, and `types/` for the name *and* for the behaviour before creating anything. Found something close → extend it with a variant or a parameter. Forking a near-copy is the failure mode, and it is invisible in review until there are four of them.
 - Named exports for components; default export only for Next.js pages/layouts.
 - `'use client'` at the leaf, not the branch. Sections stay server components where they can.
 - Tailwind classes via a `cn()` helper (`clsx` + `tailwind-merge` if the scaffold includes them; otherwise a 5-line local join).

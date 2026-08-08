@@ -23,8 +23,10 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | done 2026-08-08 | Palette, radius, fluid type, easings. `cn()` is dependency-free per §10 and does **not** resolve conflicting utilities — revisit `tailwind-merge` when variant maps land in M1.5. |
 | 0.4 | `lib/motion.ts` — ease, dur, spring, viewport | todo | |
 | 0.5 | Grain overlay + `<Container>` in `app/layout.tsx` | todo | |
-| 0.6 | `lib/api/client.ts` axios instance + `normalizeError`; `.env.example` | todo | |
+| 0.6 | `lib/api/client.ts` axios instance + `normalizeError` | todo | |
 | 0.7 | Blank page proving every token renders | todo | |
+| 0.8 | Error surfaces — `error.tsx`, `global-error.tsx`, `not-found.tsx`; `.env.example` | done 2026-08-08 | Built on tokens only, no primitives needed. `global-error` renders its own `<html>`/`<body>` and degrades without the font variables. |
+| 0.9 | Install `zod` + `mongodb`; `lib/content/` loaders, `lib/db/client.ts` | todo | official driver, not Mongoose (§7.3) |
 
 **Exit:** `npm run build` clean, blank page shows the palette, type scale, and grain.
 
@@ -42,6 +44,8 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | todo | |
 | 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | todo | |
 | 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work |
+| 1.7 | Scroll-reactive background layer (§4.6) | todo | one `useScroll` driver for the whole site; static below `md` and under reduced motion |
+| 1.8 | `<Modal />` primitive — focus trap, scroll lock, Escape, `router.back()` | todo | **Radix Dialog is the right call here** — focus trap + scroll lock + ARIA is exactly the behaviour §2 now permits a primitive for. Restyle to our tokens; animate open/close with `motion`. Consumed by 5.2. |
 
 **Exit:** every primitive renders correctly with `prefers-reduced-motion: reduce`.
 
@@ -74,7 +78,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 3.4 | Testimonials — attributed quotes only | todo | |
 | 3.5 | Brands / associations strip | todo | label honestly |
 | 3.6 | Process — `01→04`, tied to the rail | todo | |
-| 3.7 | Contact section + form | todo | |
+| 3.7 | Contact section + form → Server Action → MongoDB | todo | zod re-validation server-side, rate limit, honeypot, length caps |
 | 3.8 | CTA band | todo | |
 
 ---
@@ -100,7 +104,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | # | Task | Status | Notes |
 |---|---|---|---|
 | 5.1 | `/work` — index, filterable | todo | |
-| 5.2 | `/work/[slug]` — project details | todo | `generateStaticParams` + `notFound` |
+| 5.2 | `/work/[slug]` — full page + `@modal` intercepting route | todo | `generateStaticParams` + `notFound`. Modal on client nav, full page on direct load/share (§6.2) |
 | 5.3 | `/about` | todo | |
 | 5.4 | `/team` | todo | real people only |
 | 5.5 | `/contact` | todo | |
@@ -135,6 +139,8 @@ Things that need a human answer. Do not guess past these.
 | D1 | `/schedule`: self-built slot picker, or embed a third-party scheduler (a dependency + design-consistency call)? | 2026-08-08 | open |
 | D2 | Real content — client names, project outcomes, stats, testimonials, logos, team bios, comp bands. Every one of these must be real. | 2026-08-08 | open |
 | D3 | Which GitHub org/user feeds the Ship Log and open-source section? | 2026-08-08 | open |
+| D5 | MongoDB hosting — Atlas or self-hosted? Affects `MONGODB_URI` and whether IP allow-listing is needed. `.env.example` covers both forms. | 2026-08-08 | open |
+| D6 | Submissions are write-only with no admin UI, so nothing in the app reads them back. How do you want to be notified of a new contact query — email, Slack, or checking the collection directly? | 2026-08-08 | open |
 | D4 | Ship Log below `lg`: proposed a 2px cyan progress bar under the header, with the active section's hash/number in that section's eyebrow. The rail has no gutter to pin to at 360px. Written into CLAUDE.md §4.5 as the default — flag if you want a different mobile form for the signature element. | 2026-08-08 | proposed |
 
 ---
@@ -156,6 +162,8 @@ One line per milestone, per `maintaining-skills`. A no-op audit is a valid entry
 | 2026-08-08 | — | Skills authored: design-system, motion-system, building-a-section, adding-a-page, content-and-copy, data-and-forms, quality-gate, maintaining-skills. |
 | 2026-08-08 | M0.1 | `motion-system` corrected: package is `motion`, not `framer-motion` (no `./react` subpath on the latter). `CLAUDE.md §2` stack row updated to match, and a Next 16 warning added at the top of `CLAUDE.md` pointing at `node_modules/next/dist/docs/`. |
 | 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row. Branch created; existing work committed as two commits. |
+| 2026-08-08 | — | **Architecture change: backend added.** §2 constraints reversed — MongoDB for submissions (write-only), JSON + zod for page content, server-first with Server Actions. New `data-persistence` skill. §6.2 project details via parallel + intercepting routes (modal on client nav, full page on direct load). §4.6 scroll-reactive background. `.env.example` written. |
+| 2026-08-08 | — | **§2 constraints relaxed.** shadcn/Radix permitted on demand for hard interactive behaviour (never MUI/Chakra), adopted for behaviour only and restyled to our tokens. Non-`motion` animation libraries allowed only for a named capability motion lacks. No-duplication broadened from components to hooks, helpers, types, and logic. Propagated to `building-a-section`, `motion-system`, §10. |
 | 2026-08-08 | — | **Adopted from `biosum/admin` skills.** Async `params`/`searchParams` (Next 15+/16) → `adding-a-page`; route state files (`loading`/`error`/`not-found` + Suspense) → `adding-a-page` + `data-and-forms`; search-before-you-build component policy + prop conventions → `building-a-section` + §10 + §15; static image imports, `priority`/LCP, `remotePatterns` → `building-a-section` + `quality-gate`; discriminated-union async state, `unknown` at boundaries, no `!` → `data-and-forms` + §10; `hooks/` added to the tree. **Not adopted:** Supabase/RLS/HIPAA/Stripe/n8n/storage/deploy (no backend here), their caching skill (PHI-specific), their `git` skill (mandates never auto-commit — this project chose the opposite). |
 | 2026-08-08 | — | **PR base corrected to `staging`.** `git-workflow` + §17 updated: every PR targets `staging`; `main` is a base only on explicit request in that request. Topology `main ← staging ← feature/fast-track`. |
 | 2026-08-08 | — | **Mobile-first adopted as a project constraint.** New `CLAUDE.md §4.6` (authoring rule); §4.2 glass budget split by breakpoint; §4.3 display floor lowered `3.5rem → 2.5rem`; §4.5 mobile Ship Log defined; §9 breakpoint matrix widened. Propagated to `design-system`, `motion-system`, `building-a-section`, `adding-a-page`, `quality-gate`. |
