@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion, useScroll } from "motion/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useShipLog, type ShipLogSection } from "@/hooks/useShipLog";
@@ -53,6 +54,30 @@ function Rail({ sections, className }: ShipLogProps) {
   const { commits, activeId } = useShipLog(sections);
 
   /**
+   * The rail is fixed at the vertical centre, so once the footer scrolls up it
+   * sits on top of it. It retires instead: by the time the footer is in view
+   * there are no sections left to navigate to, so the rail has nothing to say.
+   *
+   * The root is shrunk to the top 70% of the viewport. On a 900px window that
+   * puts the trigger at 630px against a rail whose lowest row sits at ~554px,
+   * so the fade starts roughly 75px before contact — enough that a fast scroll
+   * cannot outrun a 500ms transition. Measured at -40% the clearance was 14px,
+   * which was not.
+   */
+  const [footerNear, setFooterNear] = useState(false);
+
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setFooterNear(entry.isIntersecting),
+      { rootMargin: "0px 0px -30% 0px" },
+    );
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
+
+  /**
    * The one scroll read here, and it is for the fill only. `IntersectionObserver`
    * answers "which section", but a fill that jumped one section at a time would
    * not read as progress, and page progress cannot be derived from the observer.
@@ -74,7 +99,14 @@ function Rail({ sections, className }: ShipLogProps) {
     <nav
       aria-label="Page sections"
       style={{ paddingLeft: "env(safe-area-inset-left)" }}
-      className={cn("fixed top-1/2 left-4 z-30 -translate-y-1/2", className)}
+      className={cn(
+        "fixed top-1/2 left-4 z-30 -translate-y-1/2",
+        // Retires before the footer reaches it. pointer-events go with the
+        // opacity, or an invisible rail would still swallow clicks.
+        isReduced ? null : "transition-opacity duration-(--d-base) ease-out-soft",
+        footerNear ? "pointer-events-none opacity-0" : "opacity-100",
+        className,
+      )}
     >
       <ol className="relative flex flex-col gap-4">
         {/* Track and fill run from the first node's centre to the last's.
