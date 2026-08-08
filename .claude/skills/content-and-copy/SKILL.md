@@ -9,7 +9,7 @@ The audience is CTOs and technical founders at funded startups. They can read co
 
 ## The content layer
 
-There is no CMS and no database. Content lives in typed TypeScript under `content/`, imported directly by server components.
+There is no CMS. Page content lives as **JSON** under `content/`, parsed through a zod schema at the module boundary and imported by server components — see [data-persistence](../data-persistence/SKILL.md). MongoDB exists, but it stores submitted data only and never serves page content.
 
 ```
 content/

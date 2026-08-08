@@ -5,7 +5,7 @@ description: Use when touching anything async or interactive in this repo — th
 
 # Data and Forms
 
-There is no backend, no database, and no auth. Everything async is either a Next.js route handler proxying a public API, or a mocked promise behind a real interface. Build both as if the real thing were coming, because it is.
+Two async surfaces, and they are not the same thing. **Reads** are route handlers proxying a public API (GitHub), cached at the route. **Writes** are Server Actions into MongoDB — see [data-persistence](../data-persistence/SKILL.md), which owns the database, the zod schemas and the Server Action rules. This file owns the axios client, the three designed states, and form behaviour.
 
 ## One axios instance
 
@@ -70,8 +70,8 @@ Applies to contact, schedule-a-meeting, careers application, and anything else t
 
 - Build on the shared `ui/Field` primitive: label, control, description, error, all wired with `htmlFor`/`id`. No unlabelled inputs, no placeholder-as-label.
 - Native `<form>` with a real `onSubmit`. Submit works on Enter.
-- Client-side validation only, and **hand-rolled** — a validation library is a dependency; state why before adding one.
-- Submit resolves through `lib/api/client.ts` against a mocked promise, so swapping in a real endpoint is a one-line change. Never `fetch()` inline in a component.
+- **Validate with zod on the server, always.** A Server Action is a public POST endpoint; whatever the client checked is a convenience, not a gate. Client-side checks are for the user's benefit only.
+- Submit goes through a **Server Action**, not `fetch()` in a component and not the axios client — axios is for outbound reads. The action returns a discriminated result (`{ ok: true } | { ok: false; error }`); a driver error must never reach the client.
 
 **Behaviour**
 
@@ -85,10 +85,10 @@ Applies to contact, schedule-a-meeting, careers application, and anything else t
 **Fields**
 
 - Contact: name, company, what you're building, budget range. Budget as a select of real bands.
-- Careers: name, email, links (URL fields — no file upload, there is no backend), one substantive question specific to the role.
+- Careers: name, email, links (URL fields — no file upload, since there is no blob storage), one substantive question specific to the role.
 - Schedule: date, slot, timezone (derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, editable), plus what they want to discuss.
 
-**Accessibility floor** — full keyboard path, visible cyan `:focus-visible` ring on every control, 44px minimum tap targets, correct `type`/`inputMode`/`autoComplete` on every input.
+**Accessibility floor** — full keyboard path, visible `:focus-visible` ring in `--accent-ink` on every control, checked in both themes, 44px minimum tap targets, correct `type`/`inputMode`/`autoComplete` on every input.
 
 ## Reject on sight
 
@@ -97,7 +97,7 @@ Applies to contact, schedule-a-meeting, careers application, and anything else t
 - A raw upstream API shape used in JSX.
 - A spinner where a skeleton belongs.
 - A form with no error state, no success state, or no `aria-live` announcement.
-- A validation library added without stating why first.
+- A form that trusts client-side validation, or an action with no server-side zod parse.
 
 ## Related
 

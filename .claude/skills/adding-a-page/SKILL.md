@@ -81,11 +81,11 @@ Every route inherits these, so get them right once in `layout/`:
 
 **`/contact`** — form plus the direct channels (email, GitHub, location, timezone) in mono. Set expectations explicitly: "We reply within one business day." See [data-and-forms](../data-and-forms/SKILL.md).
 
-**`/schedule`** — booking. There is no backend, so the default build is a self-hosted slot picker: a typed availability source in `content/availability.ts`, a keyboard-navigable calendar, a timezone note derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, and a submit routed through `lib/api/client.ts` to a mocked resolver. Keep the handler swappable in one line so a real scheduler drops in later. **Embedding a third-party scheduler is a dependency and a design-consistency decision — ask before adding one.**
+**`/schedule`** — booking. Self-hosted slot picker: availability from `content/availability.json`, a keyboard-navigable calendar, a timezone note derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, and a submit through a **Server Action** into the `meetings` collection ([data-persistence](../data-persistence/SKILL.md)). **Embedding a third-party scheduler is a dependency and a design-consistency decision — ask before adding one.**
 
 **`/careers`** — roles from `content/roles.ts`. Each row: title, mono metadata (level, location, comp band, stack). State the comp band; withholding it costs more senior applicants than it saves. Include how we hire, step by step, with real timings. If there are no open roles, say so and offer a way to be told when there are — never an empty list.
 
-**`/careers/[slug]`** — the role in full: what you'd own, what the first 90 days look like, what we expect you to already know, the interview loop, the band. Application form with a résumé/portfolio link field (URL, not upload — no backend).
+**`/careers/[slug]`** — the role in full: what you'd own, what the first 90 days look like, what we expect you to already know, the interview loop, the band. Application form with a résumé/portfolio link field (URL, not upload — there is no blob storage), submitting through a Server Action into the `applications` collection.
 
 **`/not-found`** — in the interface's voice, with a route back and links to the two most useful pages. No apology, no ASCII art.
 
