@@ -42,7 +42,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 1.2 | `components/motion/StaggerGroup.tsx` | done 2026-08-08 | Parent owns the trigger; `StaggerItem` reads reduced-motion from context so a child can never declare its own viewport. |
 | 1.3 | `components/motion/MaskedText.tsx` — line split | done 2026-08-08 | Lines are authored, not measured — a resize observer re-splitting mid-animation thrashes layout. Animated spans are `aria-hidden` with an `sr-only` copy of the full phrase. |
 | 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | done 2026-08-08 | Added `hooks/useMediaQuery.ts` (+ `useIsDesktop`, `useHasHover`) — shared by every desktop-only enhancement. `ScrollProgress` animates `scaleX`, never width. |
-| 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | todo | |
+| 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | done 2026-08-08 | `buttonStyles()` shared with button-styled links so there is one Button. `Button` extends `HTMLMotionProps`, not React's — the drag handler signatures collide. `Field` is a render-prop so input/textarea/select need no special-casing. |
 | 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work |
 | 1.7 | Scroll-reactive background layer (§4.6) | todo | one `useScroll` driver for the whole site; static below `md` and under reduced motion |
 | 1.8 | `<Modal />` primitive — focus trap, scroll lock, Escape, `router.back()` | todo | **Radix Dialog is the right call here** — focus trap + scroll lock + ARIA is exactly the behaviour §2 now permits a primitive for. Restyle to our tokens; animate open/close with `motion`. Consumed by 5.2. |
