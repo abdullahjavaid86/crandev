@@ -6,7 +6,9 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 
+import { Footer } from "@/components/layout/Footer";
 import { Grain } from "@/components/layout/Grain";
+import { Header } from "@/components/layout/Header";
 import type { Metadata } from "next";
 import { ScrollBackground } from "@/components/layout/ScrollBackground";
 import { ThemeScript } from "@/components/layout/ThemeScript";
@@ -49,7 +51,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <ScrollBackground />
-        {children}
+        <Header />
+        {/* flex-1 so a short page still pins the footer to the bottom. */}
+        <div className="flex-1">{children}</div>
+        <Footer />
         <Grain />
       </body>
     </html>

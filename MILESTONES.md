@@ -62,9 +62,9 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 2.2 | Shared nav source consumed by Header + Footer | done 2026-08-08 | `lib/nav.ts` — primaryNav, primaryCta, footerNav, `isActive()`. Prefix match keeps Work active on `/work/[slug]`, including as an intercepted modal. |
 | 2.3 | `layout/Footer` | done 2026-08-08 | Server component. lucide v1 ships no brand glyphs, so GitHub is a labelled text link + `ArrowUpRight`. Email and GitHub handle are flagged `NEEDS CONFIRMING` (D8). |
 | 2.4 | Ship Log rail — section registration + scroll tracking | done 2026-08-08 | Explicit array prop, not a context hook — a registration hook would force `'use client'` onto every section wrapper. IntersectionObserver for active section, one `useScroll` for the fill. Gated at `lg` (not `md`) since the rail needs a real gutter. |
-| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | copy needs D2; will draft and flag |
+| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | done 2026-08-08 | **Copy is DRAFT, needs rewriting (D2)** — deliberately contains no number, since every number here must be real. No hero glows: `ScrollBackground` already owns them site-wide. |
 | 2.7 | `<WireSolid />` — cursor-tracking wireframe solid, hero only | done 2026-08-08 | Code-generated icosahedron (`lib/solid.ts`), 2 SVG paths on motion's shared frameloop. **No new dependency** — three+R3F+drei measured at 23MB/2.2MB/1.8MB unpacked. Paused off-screen, idle drift on touch, static under reduced motion, never takes the accent. |
-| 2.6 | Hero commit ticker (mocked data) | todo | |
+| 2.6 | Hero commit ticker (mocked data) | done 2026-08-08 | Data arrives as a prop, so M4.4 is a one-line swap. Rotation stops entirely under reduced motion. **Placeholder commits must not ship** — see Known gaps. |
 
 ---
 
@@ -153,7 +153,8 @@ Things that need a human answer. Do not guess past these.
 
 Real problems we shipped past on purpose. Not a wishlist.
 
-_(none yet)_
+- **Hero commit ticker renders invented commits.** `PLACEHOLDER_COMMITS` in `components/sections/Hero.tsx`. §4.5 sanctions a mock while the GitHub route is built, but this section's entire job is being real, so it **must not reach production**. Removed by M4.4.
+- **Hero copy is a draft.** Headline and subcopy in `components/sections/Hero.tsx` were written to the §8 rules but describe a team whose actual positioning has not been supplied (D2).
 
 ---
 
