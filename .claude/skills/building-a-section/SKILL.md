@@ -17,6 +17,25 @@ Work in this order. Skipping step 1 or 2 is what produces sections that need reb
 4. **States, if async.** Loading, empty, and error designed at the same time as the happy path — see [data-and-forms](../data-and-forms/SKILL.md).
 5. **[quality-gate](../quality-gate/SKILL.md).** Then update `MILESTONES.md` and report.
 
+## Search before you build
+
+**Before creating any component, grep `components/` for it and for similar UI.** We want one `Button`, not five near-duplicates.
+
+1. Search `components/ui/` and `components/motion/` by name and by the UI pattern.
+2. Found it → use it. Close but missing a case → **add a variant or prop to the existing one**, never fork a new file.
+3. Genuinely absent → create it in the shared location so the next task finds it.
+
+This matters most when sections are built in parallel by separate agents (`CLAUDE.md §15`): three agents each needing a quote card will each invent one unless the primitive already exists or is claimed. **Build shared primitives first, sequentially; fan out only over sections that consume them.**
+
+## Component conventions
+
+- Typed props via an explicit `interface`, extending the native element so consumers get standard attributes: `interface ButtonProps extends React.ComponentProps<'button'>`.
+- Variants and sizes come from a single typed variant map merged through `cn()` — not ad-hoc conditional strings.
+- Forward `ref` wherever the DOM node matters (focus management, measurement, motion targets).
+- Accessible by default: wire `aria-*`, support keyboard interaction, expose `disabled` and `aria-invalid`.
+- Presentational primitives stay server components unless they need interactivity, and never fetch data — pass it in as props.
+- Non-trivial stateful logic becomes a custom hook in `hooks/`, named for its owner (`hooks/useShipLog.ts`).
+
 ## Anatomy
 
 ```
@@ -51,6 +70,13 @@ Every section shares one shell so vertical rhythm never drifts:
 - Eyebrow uses the mono utility face and carries the Ship Log section number.
 - Register the section with the Ship Log rail rather than adding a local progress indicator.
 - Exactly one `h2` per section, and headings stay ordered down the page.
+
+## Images
+
+- **Static-import local images** rather than passing a string path: `import cover from '@/public/work/acme.png'`. You get an automatic blur placeholder, correct intrinsic dimensions with no layout shift, and a long-term hashed URL. The blur-up is free and reads well against the dark ground — it is the right default for every project cover and team photo.
+- **`priority` goes on exactly one image per route** — the real above-the-fold LCP image, which on most of our routes is nothing at all. Everything else stays lazy. `priority` on a below-the-fold image actively hurts LCP.
+- Remote images (GitHub avatars) need their host allow-listed in `next.config.ts` under `images.remotePatterns`.
+- `sizes` is mandatory on anything responsive or using `fill` — see the work grid below.
 
 ## Section-specific notes
 

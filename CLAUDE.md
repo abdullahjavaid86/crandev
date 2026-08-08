@@ -71,6 +71,7 @@ components/
   ui/                     # Button, Card, Eyebrow, Badge, Marquee, Field
   motion/                 # Reveal, StaggerGroup, MaskedText, Parallax, ScrollProgress
   layout/                 # Header, Footer, Container, Noise, Grain, ShipLog
+hooks/                    # useShipLog, useCursorHighlight, … named for their owner
 lib/
   api/client.ts           # axios instance + interceptors
   api/github.ts           # typed GitHub calls
@@ -330,7 +331,10 @@ Not negotiable, and not something to announce in the UI:
 
 ## 10. Conventions
 
-- TypeScript strict. No `any`. Props typed with explicit interfaces above the component.
+- TypeScript strict. **No `any`** — use `unknown` at untrusted boundaries (API bodies, form input) and narrow explicitly. **No `!` non-null assertions** to silence the compiler; handle the null.
+- Props typed with an explicit `interface` above the component, extending the native element: `interface ButtonProps extends React.ComponentProps<'button'>`.
+- **Discriminated unions over boolean flags** for state — `{ status: 'loading' } | { status: 'error'; error: string }`, not `isLoading`/`isError`. Prefer `as const` objects with derived union types over enums.
+- **Search `components/` before creating a component.** One `Button`, not five. Extend the existing primitive with a variant or prop rather than forking.
 - Named exports for components; default export only for Next.js pages/layouts.
 - `'use client'` at the leaf, not the branch. Sections stay server components where they can.
 - Tailwind classes via a `cn()` helper (`clsx` + `tailwind-merge` if the scaffold includes them; otherwise a 5-line local join).
@@ -434,6 +438,8 @@ Announce which skills you loaded in one line. If no skill applies, say so — th
 - Investigating two unrelated build failures.
 
 **Keep sequential what actually is sequential.** Tokens before primitives, primitives before sections, content type before section markup. Two agents editing the same file is a merge conflict, not parallelism — give each agent its own files, or run them in order.
+
+**Build shared primitives before you fan out.** Three agents each needing a quote card will each invent one, and you end up with five Buttons. Primitives are created sequentially and *then* sections fan out over them. Every dispatch names the existing primitives the agent must use rather than rebuild.
 
 **Brief each agent completely.** Agents do not inherit this conversation. Every dispatch states: the goal, which skills to load, the exact files to create or change, the constraints that matter for that task, and what to report back. An under-briefed agent will invent a second glass variant and a purple gradient.
 

@@ -22,6 +22,8 @@ Nothing is "done" until this passes. Run it yourself before reporting — do not
 - [ ] Body text ≥ 4.5:1 against its **actual** backdrop. Check `--mist` on glass specifically — that is where dark themes fail.
 - [ ] Decorative motion wrappers carry `aria-hidden` where they add no meaning.
 - [ ] Every image uses `next/image` with explicit dimensions and real `alt` (`alt=""` if decorative).
+- [ ] Local images are **static imports** (blur placeholder + no layout shift), and `priority` is on at most the one real LCP image per route.
+- [ ] No component duplicates an existing primitive — `components/` was searched before anything new was created.
 - [ ] Interactive controls have accessible names; icon-only buttons have `aria-label`.
 
 ## Responsive — mobile first
