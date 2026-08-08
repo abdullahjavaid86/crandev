@@ -1,0 +1,12 @@
+# Vercel builds from a shallow clone; keep the upload small and the build
+# reproducible. Anything Vercel regenerates or must never see goes here.
+
+.next
+node_modules
+.yarn/cache
+.yarn/install-state.gz
+
+# Local-only
+.env*.local
+.claude
+MILESTONES.md
