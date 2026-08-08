@@ -48,7 +48,11 @@ export function Footer() {
     // vertical rhythm below stays on the shared scale (§4.4).
     <footer className="border-t border-line pb-[env(safe-area-inset-bottom)]">
       <Container className="py-28 md:py-40">
-        <div className="flex flex-col gap-12 md:flex-row md:justify-between md:gap-16">
+        {/* Stacks until lg, not md. At 768 a side-by-side brand block plus three
+            nav tracks leaves each column ~82px, which is narrower than the
+            headings — the squeeze is at md, not at 360. Stacked, the nav grid
+            gets the full container and each column ~229px. */}
+        <div className="flex flex-col gap-12 lg:flex-row lg:justify-between lg:gap-16">
           <div className="md:max-w-xs">
             <Link
               href="/"
@@ -73,10 +77,19 @@ export function Footer() {
           <div className="grid gap-10 md:auto-cols-fr md:grid-flow-col md:gap-16">
             {footerNav.map((group) => (
               <nav key={group.heading} aria-label={group.heading}>
-                {/* One heading level for every column. The element-level h2
-                    styles are display-face and fluid, so both are reset — a
-                    footer column label is not a section headline. */}
-                <h2 className="font-body text-small font-medium tracking-normal text-fg">
+                {/* One heading level for every column, deliberately in the
+                    display face. text-h3 (20→24px) is the ceiling this layout
+                    allows, and the size is the same at every breakpoint —
+                    there is nothing for `md:` to add, because the *narrowest*
+                    column is at md, not at 360. Measured: three auto-cols-fr
+                    columns give ~102px each at 768px, ~168px at 1024px and
+                    ~235px at the 1240px container cap, while "Company" set at
+                    text-h2 needs 166 / 192 / 249px — it spills its column at
+                    both ends of the range. At text-h3 it needs ~107px at most
+                    and sits on one line everywhere, which is the point: base
+                    styles supply the face and tracking, and the
+                    `overflow-wrap: normal` there stops the mid-word break. */}
+                <h2 className="font-display text-h3 text-fg">
                   {group.heading}
                 </h2>
                 <ul className="mt-1">

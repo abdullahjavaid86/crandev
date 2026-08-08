@@ -148,7 +148,14 @@
     overflow-wrap: break-word;
   }
 
-  /* Display face. text-balance keeps headlines from orphaning a word. */
+  /* Display face. text-balance keeps headlines from orphaning a word.
+     Wrapping rule for anything set in the display face: A SINGLE WORD NEVER
+     BREAKS — "Company" stays "Company", never "Compan / y". A MULTI-WORD
+     heading may still wrap, but only between words ("Talk to us" over two
+     lines is fine). `body` above keeps overflow-wrap: break-word, so long
+     unbroken strings — repo names, URLs, emails in the mono face — are still
+     contained and cannot widen the page. This only exempts the display face,
+     where a mid-word break is always a bug rather than a rescue. */
   h1,
   h2,
   h3 {
@@ -156,6 +163,17 @@
     font-weight: 650;
     letter-spacing: -0.03em;
     text-wrap: balance;
+  }
+
+  /* The wrapping rule follows the face, not the tag — an element that opts
+     into the display face with `font-display` gets it too, whatever it is. */
+  h1,
+  h2,
+  h3,
+  .font-display {
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   h1 {
