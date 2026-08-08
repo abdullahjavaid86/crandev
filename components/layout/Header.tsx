@@ -134,7 +134,7 @@ export function Header() {
             "pointer-events-none absolute inset-0 border-b border-line",
             "bg-[linear-gradient(148deg,var(--glass-tint),var(--glass-tint-soft))]",
             "shadow-[0_1px_0_0_var(--glass-catch)_inset,0_24px_60px_-24px_var(--glass-drop)]",
-            "transition-opacity duration-[--d-micro] ease-out-soft",
+            "transition-opacity duration-(--d-micro) ease-out-soft",
             scrolled
               ? "opacity-100 backdrop-blur-[20px] backdrop-saturate-[140%]"
               : "opacity-0",
@@ -155,7 +155,7 @@ export function Header() {
                   aria-current={current ? "page" : undefined}
                   className={cn(
                     "relative inline-flex min-h-11 items-center px-3 text-small font-medium",
-                    "transition-colors duration-[--d-micro]",
+                    "transition-colors duration-(--d-micro)",
                     current
                       ? "text-accent-ink"
                       : "text-muted hover:text-fg active:text-fg",
@@ -296,7 +296,7 @@ export function Header() {
                             aria-current={current ? "page" : undefined}
                             className={cn(
                               "flex min-h-11 items-center rounded-r-md border-l py-3 pl-5 text-h3 font-medium",
-                              "transition-colors duration-[--d-micro] active:bg-inset",
+                              "transition-colors duration-(--d-micro) active:bg-inset",
                               // Same rule as the desktop row: the accent
                               // border is legal here and only as --accent-ink.
                               current

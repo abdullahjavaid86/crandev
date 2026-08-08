@@ -22,7 +22,9 @@ export type ButtonSize = "sm" | "md";
 const variants: Record<ButtonVariant, string> = {
   /** THE accent. One per viewport-height of scroll (§4.1). */
   primary:
-    "bg-accent text-accent-on shadow-[0_0_0_0_rgba(53,240,220,0)] hover:shadow-[0_8px_32px_-8px_rgba(53,240,220,0.45)]",
+    // The glow is derived from the accent token rather than a raw rgba, so it
+    // follows the theme instead of hardcoding one theme's cyan.
+    "bg-accent text-accent-on shadow-[0_0_0_0_transparent] hover:shadow-[0_8px_32px_-8px_color-mix(in_srgb,var(--accent)_45%,transparent)]",
   secondary: "border border-line bg-raised text-fg hover:bg-inset",
   ghost: "border border-transparent text-muted hover:text-fg",
 };
@@ -45,7 +47,7 @@ export function buttonStyles(
   return cn(
     // min-h keeps the 44px tap target even at size sm.
     "inline-flex min-h-11 items-center justify-center gap-2 rounded-md font-medium",
-    "transition-[background-color,color,box-shadow] duration-[--d-micro]",
+    "transition-[background-color,color,box-shadow] duration-(--d-micro)",
     "disabled:cursor-not-allowed disabled:opacity-50",
     variants[variant],
     sizes[size],

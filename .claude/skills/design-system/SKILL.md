@@ -66,6 +66,18 @@ The scroll-background fields shipped invisible in light mode: a bright field at 
 
 **Bake the alpha into a themed token** (`--field-a/b/c`), so light can use a deeper, more saturated hue at roughly double the alpha, and let the component animate only a relative `0..1` band on top. Never theme this by reading the theme in JS — that costs a flash on first paint.
 
+## Tailwind v4: CSS variables use PARENTHESES, not brackets
+
+`duration-[--d-base]` is wrong. The bracket form is an arbitrary *literal*, so
+it compiles to `transition-duration: --d-base` — a bare property name as a
+value, which is invalid, silently dropped, and falls back to `0s`.
+
+The variable shorthand is `duration-(--d-base)` → `var(--d-base)`.
+
+This shipped across 11 files and 21 usages before anyone noticed, because a
+transition that does not run looks like a transition that is simply fast. Same
+rule for every var-driven utility: `ease-(--e-out)`, `w-(--x)`, and so on.
+
 ## Checking a change
 
 Both themes, every time. `--muted` is the token that fails first — the dark-mode `#8A93A6` is only 3.09:1 on white. Toggle and re-read before calling anything done.

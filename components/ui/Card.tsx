@@ -94,7 +94,7 @@ export function Card({
         /*
           `duration-(--d-base)` — PARENTHESES, not brackets. Tailwind v4's
           bracket form takes the contents as a literal value, so
-          `duration-[--d-base]` emits `transition-duration: --d-base`, which is
+          `duration-(--d-base)` emits `transition-duration: --d-base`, which is
           invalid, drops to the initial value, and gives you 0s. Measured, not
           assumed: computed `transitionDuration` was `0s` with the bracket form
           and `500ms` with this one. The parenthesis form is the var shorthand.

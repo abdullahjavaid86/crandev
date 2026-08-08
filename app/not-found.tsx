@@ -27,19 +27,19 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
           >
             Home
           </Link>
           <Link
             href="/work"
-            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
           >
             Selected work
           </Link>
           <Link
             href="/contact"
-            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
           >
             Contact
           </Link>

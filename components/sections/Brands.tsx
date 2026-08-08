@@ -37,7 +37,7 @@ function BrandItem({ brand }: { brand: Brand }) {
     <li className="shrink-0">
       {/* Hover lift is desktop-only: Tailwind v4 gates `hover:` behind
           (hover: hover), so on touch these sit at rest in text-muted. */}
-      <span className="flex items-center gap-3 text-muted transition-colors duration-[--d-base] hover:text-fg">
+      <span className="flex items-center gap-3 text-muted transition-colors duration-(--d-base) hover:text-fg">
         <span
           aria-hidden="true"
           className="block h-4 w-[3.75rem] bg-current [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"

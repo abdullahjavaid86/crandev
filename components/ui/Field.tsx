@@ -77,6 +77,6 @@ export function Field({
 export const controlStyles = cn(
   "min-h-11 w-full rounded-md border border-line bg-raised px-4 py-3",
   "text-fg placeholder:text-muted",
-  "transition-colors duration-[--d-micro] hover:border-line-strong",
+  "transition-colors duration-(--d-micro) hover:border-line-strong",
   "aria-[invalid=true]:border-line-strong",
 );

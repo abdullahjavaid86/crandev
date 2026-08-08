@@ -39,13 +39,13 @@ export default function Error({ error, reset }: ErrorProps) {
           <button
             type="button"
             onClick={reset}
-            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
           >
             Try again
           </button>
           <Link
             href="/contact"
-            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
           >
             Tell us
           </Link>

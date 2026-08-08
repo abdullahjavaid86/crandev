@@ -23,7 +23,7 @@ const CONTACT = {
  *  `active:` state instead of a stuck hover. */
 const linkStyles = cn(
   "inline-flex min-h-11 items-center rounded-sm text-small text-muted",
-  "transition-colors duration-[--d-micro]",
+  "transition-colors duration-(--d-micro)",
   "hover:text-fg active:text-fg",
 );
 

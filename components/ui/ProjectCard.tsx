@@ -77,7 +77,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
                LCP element for early bandwidth (§7.0). */
             className={cn(
               "object-cover",
-              "transition-transform duration-[--d-base] ease-out-soft",
+              "transition-transform duration-(--d-base) ease-out-soft",
               "group-hover:scale-[1.04] group-active:scale-[1.04]",
             )}
           />
@@ -109,14 +109,14 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             className={cn(
               "inline-flex items-center gap-2 pt-1",
               "font-mono text-small uppercase tracking-[0.18em] text-muted",
-              "transition-colors duration-[--d-micro]",
+              "transition-colors duration-(--d-micro)",
               "group-hover:text-fg group-active:text-fg",
             )}
           >
             Read the case study
             <ArrowUpRight
               aria-hidden="true"
-              className="size-4 transition-transform duration-[--d-micro] ease-out-soft group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              className="size-4 transition-transform duration-(--d-micro) ease-out-soft group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
             />
           </span>
         </div>

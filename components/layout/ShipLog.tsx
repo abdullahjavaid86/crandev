@@ -66,7 +66,7 @@ function Rail({ sections, className }: ShipLogProps) {
   // things that ever change, so killing the transition is the whole job.
   const settle = isReduced
     ? null
-    : "transition-[color,background-color,opacity,scale] duration-[--d-micro] ease-out-soft";
+    : "transition-[color,background-color,opacity,scale] duration-(--d-micro) ease-out-soft";
 
   if (commits.length === 0) return null;
 

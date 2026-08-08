@@ -43,7 +43,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <button
               type="button"
               onClick={reset}
-              className="mt-10 rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
+              className="mt-10 rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-(--d-micro) hover:bg-inset"
             >
               Reload
             </button>
