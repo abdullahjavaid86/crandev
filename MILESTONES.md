@@ -34,11 +34,11 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M1 — Primitives
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 1.1 | `components/motion/Reveal.tsx` | todo | |
+| 1.1 | `components/motion/Reveal.tsx` | done 2026-08-08 | opacity + 24px + blur(6px)→0, `once: true`, `delay` prop. Reduced motion drops travel and blur entirely. |
 | 1.2 | `components/motion/StaggerGroup.tsx` | todo | |
 | 1.3 | `components/motion/MaskedText.tsx` — line split | todo | |
 | 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | todo | |
@@ -53,7 +53,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M2 — Shell + Hero
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M3 — Home body
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -85,7 +85,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M4 — GitHub integration
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -99,7 +99,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M5 — Routes
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -117,7 +117,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M6 — Polish
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
