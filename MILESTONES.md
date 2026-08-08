@@ -12,36 +12,41 @@ Each numbered row is **one commit** on `feature/fast-track` — the row is the r
 
 ## M0 — Foundations
 
-**Status:** in progress
+**Status:** done 2026-08-08
 
 Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Tailwind 4 · motion 13 · lucide-react 1.30**. App Router, no `src/`, alias `@/*`, ESLint flat config.
 
 | # | Task | Status | Notes |
 |---|---|---|---|
 | 0.1 | `create-next-app` — App Router, TypeScript strict, Tailwind | done 2026-08-08 | Scaffolded in a temp dir and moved in, since `create-next-app` refuses a non-empty directory. Repo initialized by the scaffold (one commit, scaffold files only). `motion` + `lucide-react` installed; build and lint clean. |
-| 0.2 | Fonts via `next/font/google`: Bricolage Grotesque, Inter Tight, JetBrains Mono | todo | |
-| 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | todo | |
-| 0.4 | `lib/motion.ts` — ease, dur, spring, viewport | todo | |
-| 0.5 | Grain overlay + `<Container>` in `app/layout.tsx` | todo | |
-| 0.6 | `lib/api/client.ts` axios instance + `normalizeError`; `.env.example` | todo | |
-| 0.7 | Blank page proving every token renders | todo | |
+| 0.2 | Fonts via `next/font/google`: Bricolage Grotesque, Inter Tight, JetBrains Mono | done 2026-08-08 | All three resolve as variable — no `weight` needed. Exposed as `--font-display` / `--font-body` / `--font-mono`. Placeholder metadata replaced; real agency name still pending (D2). |
+| 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | done 2026-08-08 | Palette, radius, fluid type, easings. `cn()` is dependency-free per §10 and does **not** resolve conflicting utilities — revisit `tailwind-merge` when variant maps land in M1.5. |
+| 0.4 | `lib/motion.ts` — ease, dur, spring, viewport | done 2026-08-08 | Also carries `revealVariants`, `staggerVariants`, and `reduced()` so components never hand-roll a fifth reveal. |
+| 0.5 | Grain overlay + `<Container>` in `app/layout.tsx` | done 2026-08-08 | `Grain` is static and server-rendered — no client boundary. `Container` takes an `as` prop so sections keep correct semantics without a second wrapper. |
+| 0.6 | `lib/api/client.ts` axios instance + `normalizeError` | done 2026-08-08 | One shape for every failure mode (HTTP/timeout/network), with `RATE_LIMITED` split out since GitHub 429s are routine. |
+| 0.7 | Blank page proving every token renders | done 2026-08-08 | Surfaces, ink, type scale, glass over a glow, radius, focus ring, content counts, motion values. Replaced wholesale in M2. |
+| 0.8 | Error surfaces — `error.tsx`, `global-error.tsx`, `not-found.tsx`; `.env.example` | done 2026-08-08 | Built on tokens only, no primitives needed. `global-error` renders its own `<html>`/`<body>` and degrades without the font variables. |
+| 0.9 | Install `zod` + `mongodb`; `lib/content/` loaders, `lib/db/client.ts` | done 2026-08-08 | Official driver, not Mongoose. JSON files ship **empty** — honest until D2. Schema enforces kebab-case slugs and rejects an outcome line with no digit in it (§8). **Validation only runs when a page imports the loader** — an unimported content file is unvalidated. |
 
-**Exit:** `npm run build` clean, blank page shows the palette, type scale, and grain.
+**Exit:** `yarn build` clean, blank page shows the palette, type scale, and grain.
 
 ---
 
 ## M1 — Primitives
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 1.1 | `components/motion/Reveal.tsx` | todo | |
-| 1.2 | `components/motion/StaggerGroup.tsx` | todo | |
-| 1.3 | `components/motion/MaskedText.tsx` — line split | todo | |
-| 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | todo | |
-| 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | todo | |
-| 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work |
+| 1.1 | `components/motion/Reveal.tsx` | done 2026-08-08 | opacity + 24px + blur(6px)→0, `once: true`, `delay` prop. Reduced motion drops travel and blur entirely. |
+| 1.2 | `components/motion/StaggerGroup.tsx` | done 2026-08-08 | Parent owns the trigger; `StaggerItem` reads reduced-motion from context so a child can never declare its own viewport. |
+| 1.3 | `components/motion/MaskedText.tsx` — line split | done 2026-08-08 | Lines are authored, not measured — a resize observer re-splitting mid-animation thrashes layout. Animated spans are `aria-hidden` with an `sr-only` copy of the full phrase. |
+| 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | done 2026-08-08 | Added `hooks/useMediaQuery.ts` (+ `useIsDesktop`, `useHasHover`) — shared by every desktop-only enhancement. `ScrollProgress` animates `scaleX`, never width. |
+| 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | done 2026-08-08 | `buttonStyles()` shared with button-styled links so there is one Button. `Button` extends `HTMLMotionProps`, not React's — the drag handler signatures collide. `Field` is a render-prop so input/textarea/select need no special-casing. |
+| 1.6 | Reduced-motion verified on every primitive | done 2026-08-08 | Verified in headless Chrome over CDP, not by inspection: 12 runs (reduced on/off x light/dark x 360/768/1440). Zero infinite animations under `reduce`, zero content left stuck at opacity 0, zero horizontal overflow. Script pattern is reusable for M6.3/6.4. |
+| 1.9 | **Light + dark theming** — role-based tokens, `ThemeScript` (no FOUC), `useTheme`, `ThemeToggle` | done 2026-08-08 | Tokens renamed to roles; all components migrated. Accent split into fill (`--accent`) vs ink (`--accent-ink`) because cyan text on white is 1.43:1. |
+| 1.7 | Scroll-reactive background layer (§4.6) | done 2026-08-08 | Three fields, transform+opacity only, blur and gradient static. Frozen at mid-scroll below `md` and under reduced motion by flattening the output range, not branching JSX. Ion capped at 0.14 — it is the token that muddies on light. |
+| 1.8 | `<Modal />` primitive — focus trap, scroll lock, Escape, `router.back()` | done 2026-08-08 | Radix Dialog 1.1.23, behaviour only, restyled to role tokens. `forceMount` + `AnimatePresence` so motion owns the exit. Centred with auto margins, **not** translate — motion owns `transform`. No `next/navigation`: `onClose` is the whole routing contract for 5.2. |
 
 **Exit:** every primitive renders correctly with `prefers-reduced-motion: reduce`.
 
@@ -49,39 +54,40 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M2 — Shell + Hero
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 2.1 | `layout/Header` — sticky, blurs past 40px, mobile overlay | todo | |
-| 2.2 | Shared nav source consumed by Header + Footer | todo | |
-| 2.3 | `layout/Footer` | todo | |
-| 2.4 | Ship Log rail — section registration + scroll tracking | todo | the signature element |
-| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | |
-| 2.6 | Hero commit ticker (mocked data) | todo | |
+| 2.1 | `layout/Header` — sticky, blurs past 40px, mobile overlay | done 2026-08-08 | Radix Dialog for the overlay. Glass is a separate layer whose blur class is **absent** below 40px, not faded — a blurred layer at `opacity:0` still costs GPU. Scroll state via `useSyncExternalStore` on motion's `scrollY`, since `set-state-in-effect` now errors. |
+| 2.2 | Shared nav source consumed by Header + Footer | done 2026-08-08 | `lib/nav.ts` — primaryNav, primaryCta, footerNav, `isActive()`. Prefix match keeps Work active on `/work/[slug]`, including as an intercepted modal. |
+| 2.3 | `layout/Footer` | done 2026-08-08 | Server component. lucide v1 ships no brand glyphs, so GitHub is a labelled text link + `ArrowUpRight`. Email and GitHub handle are flagged `NEEDS CONFIRMING` (D8). |
+| 2.4 | Ship Log rail — section registration + scroll tracking | done 2026-08-08 | Explicit array prop, not a context hook — a registration hook would force `'use client'` onto every section wrapper. IntersectionObserver for active section, one `useScroll` for the fill. Gated at `lg` (not `md`) since the rail needs a real gutter. |
+| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | done 2026-08-08 | **Copy is DRAFT, needs rewriting (D2)** — deliberately contains no number, since every number here must be real. No hero glows: `ScrollBackground` already owns them site-wide. |
+| 2.7 | `<WireSolid />` — cursor-tracking wireframe solid, hero only | done 2026-08-08 | Code-generated icosahedron (`lib/solid.ts`), 2 SVG paths on motion's shared frameloop. **No new dependency** — three+R3F+drei measured at 23MB/2.2MB/1.8MB unpacked. Paused off-screen, idle drift on touch, static under reduced motion, never takes the accent. |
+| 2.6 | Hero commit ticker (mocked data) | done 2026-08-08 | Data arrives as a prop, so M4.4 is a one-line swap. Rotation stops entirely under reduced motion. **Placeholder commits must not ship** — see Known gaps. |
 
 ---
 
 ## M3 — Home body
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 3.1 | Proof strip — 4 real stats, count-up | todo | real numbers or cut |
-| 3.2 | Services — card stacking, list on mobile | todo | |
-| 3.3 | Work grid — 4–6 projects, links to `/work/[slug]` | todo | |
-| 3.4 | Testimonials — attributed quotes only | todo | |
-| 3.5 | Brands / associations strip | todo | label honestly |
-| 3.6 | Process — `01→04`, tied to the rail | todo | |
-| 3.7 | Contact section + form | todo | |
-| 3.8 | CTA band | todo | |
+| 3.1 | Proof strip — 4 real stats, count-up | done 2026-08-08 | Count-up extracted to `ui/StatFigure` so the section stays a server component; server-rendered at final value, so it is correct with no JS. |
+| 3.2 | Services — card stacking, list on mobile | done 2026-08-08 | List-first, stack added at `lg`. `lg:gap-48` is load-bearing — it makes the progress slices land on real hand-off points regardless of card height. |
+| 3.3 | Work grid — 4–6 projects, links to `/work/[slug]` | done 2026-08-08 | `ui/ProjectCard` is separate — /work and the modal both consume it. Remote covers use `fill` in a fixed aspect box; `sizes` set, no `priority`. |
+| 3.4 | Testimonials — attributed quotes only | done 2026-08-08 | `<figure>`/`<blockquote>`/`<figcaption><cite>` — `<cite>` inside a quote would name the work, not the speaker. |
+| 3.5 | Brands / associations strip | done 2026-08-08 | Name is the primary visual (six identical placeholder marks would look broken). Mark is a CSS mask, not `next/image`, so `currentColor` survives. |
+| 3.6 | Process — `01→04`, tied to the rail | done 2026-08-08 | Numbering derives from index; base is a plain list, `md` adds the rail. |
+| 3.7 | Contact section + form → Server Action → MongoDB | todo | zod re-validation server-side, rate limit, honeypot, length caps |
+| 3.8 | CTA band | done 2026-08-08 | The only section allowed the accent. CTA label/href from `lib/nav`. |
 
 ---
 
 ## M4 — GitHub integration
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -95,12 +101,12 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M5 — Routes
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
 | 5.1 | `/work` — index, filterable | todo | |
-| 5.2 | `/work/[slug]` — project details | todo | `generateStaticParams` + `notFound` |
+| 5.2 | `/work/[slug]` — full page + `@modal` intercepting route | todo | `generateStaticParams` + `notFound`. Modal on client nav, full page on direct load/share (§6.2) |
 | 5.3 | `/about` | todo | |
 | 5.4 | `/team` | todo | real people only |
 | 5.5 | `/contact` | todo | |
@@ -113,7 +119,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 ## M6 — Polish
 
-**Status:** todo
+**Status:** in progress
 
 | # | Task | Status | Notes |
 |---|---|---|---|
@@ -135,6 +141,11 @@ Things that need a human answer. Do not guess past these.
 | D1 | `/schedule`: self-built slot picker, or embed a third-party scheduler (a dependency + design-consistency call)? | 2026-08-08 | open |
 | D2 | Real content — client names, project outcomes, stats, testimonials, logos, team bios, comp bands. Every one of these must be real. | 2026-08-08 | open |
 | D3 | Which GitHub org/user feeds the Ship Log and open-source section? | 2026-08-08 | open |
+| D5 | MongoDB hosting — Atlas or self-hosted? Affects `MONGODB_URI` and whether IP allow-listing is needed. `.env.example` covers both forms. | 2026-08-08 | open |
+| D9 | **Background variant: fields vs lattice.** Both are live behind a dev-only toggle (bottom-right, `bg: …`). Pick one, then delete the loser plus `BackgroundLayer`, `useBackground`, `BackgroundToggle`, the `data-bg` line in `ThemeScript`, and the unused tokens. | 2026-08-08 | open |
+| D8 | Footer contact details are placeholders: `hello@cranedev.com` and `github.com/cranedev`. The real domain is `cranedev.ai.studio`, so both are likely wrong. `GITHUB_OWNER` in `.env.example` is blank too. | 2026-08-08 | open |
+| D7 | Light mode changes the ambient glows and the Ship Log rail's look — both were designed against `--void`. Worth your eye once M2 lands. | 2026-08-08 | open |
+| D6 | Submissions are write-only with no admin UI, so nothing in the app reads them back. How do you want to be notified of a new contact query — email, Slack, or checking the collection directly? | 2026-08-08 | open |
 | D4 | Ship Log below `lg`: proposed a 2px cyan progress bar under the header, with the active section's hash/number in that section's eyebrow. The rail has no gutter to pin to at 360px. Written into CLAUDE.md §4.5 as the default — flag if you want a different mobile form for the signature element. | 2026-08-08 | proposed |
 
 ---
@@ -143,7 +154,10 @@ Things that need a human answer. Do not guess past these.
 
 Real problems we shipped past on purpose. Not a wishlist.
 
-_(none yet)_
+- **ALL of `content/` is invented sample data.** See `content/README.md` for the per-file list. Authorised by the owner so the sections have a correct shape to build against, and to be replaced before launch. The numbers in `work.json` and `stats.json` are fabricated, and `testimonials.json` attributes invented quotes to invented people — that is the entry with the most reputational weight if it ever ships.
+- **Project covers and team photos are remote Unsplash URLs.** They must become static imports from `/public` for the blur placeholder and intrinsic sizing (§7.0) — a schema change, not just a value swap. `next.config.ts` `remotePatterns` exists only to serve them and should be removed with them.
+- **Hero commit ticker renders invented commits.** `PLACEHOLDER_COMMITS` in `components/sections/Hero.tsx`. §4.5 sanctions a mock while the GitHub route is built, but this section's entire job is being real, so it **must not reach production**. Removed by M4.4.
+- **Hero copy is a draft.** Headline and subcopy in `components/sections/Hero.tsx` were written to the §8 rules but describe a team whose actual positioning has not been supplied (D2).
 
 ---
 
@@ -154,6 +168,11 @@ One line per milestone, per `maintaining-skills`. A no-op audit is a valid entry
 | Date | Milestone | Result |
 |---|---|---|
 | 2026-08-08 | — | Skills authored: design-system, motion-system, building-a-section, adding-a-page, content-and-copy, data-and-forms, quality-gate, maintaining-skills. |
+| 2026-08-08 | M2 | **`design-system` corrected: a token that works on dark does not work on light by symmetry.** The scroll fields were invisible in light mode — a bright field at 0.14 alpha is a 2.8x luminance step on near-black and 1.04x on `#FAFBFC`. Fix: bake the alpha into themed `--field-*` tokens and let motion animate only a relative band. |
 | 2026-08-08 | M0.1 | `motion-system` corrected: package is `motion`, not `framer-motion` (no `./react` subpath on the latter). `CLAUDE.md §2` stack row updated to match, and a Next 16 warning added at the top of `CLAUDE.md` pointing at `node_modules/next/dist/docs/`. |
-| 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row, milestone PRs to `main`. Branch created; existing work committed as two commits. |
+| 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row. Branch created; existing work committed as two commits. |
+| 2026-08-08 | — | **Architecture change: backend added.** §2 constraints reversed — MongoDB for submissions (write-only), JSON + zod for page content, server-first with Server Actions. New `data-persistence` skill. §6.2 project details via parallel + intercepting routes (modal on client nav, full page on direct load). §4.6 scroll-reactive background. `.env.example` written. |
+| 2026-08-08 | — | **§2 constraints relaxed.** shadcn/Radix permitted on demand for hard interactive behaviour (never MUI/Chakra), adopted for behaviour only and restyled to our tokens. Non-`motion` animation libraries allowed only for a named capability motion lacks. No-duplication broadened from components to hooks, helpers, types, and logic. Propagated to `building-a-section`, `motion-system`, §10. |
+| 2026-08-08 | — | **Adopted from `biosum/admin` skills.** Async `params`/`searchParams` (Next 15+/16) → `adding-a-page`; route state files (`loading`/`error`/`not-found` + Suspense) → `adding-a-page` + `data-and-forms`; search-before-you-build component policy + prop conventions → `building-a-section` + §10 + §15; static image imports, `priority`/LCP, `remotePatterns` → `building-a-section` + `quality-gate`; discriminated-union async state, `unknown` at boundaries, no `!` → `data-and-forms` + §10; `hooks/` added to the tree. **Not adopted:** Supabase/RLS/HIPAA/Stripe/n8n/storage/deploy (no backend here), their caching skill (PHI-specific), their `git` skill (mandates never auto-commit — this project chose the opposite). |
+| 2026-08-08 | — | **PR base corrected to `staging`.** `git-workflow` + §17 updated: every PR targets `staging`; `main` is a base only on explicit request in that request. Topology `main ← staging ← feature/fast-track`. |
 | 2026-08-08 | — | **Mobile-first adopted as a project constraint.** New `CLAUDE.md §4.6` (authoring rule); §4.2 glass budget split by breakpoint; §4.3 display floor lowered `3.5rem → 2.5rem`; §4.5 mobile Ship Log defined; §9 breakpoint matrix widened. Propagated to `design-system`, `motion-system`, `building-a-section`, `adding-a-page`, `quality-gate`. |

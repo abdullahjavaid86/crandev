@@ -32,9 +32,29 @@ Typed call sites live in `lib/api/<domain>.ts` (e.g. `lib/api/github.ts`) and re
 - GitHub headers: `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, and `Authorization: Bearer ${token}` **only when the token exists**.
 - **Rate limits and outages are normal, not exceptional.** On failure, the section renders its typed fallback from `content/` and logs server-side. The user never sees an error state for decorative data.
 
+## Model async state as a discriminated union
+
+Never a bag of booleans (`isLoading`, `isError`, `data`) — that lets `isLoading && isError` typecheck and leaves the three states as something you remember to handle rather than something the compiler enforces.
+
+```ts
+type Async<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: string };
+```
+
+The same shape covers form submission (`idle | submitting | success | error`). Switch on `status` and the compiler tells you when a state has no UI.
+
+Untrusted input — an upstream API body, a form value — is `unknown` at the boundary and narrowed explicitly. Never cast straight to a domain type, and never reach for `!` to silence a null.
+
+If the same read happens more than once in a request, wrap it in React `cache()` so it runs once.
+
 ## The three states
 
 Every async surface ships all three at the same time as the happy path. Building the happy path alone and adding states later is how a section gets rebuilt.
+
+At route level these have App Router files — `loading.tsx`, `error.tsx` (must be `'use client'`), `not-found.tsx`. See [adding-a-page](../adding-a-page/SKILL.md). Within a section, build them inline.
 
 - **Loading** — a skeleton matching the final layout's dimensions exactly. Glass surface, no spinner, subtle shimmer that respects reduced motion. If the skeleton and the loaded content are different heights, the layout shifts and the section fails the quality gate.
 - **Empty** — a sentence saying what would appear here, plus an action. Never "No data."

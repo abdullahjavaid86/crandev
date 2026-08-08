@@ -17,6 +17,30 @@ Work in this order. Skipping step 1 or 2 is what produces sections that need reb
 4. **States, if async.** Loading, empty, and error designed at the same time as the happy path — see [data-and-forms](../data-and-forms/SKILL.md).
 5. **[quality-gate](../quality-gate/SKILL.md).** Then update `MILESTONES.md` and report.
 
+## Search before you build
+
+**Before writing any component, hook, helper, type, or piece of logic, search for it.** Not just components — one `cn()`, one date formatter, one slug lookup. Duplication is invisible in review until there are four copies.
+
+1. Grep `components/`, `hooks/`, `lib/`, and `types/` by name **and** by behaviour — the existing one may not be called what you'd call it.
+2. Found it → use it. Close but missing a case → **add a variant or parameter to the existing one**, never fork a near-copy.
+3. Genuinely absent → create it in the shared location so the next task finds it.
+
+**Before hand-building interactive behaviour, check whether Radix or shadcn already solves it.** Dialog, popover, tooltip, select, and anything involving focus management are hard to get right and easy to get subtly wrong. Buttons and cards stay hand-built — a dependency for those is not worth it.
+
+When adopting a shadcn component: take the behaviour and the ARIA wiring, then **strip its palette and restyle against our tokens**. If it still references `--background`, `--foreground`, or stock Tailwind greys, it isn't adopted — it's pasted, and it will drift from the design system on the first hover state.
+
+This matters most when sections are built in parallel by separate agents (`CLAUDE.md §15`): three agents each needing a quote card will each invent one unless the primitive already exists or is claimed. **Build shared primitives first, sequentially; fan out only over sections that consume them.**
+
+## Component conventions
+
+- Typed props via an explicit `interface`, extending the native element so consumers get standard attributes: `interface ButtonProps extends React.ComponentProps<'button'>`.
+- Variants and sizes come from a single typed variant map merged through `cn()` — not ad-hoc conditional strings.
+- Forward `ref` wherever the DOM node matters (focus management, measurement, motion targets).
+- Accessible by default: wire `aria-*`, support keyboard interaction, expose `disabled` and `aria-invalid`.
+- Presentational primitives stay server components unless they need interactivity, and never fetch data — pass it in as props.
+- Non-trivial stateful logic becomes a custom hook in `hooks/`, named for its owner (`hooks/useShipLog.ts`).
+- **Shared style functions and helpers live in a module with no `'use client'`.** A helper exported from a client module cannot be called by a server component — it fails at prerender, and re-exporting it through another file does not help. Put the helper in its own plain module and have the client component import it too.
+
 ## Anatomy
 
 ```
@@ -41,7 +65,7 @@ Every section shares one shell so vertical rhythm never drifts:
 ```tsx
 <section id="work" aria-labelledby="work-heading" className="py-28 md:py-40">
   <Container>
-    <Eyebrow>02 / Selected work</Eyebrow>          {/* mono, --mist */}
+    <Eyebrow index="02">Selected work</Eyebrow>   {/* mono, text-muted */}
     <h2 id="work-heading">…</h2>                    {/* display face, text-balance */}
     …
   </Container>
@@ -51,6 +75,13 @@ Every section shares one shell so vertical rhythm never drifts:
 - Eyebrow uses the mono utility face and carries the Ship Log section number.
 - Register the section with the Ship Log rail rather than adding a local progress indicator.
 - Exactly one `h2` per section, and headings stay ordered down the page.
+
+## Images
+
+- **Static-import local images** rather than passing a string path: `import cover from '@/public/work/acme.png'`. You get an automatic blur placeholder, correct intrinsic dimensions with no layout shift, and a long-term hashed URL. The blur-up is free and reads well against the dark ground — it is the right default for every project cover and team photo.
+- **`priority` goes on exactly one image per route** — the real above-the-fold LCP image, which on most of our routes is nothing at all. Everything else stays lazy. `priority` on a below-the-fold image actively hurts LCP.
+- Remote images (GitHub avatars) need their host allow-listed in `next.config.ts` under `images.remotePatterns`.
+- `sizes` is mandatory on anything responsive or using `fill` — see the work grid below.
 
 ## Section-specific notes
 
@@ -62,7 +93,7 @@ Every section shares one shell so vertical rhythm never drifts:
 
 **Testimonials** — attributed or cut. A quote needs a name, a role, and a company; an unattributed quote reads as fabricated to exactly the audience we are addressing. Prefer 3 substantial quotes over 8 thin ones. No star ratings, no carousel that auto-advances. Stacked on mobile, grid at `md`.
 
-**Brands / associations** — a hairline-bordered logo strip, monochrome at `--mist` opacity, lifting to full `--ice` on hover (desktop only — on touch they sit at rest). Logos as inline SVG or `next/image` with explicit dimensions; never raster logos scaled up. Label it honestly ("Teams we've shipped for" vs "Partners") — the wrong label here is a credibility leak. On mobile the strip scrolls horizontally inside its own container with `overscroll-behavior-x: contain` and a fade mask on both edges; it must never scroll the page sideways. Auto-scroll marquee only if the logos exceed one row on desktop.
+**Brands / associations** — a hairline-bordered logo strip, monochrome at `text-muted`, lifting to `text-fg` on hover (desktop only — on touch they sit at rest). Logos as inline SVG or `next/image` with explicit dimensions; never raster logos scaled up. Label it honestly ("Teams we've shipped for" vs "Partners") — the wrong label here is a credibility leak. On mobile the strip scrolls horizontally inside its own container with `overscroll-behavior-x: contain` and a fade mask on both edges; it must never scroll the page sideways. Auto-scroll marquee only if the logos exceed one row on desktop.
 
 **Process** — genuinely sequential, so `01 → 04` numbering is legitimate. Tied to the Ship Log rail, one reveal per step.
 

@@ -1,26 +1,247 @@
 @import "tailwindcss";
 
+/* Class-based, not prefers-color-scheme: the toggle has to win over the OS.
+   The OS is only the initial guess, resolved before paint in layout.tsx. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────
+   Tokens — the single source of truth. CLAUDE.md §4.
+   Names are ROLES, not colours. `--carbon` can't be light, but
+   `--raised` can, and every component reads roles.
+   ───────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light — the default. Dark overrides below. */
+  --surface: #fafbfc;   /* page background */
+  --raised: #ffffff;    /* cards, raised surfaces */
+  --inset: #f1f3f6;     /* hover, inset panels */
+  --line: rgba(6, 7, 10, 0.1);
+  --line-strong: rgba(6, 7, 10, 0.22);   /* hover / invalid */
+
+  --fg: #0e1017;        /* primary text */
+  --muted: #5a6274;     /* secondary text — 5.9:1 on --surface */
+
+  /* The accent has TWO roles and they are not interchangeable.
+     --accent is a FILL. Cyan under dark ink is 14:1 in both themes.
+     --accent-ink is for TEXT and BORDERS. Cyan as text on white is
+     1.43:1, so light mode uses a darkened teal at 6.4:1. */
+  --accent: #35f0dc;
+  --accent-on: #06070a;  /* ink that sits ON --accent */
+  --accent-ink: #0a6b5e;
+  --ion: #3a55d9;
+
+  --glass-tint: rgba(6, 7, 10, 0.04);
+  --glass-tint-soft: rgba(6, 7, 10, 0.015);
+  --glass-catch: rgba(255, 255, 255, 0.7);
+  --glass-drop: rgba(6, 7, 10, 0.12);
+  --grain-opacity: 0.02;
+
+  /* Scroll-background fields. The ALPHA lives here, not in the component,
+     because the two themes need very different amounts of it: a bright field
+     at 0.14 over near-black is a 2.8x luminance step, and the same field over
+     #FAFBFC is 1.04x — invisible. Light therefore uses deeper, more saturated
+     hues at roughly double the alpha. The component only animates a relative
+     opacity band on top, so scroll variation stays identical in both themes. */
+  --field-a: radial-gradient(circle at center, rgba(15, 185, 166, 0.42) 0%, transparent 68%);
+  --field-b: radial-gradient(circle at center, rgba(58, 85, 217, 0.36) 0%, transparent 68%);
+  --field-c: radial-gradient(circle at center, rgba(10, 107, 94, 0.34) 0%, transparent 66%);
+
+  /* Lattice background. Thin 1px lines need more alpha than a huge blurred
+     field to register at all, and on a light ground they must DARKEN. */
+  --lattice-line: rgba(6, 7, 10, 0.13);
+  --lattice-node: rgba(6, 7, 10, 0.22);
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 24px;
+
+  /* Fluid type — floors set from 360px, not from the desktop end.
+     A 56px display at 360px fits ~7 characters per line. */
+  --t-display: clamp(2.5rem, 1.35rem + 5.1vw, 6.5rem);
+  --t-h2: clamp(1.75rem, 1.24rem + 2.27vw, 3.5rem);
+  --t-h3: clamp(1.25rem, 1.18rem + 0.32vw, 1.5rem);
+  --t-body: 1.0625rem;
+  --t-small: 0.875rem;
+
+  /* Motion — mirrors lib/motion.ts. */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-micro: 180ms;
+  --d-base: 500ms;
+}
+
+.dark {
+  --surface: #06070a;
+  --raised: #0e1017;
+  --inset: #171a22;
+  --line: rgba(232, 237, 245, 0.08);
+  --line-strong: rgba(232, 237, 245, 0.22);
+
+  --fg: #e8edf5;
+  --muted: #8a93a6;
+
+  /* On dark the accent can be text — 14:1 on --surface — so both roles
+     collapse back to the one signature cyan. */
+  --accent: #35f0dc;
+  --accent-on: #06070a;
+  --accent-ink: #35f0dc;
+  --ion: #4c6fff;
+
+  --glass-tint: rgba(232, 237, 245, 0.055);
+  --glass-tint-soft: rgba(232, 237, 245, 0.015);
+  --glass-catch: rgba(232, 237, 245, 0.06);
+  --glass-drop: rgba(0, 0, 0, 0.7);
+  --grain-opacity: 0.028;
+
+  --field-a: radial-gradient(circle at center, rgba(53, 240, 220, 0.24) 0%, transparent 68%);
+  --field-b: radial-gradient(circle at center, rgba(76, 111, 255, 0.22) 0%, transparent 68%);
+  --field-c: radial-gradient(circle at center, rgba(53, 240, 220, 0.20) 0%, transparent 66%);
+
+  --lattice-line: rgba(232, 237, 245, 0.11);
+  --lattice-node: rgba(232, 237, 245, 0.20);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  /* The track holds the list twice, so -50% is exactly one full set. */
+  to   { transform: translateX(-50%); }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --animate-marquee: marquee 60s linear infinite;
+
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-inset: var(--inset);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-on: var(--accent-on);
+  --color-accent-ink: var(--accent-ink);
+  --color-ion: var(--ion);
+
+  /* next/font sets --font-*-src on <html>. Theme keys must NOT share those
+     names — a self-reference is a cycle, and Tailwind resolves a cycle by
+     dropping the utility, silently falling back to its default stack. */
+  --font-display: var(--font-display-src);
+  --font-body: var(--font-body-src);
+  --font-mono: var(--font-mono-src);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+
+  --text-display: var(--t-display);
+  --text-h2: var(--t-h2);
+  --text-h3: var(--t-h3);
+  --text-body: var(--t-body);
+  --text-small: var(--t-small);
+
+  --ease-out-soft: var(--e-out);
+  --ease-in-out-soft: var(--e-in-out);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
+
+/* Wrapped in @layer base so UTILITIES CAN OVERRIDE THESE.
+   Unlayered CSS beats anything inside a cascade layer, and Tailwind puts its
+   utilities in @layer utilities — so a bare `h2 { font-size }` silently wins
+   over `text-small` on that element. The footer's column headings rendered at
+   display size for exactly this reason. */
+@layer base {
+  html {
+    /* The Ship Log rail and any in-page anchor jump smoothly. The
+       reduced-motion block below forces this back to `auto`, which is the
+       correct behaviour there — a long smooth scroll is motion too. */
+    scroll-behavior: smooth;
+  }
+
+  /* Anchor targets clear the sticky header instead of landing under it. */
+  section[id] {
+    scroll-margin-top: 6rem;
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--fg);
+    font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--t-body);
+    line-height: 1.65;
+    /* Long repo names and URLs in mono must never widen the page. */
+    overflow-wrap: break-word;
+  }
+
+  /* Display face. text-balance keeps headlines from orphaning a word.
+     Wrapping rule for anything set in the display face: A SINGLE WORD NEVER
+     BREAKS — "Company" stays "Company", never "Compan / y". A MULTI-WORD
+     heading may still wrap, but only between words ("Talk to us" over two
+     lines is fine). `body` above keeps overflow-wrap: break-word, so long
+     unbroken strings — repo names, URLs, emails in the mono face — are still
+     contained and cannot widen the page. This only exempts the display face,
+     where a mid-word break is always a bug rather than a rescue. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  /* The wrapping rule follows the face, not the tag — an element that opts
+     into the display face with `font-display` gets it too, whatever it is. */
+  h1,
+  h2,
+  h3,
+  .font-display {
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  h1 {
+    font-size: var(--t-display);
+    line-height: 0.95;
+  }
+
+  h2 {
+    font-size: var(--t-h2);
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: var(--t-h3);
+    line-height: 1.25;
+  }
+
+  /* The one accent border that is legal, per §4.1. Uses --accent-ink so it
+     stays visible on a light background. */
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-on);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Reduced motion is a floor, not a preference. Components still call
+   useReducedMotion(); this catches anything that slips through. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
