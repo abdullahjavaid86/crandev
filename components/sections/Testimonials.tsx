@@ -34,7 +34,10 @@ export function Testimonials() {
           </h2>
         </Reveal>
 
-        <StaggerGroup as="ul" className="mt-14 grid gap-6 md:mt-20 md:grid-cols-3 md:gap-8">
+        <StaggerGroup
+          as="ul"
+          className="mt-14 grid gap-6 md:mt-20 md:grid-cols-3 md:gap-8"
+        >
           {testimonials.map((testimonial) => (
             <StaggerItem as="li" key={`${testimonial.company}-${testimonial.name}`}>
               <Card className="h-full p-6 md:p-8">
@@ -48,8 +51,10 @@ export function Testimonials() {
 
                   <figcaption className="mt-6 border-t border-line pt-5">
                     <cite className="not-italic">
-                      <span className="block font-medium text-fg">{testimonial.name}</span>
-                      <span className="mt-2 block font-mono text-small uppercase tracking-[0.18em] text-muted">
+                      <span className="block font-medium text-fg">
+                        {testimonial.name}
+                      </span>
+                      <span className="mt-2 block font-mono text-small tracking-[0.18em] text-muted uppercase">
                         {testimonial.role}, {testimonial.company}
                       </span>
                     </cite>

@@ -9,18 +9,18 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
 
 ## Route map
 
-| Route | Purpose |
-|---|---|
-| `/` | Home — hero, proof, services, work, testimonials, brands, process, open source, contact |
-| `/work` | All projects, filterable by stack or sector |
-| `/work/[slug]` | Project detail / case study |
-| `/team` | The people, with real substance per person |
-| `/about` | Who we are, how we work, why we exist |
-| `/contact` | Form + direct channels |
-| `/schedule` | Book a call |
-| `/careers` | Open roles + how we hire |
-| `/careers/[slug]` | Role detail + application |
-| `/not-found` | Real 404 in the site's voice |
+| Route             | Purpose                                                                                 |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| `/`               | Home — hero, proof, services, work, testimonials, brands, process, open source, contact |
+| `/work`           | All projects, filterable by stack or sector                                             |
+| `/work/[slug]`    | Project detail / case study                                                             |
+| `/team`           | The people, with real substance per person                                              |
+| `/about`          | Who we are, how we work, why we exist                                                   |
+| `/contact`        | Form + direct channels                                                                  |
+| `/schedule`       | Book a call                                                                             |
+| `/careers`        | Open roles + how we hire                                                                |
+| `/careers/[slug]` | Role detail + application                                                               |
+| `/not-found`      | Real 404 in the site's voice                                                            |
 
 ## Checklist for every new route
 
@@ -33,12 +33,17 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
    **`params` and `searchParams` are async in Next 15+/16 — you must `await` them.** This is the single most common way code written from memory breaks on this stack:
 
    ```tsx
-   export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+   export default async function Page({
+     params,
+   }: {
+     params: Promise<{ slug: string }>;
+   }) {
      const { slug } = await params;
    }
    ```
 
    `cookies()` and `headers()` are async too, and awaiting any of them opts the segment into dynamic rendering. A page reading only typed content from `content/` should stay static — don't reach for them.
+
 7. Every page ends with the same CTA band → footer. One cyan element in that band.
 8. Run [quality-gate](../quality-gate/SKILL.md), then update `MILESTONES.md`.
 
@@ -46,11 +51,11 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
 
 The three designed states from [data-and-forms](../data-and-forms/SKILL.md) have App Router file conventions. Co-locate them in the segment folder alongside `page.tsx` — do not hand-roll equivalents inside the page.
 
-| File | Role |
-|---|---|
-| `loading.tsx` | Route-level pending UI. Skeleton matching the final layout, never a spinner. |
-| `error.tsx` | Error boundary. **Must be a client component** (`'use client'`), and takes `reset`. |
-| `not-found.tsx` | Rendered by `notFound()`. The root one is the site 404. |
+| File            | Role                                                                                |
+| --------------- | ----------------------------------------------------------------------------------- |
+| `loading.tsx`   | Route-level pending UI. Skeleton matching the final layout, never a spinner.        |
+| `error.tsx`     | Error boundary. **Must be a client component** (`'use client'`), and takes `reset`. |
+| `not-found.tsx` | Rendered by `notFound()`. The root one is the site 404.                             |
 
 Wrap a slow or uncacheable part in its own `<Suspense>` so the static shell paints immediately and the rest of the route stays cacheable — the GitHub-fed sections are the case for this. A route group `(group)` organizes files without adding a URL segment; use it if the marketing routes need a shared layout that `/` does not.
 
@@ -76,11 +81,11 @@ Every route inherits these, so get them right once in `layout/`:
 
 **`/contact`** — form plus the direct channels (email, GitHub, location, timezone) in mono. Set expectations explicitly: "We reply within one business day." See [data-and-forms](../data-and-forms/SKILL.md).
 
-**`/schedule`** — booking. There is no backend, so the default build is a self-hosted slot picker: a typed availability source in `content/availability.ts`, a keyboard-navigable calendar, a timezone note derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, and a submit routed through `lib/api/client.ts` to a mocked resolver. Keep the handler swappable in one line so a real scheduler drops in later. **Embedding a third-party scheduler is a dependency and a design-consistency decision — ask before adding one.**
+**`/schedule`** — booking. Self-hosted slot picker: availability from `content/availability.json`, a keyboard-navigable calendar, a timezone note derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, and a submit through a **Server Action** into the `meetings` collection ([data-persistence](../data-persistence/SKILL.md)). **Embedding a third-party scheduler is a dependency and a design-consistency decision — ask before adding one.**
 
 **`/careers`** — roles from `content/roles.ts`. Each row: title, mono metadata (level, location, comp band, stack). State the comp band; withholding it costs more senior applicants than it saves. Include how we hire, step by step, with real timings. If there are no open roles, say so and offer a way to be told when there are — never an empty list.
 
-**`/careers/[slug]`** — the role in full: what you'd own, what the first 90 days look like, what we expect you to already know, the interview loop, the band. Application form with a résumé/portfolio link field (URL, not upload — no backend).
+**`/careers/[slug]`** — the role in full: what you'd own, what the first 90 days look like, what we expect you to already know, the interview loop, the band. Application form with a résumé/portfolio link field (URL, not upload — there is no blob storage), submitting through a Server Action into the `applications` collection.
 
 **`/not-found`** — in the interface's voice, with a route back and links to the two most useful pages. No apology, no ASCII art.
 

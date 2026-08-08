@@ -22,22 +22,22 @@ Everything below serves that job.
 
 ## 2. Stack and hard constraints
 
-| Concern | Choice |
-|---|---|
-| Package manager | **Yarn Berry 4.x** via corepack. Not npm. |
-| Framework | Next.js (App Router), TypeScript, strict mode |
-| Styling | Tailwind CSS (v4 if the installer scaffolds it) |
-| Animation | Framer Motion — npm package is **`motion`**, not `framer-motion`. Import from `motion/react`. |
-| Icons | `lucide-react` |
-| HTTP | `axios` (single shared instance — never call `axios` directly from a component) |
-| Fonts | `next/font/google` only |
-| Database | MongoDB via the official `mongodb` driver — **not** Mongoose |
-| Validation | `zod` — one schema library for both JSON content and form input |
-| Content | JSON under `content/`, parsed through a zod schema at the boundary |
+| Concern         | Choice                                                                                        |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| Package manager | **Yarn Berry 4.x** via corepack. Not npm.                                                     |
+| Framework       | Next.js (App Router), TypeScript, strict mode                                                 |
+| Styling         | Tailwind CSS (v4 if the installer scaffolds it)                                               |
+| Animation       | Framer Motion — npm package is **`motion`**, not `framer-motion`. Import from `motion/react`. |
+| Icons           | `lucide-react`                                                                                |
+| HTTP            | `axios` (single shared instance — never call `axios` directly from a component)               |
+| Fonts           | `next/font/google` only                                                                       |
+| Database        | MongoDB via the official `mongodb` driver — **not** Mongoose                                  |
+| Validation      | `zod` — one schema library for both JSON content and form input                               |
+| Content         | JSON under `content/`, parsed through a zod schema at the boundary                            |
 
 **Constraints — do not violate without asking:**
 
-- **Server first.** Server Components by default; `'use client'` only at an interactive leaf. Mutations go through Server Actions, never a client-side write. Anything that *can* run on the server does.
+- **Server first.** Server Components by default; `'use client'` only at an interactive leaf. Mutations go through Server Actions, never a client-side write. Anything that _can_ run on the server does.
 - **MongoDB stores submitted data only** — contact queries, meeting requests, job applications. It is not a CMS and never serves page content. No auth, no user accounts, no admin UI.
 - **Site content is JSON**, read at build time and validated by a zod schema. Never fetch page content from Mongo.
 - **UI primitives: shadcn or Radix, on demand.** Reach for them where the behaviour is genuinely hard to get right — dialog, popover, tooltip, select, focus management. Do not pull one in for a button or a card; those stay hand-built. **Never MUI, Chakra, DaisyUI, or any kit that ships its own design language.**
@@ -53,8 +53,10 @@ Everything below serves that job.
 yarn dev      # local
 yarn build    # must pass with zero TS errors before any section is "done"
 yarn lint
-yarn tsc --noEmit
+yarn typecheck  # next typegen && tsc --noEmit
 ```
+
+**Typecheck with `yarn typecheck`, never a bare `tsc --noEmit`.** Next generates `LayoutProps`/`PageProps` into `.next/types` during a build, and `tsconfig` includes them — so bare `tsc` passes locally off a stale `.next` and fails on a clean checkout. `yarn typecheck` runs `next typegen` first.
 
 **The package manager is Yarn Berry (4.x), via corepack — not npm.** `packageManager` in `package.json` pins it, so `corepack enable` once and the right version is used automatically. `yarn.lock` is the lockfile; there is no `package-lock.json`. Add dependencies with `yarn add`, never `npm install` — mixing the two produces two lockfiles that disagree.
 
@@ -112,14 +114,14 @@ The site supports **dark and light**. Dark is the signature; light is a first-cl
 
 **Token names are roles, not colours.** `--carbon` cannot be light, so it doesn't exist — `--raised` does. Components read `bg-raised`, `text-fg`, `text-muted`, `border-line`. A component naming a colour has bypassed the system.
 
-| Role | Light | Dark |
-|---|---|---|
-| `--surface` page | `#FAFBFC` | `#06070A` |
-| `--raised` cards | `#FFFFFF` | `#0E1017` |
-| `--inset` hover | `#F1F3F6` | `#171A22` |
+| Role                       | Light           | Dark         |
+| -------------------------- | --------------- | ------------ |
+| `--surface` page           | `#FAFBFC`       | `#06070A`    |
+| `--raised` cards           | `#FFFFFF`       | `#0E1017`    |
+| `--inset` hover            | `#F1F3F6`       | `#171A22`    |
 | `--line` / `--line-strong` | black 10% / 22% | ice 8% / 22% |
-| `--fg` text | `#0E1017` | `#E8EDF5` |
-| `--muted` secondary | `#5A6274` | `#8A93A6` |
+| `--fg` text                | `#0E1017`       | `#E8EDF5`    |
+| `--muted` secondary        | `#5A6274`       | `#8A93A6`    |
 
 **The accent has two roles and they are not interchangeable.**
 
@@ -164,8 +166,8 @@ background: linear-gradient(
 border: 1px solid var(--hairline);
 backdrop-filter: blur(20px) saturate(140%);
 box-shadow:
-  0 1px 0 0 rgba(232, 237, 245, 0.06) inset,  /* top light catch */
-  0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  0 1px 0 0 rgba(232, 237, 245, 0.06) inset,
+  /* top light catch */ 0 24px 60px -24px rgba(0, 0, 0, 0.7);
 ```
 
 Glass is only legible over something with variation. Every glass surface must sit above either the grain layer or a soft radial glow — otherwise it reads as flat grey and we've spent the blur budget for nothing.
@@ -178,7 +180,7 @@ Three roles, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS v
 
 - **Display — `Bricolage Grotesque`** (variable). Headlines only. Tight tracking (`-0.03em`), weight 600–700, `text-balance` on every headline.
 - **Body — `Inter Tight`**. Paragraphs, buttons, nav. Weight 400/500. Max measure `65ch`.
-- **Utility — `JetBrains Mono`**. Eyebrows, section numbers, stat labels, metadata, anything that should read as *machine output*. Always `uppercase`, `tracking-[0.18em]`, `text-xs`, `--mist`.
+- **Utility — `JetBrains Mono`**. Eyebrows, section numbers, stat labels, metadata, anything that should read as _machine output_. Always `uppercase`, `tracking-[0.18em]`, `text-xs`, `--mist`.
 
 The mono utility face is a deliberate signal: this is a shop that reads logs. Use it for real metadata (repo names, dates, latency figures, stack labels) and never as decoration on prose.
 
@@ -211,18 +213,18 @@ One `fixed inset-0 -z-10` layer in `layout.tsx`, below content and below the gra
 - **One ambient driver.** The background owns a single page-level `useScroll()`, in this one component. No section adds its own ambient layer or its own page-progress read.
   - Element-relative `useScroll({ target })` is fine where the effect genuinely is element-relative — that is what `Parallax` needs, and it cannot be derived from page progress.
   - Motion reads scroll from a `ScrollTimeline` inside its single shared frameloop, not a listener per hook, so N `useScroll` calls are N cheap per-frame reads rather than N scroll listeners. The rule here is about not scattering ambient effects, not about listener count.
-- **Two or three large radial fields** in `--cyan` and `--ion` at very low opacity, `blur(120px)`, whose position and opacity map to scroll progress through `useTransform`. The hue shifts as sections pass; it never becomes a *different* background.
+- **Two or three large radial fields** in `--cyan` and `--ion` at very low opacity, `blur(120px)`, whose position and opacity map to scroll progress through `useTransform`. The hue shifts as sections pass; it never becomes a _different_ background.
 - **Transform and opacity only.** Never animate `background-image`, gradient stops, or `backdrop-filter`. Those repaint the whole viewport every frame.
 - **It is ambient, not a feature.** If you notice it while reading, it is too strong. It must never compete with the Ship Log rail or pull attention from a CTA.
 - **Below `md` it is static** — the fields render at their mid-scroll position and stop. Two full-viewport blurred layers tracking scroll on a mid-range phone is the most expensive thing we could ship.
 - **Reduced motion renders it static** at the same mid position. No exceptions.
-- Contrast is measured against the background at its *brightest* scroll position, not its darkest.
+- Contrast is measured against the background at its _brightest_ scroll position, not its darkest.
 
 ## 4.7 Mobile first — the authoring rule
 
 This is a mobile-first build. It is a rule about the order you write CSS in, not a note about testing.
 
-**Write the small-screen implementation as the unprefixed base. `md:` and `lg:` may only add.** If a breakpoint prefix has to *undo* something the base declared, the base was written for desktop and is wrong. `flex-col md:flex-row` is right; `flex-row md:flex-row` with a mobile override underneath is not.
+**Write the small-screen implementation as the unprefixed base. `md:` and `lg:` may only add.** If a breakpoint prefix has to _undo_ something the base declared, the base was written for desktop and is wrong. `flex-col md:flex-row` is right; `flex-row md:flex-row` with a mobile override underneath is not.
 
 - **Design at 360px first.** Decide what the section is when there is no room, then spend the extra width. A layout designed at 1440 and squeezed down always loses the wrong things.
 - **Everything desktop-only is an enhancement layered on top**: sticky card stacking, the Ship Log rail, magnetic pull, cursor-following highlights, parallax. Mobile is not a degraded desktop; it is the base case that must be complete on its own.
@@ -241,15 +243,20 @@ All easings, durations and shared variants live in `lib/motion.ts`. Components i
 
 ```ts
 export const ease = {
-  out:   [0.16, 1, 0.3, 1],      // default reveal
-  inOut: [0.65, 0, 0.35, 1],     // moves that return
+  out: [0.16, 1, 0.3, 1], // default reveal
+  inOut: [0.65, 0, 0.35, 1], // moves that return
 } as const;
 
 export const dur = { micro: 0.18, base: 0.5, reveal: 0.8, hero: 1.2 } as const;
 
-export const spring = { type: 'spring', stiffness: 260, damping: 30, mass: 0.9 } as const;
+export const spring = {
+  type: "spring",
+  stiffness: 260,
+  damping: 30,
+  mass: 0.9,
+} as const;
 
-export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
+export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 ```
 
 ### 5.1 Rules
@@ -265,7 +272,7 @@ export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
 
 ### 5.2 The four named techniques
 
-**Text masking** (`<MaskedText />`) — headline reveal. Split by *line*, not by character (per-character on a 60px headline is a gimmick and costs layout thrash). Each line sits in `overflow-hidden`; the inner span animates `y: '110%' → 0` with `dur.reveal`, `ease.out`, `0.08` stagger. Hero only, plus one section headline max.
+**Text masking** (`<MaskedText />`) — headline reveal. Split by _line_, not by character (per-character on a 60px headline is a gimmick and costs layout thrash). Each line sits in `overflow-hidden`; the inner span animates `y: '110%' → 0` with `dur.reveal`, `ease.out`, `0.08` stagger. Hero only, plus one section headline max.
 
 **Scroll reveal** (`<Reveal />`) — the workhorse. `opacity 0→1`, `y 24→0`, `filter: blur(6px)→blur(0)`. Accepts a `delay` prop. Used for prose, images, single cards.
 
@@ -286,18 +293,18 @@ export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
 
 ### 6.0 Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | Home |
-| `/work` | All projects, filterable |
-| `/work/[slug]` | Project detail / case study |
-| `/about` | Who we are, how we work, what we decline |
-| `/team` | The people, with real substance per person |
-| `/contact` | Form + direct channels |
-| `/schedule` | Book a call |
-| `/careers` | Open roles + how we hire |
-| `/careers/[slug]` | Role detail + application |
-| `not-found` | 404 |
+| Route             | Purpose                                    |
+| ----------------- | ------------------------------------------ |
+| `/`               | Home                                       |
+| `/work`           | All projects, filterable                   |
+| `/work/[slug]`    | Project detail / case study                |
+| `/about`          | Who we are, how we work, what we decline   |
+| `/team`           | The people, with real substance per person |
+| `/contact`        | Form + direct channels                     |
+| `/schedule`       | Book a call                                |
+| `/careers`        | Open roles + how we hire                   |
+| `/careers/[slug]` | Role detail + application                  |
+| `not-found`       | 404                                        |
 
 Every route: `metadata` with OG tags, one `h1`, reachable from `Header` or `Footer`, sections registered with the Ship Log rail, ending in the shared CTA band → footer. Per-page recipes live in the `adding-a-page` skill.
 
@@ -340,11 +347,11 @@ Top to bottom. Each section states its animation so nothing is improvised.
 
 Three separate concerns, and they must not blur into each other:
 
-| Concern | Source | Direction |
-|---|---|---|
-| Page content — projects, team, roles | JSON in `content/`, zod-validated | read, build time |
-| Live decoration — GitHub commits, repos | route handler + axios | read, revalidated |
-| Submissions — contact, meetings, applications | MongoDB via Server Action | **write only** |
+| Concern                                       | Source                            | Direction         |
+| --------------------------------------------- | --------------------------------- | ----------------- |
+| Page content — projects, team, roles          | JSON in `content/`, zod-validated | read, build time  |
+| Live decoration — GitHub commits, repos       | route handler + axios             | read, revalidated |
+| Submissions — contact, meetings, applications | MongoDB via Server Action         | **write only**    |
 
 **Mongo never serves page content, and JSON never stores a submission.** If a section needs data, it reads JSON. If a form sends data, it writes Mongo.
 
@@ -360,13 +367,13 @@ Three separate concerns, and they must not blur into each other:
 `lib/api/client.ts` exports one configured instance. Nothing else creates one.
 
 ```ts
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({ timeout: 8000 });
 
 api.interceptors.response.use(
   (res) => res,
-  (err) => Promise.reject(normalizeError(err)),  // -> { status, message, code }
+  (err) => Promise.reject(normalizeError(err)), // -> { status, message, code }
 );
 ```
 
@@ -407,7 +414,7 @@ Write the copy; don't leave lorem ipsum, and don't leave placeholder brackets in
 - Specific beats clever. A real number beats an adjective every time.
 - Buttons say what happens: "Book a call," not "Get started." The action keeps its name through the whole flow.
 - Sentence case everywhere except the mono utility face.
-- Case study lines follow: *problem → what we built → measurable outcome*, in one sentence each.
+- Case study lines follow: _problem → what we built → measurable outcome_, in one sentence each.
 
 ---
 
@@ -431,8 +438,8 @@ Not negotiable, and not something to announce in the UI:
 - TypeScript strict. **No `any`** — use `unknown` at untrusted boundaries (API bodies, form input) and narrow explicitly. **No `!` non-null assertions** to silence the compiler; handle the null.
 - Props typed with an explicit `interface` above the component, extending the native element: `interface ButtonProps extends React.ComponentProps<'button'>`.
 - **Discriminated unions over boolean flags** for state — `{ status: 'loading' } | { status: 'error'; error: string }`, not `isLoading`/`isError`. Prefer `as const` objects with derived union types over enums.
-- **A shared helper must not live in a `'use client'` module.** Every export of a client module is a client reference, so a server component calling it fails at prerender with *"Attempted to call X() from the server but X is on the client"* — and a re-export does not launder it. Pure helpers (style builders, formatters, predicates) go in their own directive-free module; the client component imports from there too. Verified against a real build, both directions.
-- **Search before you write — components, hooks, helpers, types, logic.** One `Button`, not five; one `cn()`, not a second class-joiner; one date formatter. Grep `components/`, `hooks/`, `lib/`, and `types/` for the name *and* for the behaviour before creating anything. Found something close → extend it with a variant or a parameter. Forking a near-copy is the failure mode, and it is invisible in review until there are four of them.
+- **A shared helper must not live in a `'use client'` module.** Every export of a client module is a client reference, so a server component calling it fails at prerender with _"Attempted to call X() from the server but X is on the client"_ — and a re-export does not launder it. Pure helpers (style builders, formatters, predicates) go in their own directive-free module; the client component imports from there too. Verified against a real build, both directions.
+- **Search before you write — components, hooks, helpers, types, logic.** One `Button`, not five; one `cn()`, not a second class-joiner; one date formatter. Grep `components/`, `hooks/`, `lib/`, and `types/` for the name _and_ for the behaviour before creating anything. Found something close → extend it with a variant or a parameter. Forking a near-copy is the failure mode, and it is invisible in review until there are four of them.
 - Named exports for components; default export only for Next.js pages/layouts.
 - `'use client'` at the leaf, not the branch. Sections stay server components where they can.
 - Tailwind classes via a `cn()` helper (`clsx` + `tailwind-merge` if the scaffold includes them; otherwise a 5-line local join).
@@ -493,17 +500,17 @@ The full gate lives in the `quality-gate` skill. Load it before reporting anythi
 
 Project skills live in `.claude/skills/`. They are the operational how-to for the rules above. `CLAUDE.md` holds the fixed direction; skills hold the procedure. When they disagree, this file wins and the skill gets corrected.
 
-| Skill | Load when |
-|---|---|
-| `design-system` | any visual code — Tailwind, `globals.css`, color, glass, type, spacing |
-| `motion-system` | any animation, transition, scroll effect, hover, page transition |
-| `building-a-section` | building or reworking a page section |
-| `adding-a-page` | creating or reworking a route |
-| `content-and-copy` | any user-facing text, or anything under `content/` and `types/` |
-| `data-and-forms` | axios, route handlers, GitHub, env vars, forms, loading/empty/error states |
-| `git-workflow` | **before starting any task, and before every commit** |
-| `quality-gate` | **before reporting anything as done** |
-| `maintaining-skills` | a decision is made that outlives the current task |
+| Skill                | Load when                                                                  |
+| -------------------- | -------------------------------------------------------------------------- |
+| `design-system`      | any visual code — Tailwind, `globals.css`, color, glass, type, spacing     |
+| `motion-system`      | any animation, transition, scroll effect, hover, page transition           |
+| `building-a-section` | building or reworking a page section                                       |
+| `adding-a-page`      | creating or reworking a route                                              |
+| `content-and-copy`   | any user-facing text, or anything under `content/` and `types/`            |
+| `data-and-forms`     | axios, route handlers, GitHub, env vars, forms, loading/empty/error states |
+| `git-workflow`       | **before starting any task, and before every commit**                      |
+| `quality-gate`       | **before reporting anything as done**                                      |
+| `maintaining-skills` | a decision is made that outlives the current task                          |
 
 Plus the installed `superpowers` plugin: `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `systematic-debugging`, `test-driven-development`, `requesting-code-review`, `verification-before-completion`, `writing-skills`.
 
@@ -537,7 +544,7 @@ Announce which skills you loaded in one line. If no skill applies, say so — th
 
 **Keep sequential what actually is sequential.** Tokens before primitives, primitives before sections, content type before section markup. Two agents editing the same file is a merge conflict, not parallelism — give each agent its own files, or run them in order.
 
-**Build shared primitives before you fan out.** Three agents each needing a quote card will each invent one, and you end up with five Buttons. Primitives are created sequentially and *then* sections fan out over them. Every dispatch names the existing primitives the agent must use rather than rebuild.
+**Build shared primitives before you fan out.** Three agents each needing a quote card will each invent one, and you end up with five Buttons. Primitives are created sequentially and _then_ sections fan out over them. Every dispatch names the existing primitives the agent must use rather than rebuild.
 
 **Brief each agent completely.** Agents do not inherit this conversation. Every dispatch states: the goal, which skills to load, the exact files to create or change, the constraints that matter for that task, and what to report back. An under-briefed agent will invent a second glass variant and a purple gradient.
 
@@ -572,8 +579,8 @@ main  ←  staging  ←  feature/fast-track
 
 **PRs target `staging`.** Always. `main` is a PR base only when you explicitly ask for it in that request — a finished milestone is not permission. `staging` → `main` is a release and is the user's call.
 
-**One task, one commit.** A task is a numbered row in `MILESTONES.md`; it becomes exactly one commit, made *after* the quality gate passes. No mid-task checkpoints — use `git stash`. If a task turns out to be two things, split the row in the tracker first. `MILESTONES.md` is updated in the same commit as the code it describes.
+**One task, one commit.** A task is a numbered row in `MILESTONES.md`; it becomes exactly one commit, made _after_ the quality gate passes. No mid-task checkpoints — use `git stash`. If a task turns out to be two things, split the row in the tracker first. `MILESTONES.md` is updated in the same commit as the code it describes.
 
-Messages are Conventional Commits with the task reference in the subject — `feat(tokens): obsidian palette, fluid type scale [M0.3]` — and a body explaining *why*. Stage deliberately with explicit paths; never `git add -A`.
+Messages are Conventional Commits with the task reference in the subject — `feat(tokens): obsidian palette, fluid type scale [M0.3]` — and a body explaining _why_. Stage deliberately with explicit paths; never `git add -A`.
 
 **Pushing publishes.** Commit freely; push when asked or at milestone close.

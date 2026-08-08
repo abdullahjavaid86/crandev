@@ -7,11 +7,11 @@ description: Use when writing anything that reads JSON content or writes submitt
 
 Three concerns that must never blur into each other:
 
-| Concern | Source | Direction |
-|---|---|---|
-| Page content | JSON in `content/`, zod-validated | read, build time |
-| Live decoration | route handler + axios | read, revalidated |
-| Submissions | MongoDB via Server Action | **write only** |
+| Concern         | Source                            | Direction         |
+| --------------- | --------------------------------- | ----------------- |
+| Page content    | JSON in `content/`, zod-validated | read, build time  |
+| Live decoration | route handler + axios             | read, revalidated |
+| Submissions     | MongoDB via Server Action         | **write only**    |
 
 **Mongo never serves page content. JSON never stores a submission.** A section that needs data reads JSON; a form that sends data writes Mongo. If you find yourself querying Mongo to render a project, stop — that is the wrong layer.
 
@@ -21,12 +21,12 @@ JSON has no compile-time type. An unvalidated `import data from './work.json'` i
 
 ```ts
 // lib/content/work.ts
-import raw from '@/content/work.json';
+import raw from "@/content/work.json";
 
 const Project = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   client: z.string().min(1),
-  outcome: z.string().min(1),          // must contain a real number
+  outcome: z.string().min(1), // must contain a real number
   stack: z.array(z.string()).min(1),
   year: z.number().int().min(2015),
 });
@@ -45,8 +45,11 @@ export const projects: Project[] = z.array(Project).parse(raw);
 
 ```ts
 // lib/content/covers.ts
-import acme from '@/public/work/acme.png';
-export const covers = { 'acme-migration': acme } satisfies Record<string, StaticImageData>;
+import acme from "@/public/work/acme.png";
+export const covers = { "acme-migration": acme } satisfies Record<
+  string,
+  StaticImageData
+>;
 ```
 
 A slug present in JSON but missing from the map should be a type error, not a broken image.
@@ -74,10 +77,10 @@ export function getClient() {
 **A Server Action is a public POST endpoint.** Anyone can call it with any payload. The client-side validation is a convenience for the user, never the gate.
 
 ```ts
-'use server';
+"use server";
 export async function submitContact(_prev: State, formData: FormData): Promise<State> {
   const parsed = ContactInput.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { ok: false, error: 'Check the highlighted fields.' };
+  if (!parsed.success) return { ok: false, error: "Check the highlighted fields." };
   // …rate limit, honeypot, insert…
 }
 ```
@@ -94,10 +97,10 @@ export async function submitContact(_prev: State, formData: FormData): Promise<S
 
 Server-only, never `NEXT_PUBLIC_*`. `.env.example` is committed with empty values; `.env.local` never is.
 
-| Var | Purpose |
-|---|---|
-| `MONGODB_URI` | connection string — contains credentials |
-| `MONGODB_DB` | database name |
+| Var            | Purpose                                                        |
+| -------------- | -------------------------------------------------------------- |
+| `MONGODB_URI`  | connection string — contains credentials                       |
+| `MONGODB_DB`   | database name                                                  |
 | `GITHUB_TOKEN` | optional; Ship Log works unauthenticated at a lower rate limit |
 
 A missing `MONGODB_URI` should fail loudly at first use with a clear message, not `undefined` deep in the driver.

@@ -13,19 +13,19 @@ The skills in `.claude/skills/` are the working memory of this project. They are
 
 Update in the same turn when any of these happen:
 
-| Trigger | Where it goes |
-|---|---|
-| New token, color, radius, or type role | `design-system` |
-| New motion primitive, or a timing rule changed | `motion-system` |
-| New section pattern, or a section shape that took two tries to get right | `building-a-section` |
-| New route, or a page type with its own recipe | `adding-a-page` (route map + recipe) |
-| New `content/` file or a type in `types/index.ts` | `content-and-copy` |
-| New route handler, form pattern, or env var | `data-and-forms` |
-| Branching, commit, or release convention changes | `git-workflow` |
-| A defect that shipped and had to be fixed | `quality-gate` — as a checklist line |
-| The user corrects you, or says "always"/"never"/"from now on" | The relevant skill, plus a memory if it's about *how you work* rather than about this code |
-| Stack change, new dependency, new constraint | `CLAUDE.md` first, then the affected skills |
-| A rule in a skill turned out to be wrong | Fix the rule. Do not append an exception next to the wrong rule. |
+| Trigger                                                                  | Where it goes                                                                              |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| New token, color, radius, or type role                                   | `design-system`                                                                            |
+| New motion primitive, or a timing rule changed                           | `motion-system`                                                                            |
+| New section pattern, or a section shape that took two tries to get right | `building-a-section`                                                                       |
+| New route, or a page type with its own recipe                            | `adding-a-page` (route map + recipe)                                                       |
+| New `content/` file or a type in `types/index.ts`                        | `content-and-copy`                                                                         |
+| New route handler, form pattern, or env var                              | `data-and-forms`                                                                           |
+| Branching, commit, or release convention changes                         | `git-workflow`                                                                             |
+| A defect that shipped and had to be fixed                                | `quality-gate` — as a checklist line                                                       |
+| The user corrects you, or says "always"/"never"/"from now on"            | The relevant skill, plus a memory if it's about _how you work_ rather than about this code |
+| Stack change, new dependency, new constraint                             | `CLAUDE.md` first, then the affected skills                                                |
+| A rule in a skill turned out to be wrong                                 | Fix the rule. Do not append an exception next to the wrong rule.                           |
 
 `CLAUDE.md` holds the fixed direction — stack, constraints, design intent, page structure. Skills hold the operational how-to. When they disagree, `CLAUDE.md` wins and the skill gets corrected.
 

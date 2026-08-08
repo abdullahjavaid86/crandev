@@ -13,15 +13,20 @@ All easings, durations, and shared variants live in `lib/motion.ts`. Components 
 
 ```ts
 export const ease = {
-  out:   [0.16, 1, 0.3, 1],      // default reveal
-  inOut: [0.65, 0, 0.35, 1],     // moves that return
+  out: [0.16, 1, 0.3, 1], // default reveal
+  inOut: [0.65, 0, 0.35, 1], // moves that return
 } as const;
 
 export const dur = { micro: 0.18, base: 0.5, reveal: 0.8, hero: 1.2 } as const;
 
-export const spring = { type: 'spring', stiffness: 260, damping: 30, mass: 0.9 } as const;
+export const spring = {
+  type: "spring",
+  stiffness: 260,
+  damping: 30,
+  mass: 0.9,
+} as const;
 
-export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
+export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 ```
 
 **The installed package is `motion` (v13), not `framer-motion`.** Framer Motion renamed itself; the `framer-motion` package is a mirror with no `./react` subpath, so `import { motion } from 'motion/react'` only resolves against the `motion` package. Never `npm i framer-motion` — you will get a second copy of the same library and an unresolvable import.

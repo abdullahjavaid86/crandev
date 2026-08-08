@@ -12,21 +12,21 @@
 
 :root {
   /* Light — the default. Dark overrides below. */
-  --surface: #fafbfc;   /* page background */
-  --raised: #ffffff;    /* cards, raised surfaces */
-  --inset: #f1f3f6;     /* hover, inset panels */
+  --surface: #fafbfc; /* page background */
+  --raised: #ffffff; /* cards, raised surfaces */
+  --inset: #f1f3f6; /* hover, inset panels */
   --line: rgba(6, 7, 10, 0.1);
-  --line-strong: rgba(6, 7, 10, 0.22);   /* hover / invalid */
+  --line-strong: rgba(6, 7, 10, 0.22); /* hover / invalid */
 
-  --fg: #0e1017;        /* primary text */
-  --muted: #5a6274;     /* secondary text — 5.9:1 on --surface */
+  --fg: #0e1017; /* primary text */
+  --muted: #5a6274; /* secondary text — 5.9:1 on --surface */
 
   /* The accent has TWO roles and they are not interchangeable.
      --accent is a FILL. Cyan under dark ink is 14:1 in both themes.
      --accent-ink is for TEXT and BORDERS. Cyan as text on white is
      1.43:1, so light mode uses a darkened teal at 6.4:1. */
   --accent: #35f0dc;
-  --accent-on: #06070a;  /* ink that sits ON --accent */
+  --accent-on: #06070a; /* ink that sits ON --accent */
   --accent-ink: #0a6b5e;
   --ion: #3a55d9;
 
@@ -42,9 +42,21 @@
      #FAFBFC is 1.04x — invisible. Light therefore uses deeper, more saturated
      hues at roughly double the alpha. The component only animates a relative
      opacity band on top, so scroll variation stays identical in both themes. */
-  --field-a: radial-gradient(circle at center, rgba(15, 185, 166, 0.42) 0%, transparent 68%);
-  --field-b: radial-gradient(circle at center, rgba(58, 85, 217, 0.36) 0%, transparent 68%);
-  --field-c: radial-gradient(circle at center, rgba(10, 107, 94, 0.34) 0%, transparent 66%);
+  --field-a: radial-gradient(
+    circle at center,
+    rgba(15, 185, 166, 0.42) 0%,
+    transparent 68%
+  );
+  --field-b: radial-gradient(
+    circle at center,
+    rgba(58, 85, 217, 0.36) 0%,
+    transparent 68%
+  );
+  --field-c: radial-gradient(
+    circle at center,
+    rgba(10, 107, 94, 0.34) 0%,
+    transparent 66%
+  );
 
   /* Lattice background. Thin 1px lines need more alpha than a huge blurred
      field to register at all, and on a light ground they must DARKEN. */
@@ -94,18 +106,54 @@
   --glass-drop: rgba(0, 0, 0, 0.7);
   --grain-opacity: 0.028;
 
-  --field-a: radial-gradient(circle at center, rgba(53, 240, 220, 0.24) 0%, transparent 68%);
-  --field-b: radial-gradient(circle at center, rgba(76, 111, 255, 0.22) 0%, transparent 68%);
-  --field-c: radial-gradient(circle at center, rgba(53, 240, 220, 0.20) 0%, transparent 66%);
+  --field-a: radial-gradient(
+    circle at center,
+    rgba(53, 240, 220, 0.24) 0%,
+    transparent 68%
+  );
+  --field-b: radial-gradient(
+    circle at center,
+    rgba(76, 111, 255, 0.22) 0%,
+    transparent 68%
+  );
+  --field-c: radial-gradient(
+    circle at center,
+    rgba(53, 240, 220, 0.2) 0%,
+    transparent 66%
+  );
 
   --lattice-line: rgba(232, 237, 245, 0.11);
-  --lattice-node: rgba(232, 237, 245, 0.20);
+  --lattice-node: rgba(232, 237, 245, 0.2);
+}
+
+/* The 0→1 driver for the card's cursor-light hover state (Card.tsx).
+   It has to be REGISTERED: an unregistered custom property is not
+   interpolable, so `--lit` would jump 0→1 at the halfway point and the light
+   would snap on instead of rising. Registered, one transition drives every
+   derived value at once — the light layer's opacity, the radius of its
+   gradient and of its mask, and the depth shadow — with a single paint
+   invalidation per frame rather than four transitions racing each other.
+
+   `inherits: true` because the card sets it and the light layer inside reads
+   it; the child re-inherits the animating value every frame for free.
+
+   @property is Chrome 85 / Safari 16.4 / Firefox 128 — inside Tailwind v4's
+   own support baseline. Where it is missing the hover state still applies, it
+   just arrives instantly, which is also exactly what reduced motion asks for. */
+@property --lit {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
+  from {
+    transform: translateX(0);
+  }
   /* The track holds the list twice, so -50% is exactly one full set. */
-  to   { transform: translateX(-50%); }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @theme inline {

@@ -53,11 +53,10 @@ function Rail({ sections, className }: ShipLogProps) {
   const { commits, activeId } = useShipLog(sections);
 
   /**
-   * The one scroll read here, and it is for the fill only. `IntersectionObserver`
-   * answers "which section", but a fill that jumped one section at a time would
-   * not read as progress, and page progress cannot be derived from the observer.
-   * Motion reads this from the shared frameloop's ScrollTimeline rather than a
-   * scroll listener (§4.6), so it is a cheap per-frame read.
+   * The one scroll read here, and it is for the fill only.
+   * `IntersectionObserver` answers "which section", but a fill that jumped one
+   * section at a time would not read as progress. Motion reads this from the
+   * shared frameloop's ScrollTimeline rather than a scroll listener (§4.6).
    */
   const { scrollYProgress } = useScroll();
 
@@ -74,7 +73,23 @@ function Rail({ sections, className }: ShipLogProps) {
     <nav
       aria-label="Page sections"
       style={{ paddingLeft: "env(safe-area-inset-left)" }}
-      className={cn("fixed top-1/2 left-4 z-30 -translate-y-1/2", className)}
+      className={cn(
+        /**
+         * Sticky inside <main>, not fixed to the viewport.
+         *
+         * Fixed meant the rail scrolled straight over the footer. Sticky
+         * inside a container that spans only the content area parks it at the
+         * end of the last section instead — it stays visible and simply stops,
+         * with no IntersectionObserver, no fade, and no JS at all.
+         *
+         * The translate is visual only, so sticky parks the untranslated box
+         * at the container's bottom edge and the rail comes to rest half its
+         * own height above that. It errs away from the footer, which is the
+         * direction to err in.
+         */
+        "sticky top-1/2 -translate-y-1/2",
+        className,
+      )}
     >
       <ol className="relative flex flex-col gap-4">
         {/* Track and fill run from the first node's centre to the last's.
@@ -141,10 +156,7 @@ function Rail({ sections, className }: ShipLogProps) {
                 >
                   <span className={cn("text-muted", settle)}>{commit.index}</span>
                   <span
-                    className={cn(
-                      settle,
-                      isCurrent ? "text-accent-ink" : "text-muted",
-                    )}
+                    className={cn(settle, isCurrent ? "text-accent-ink" : "text-muted")}
                   >
                     {commit.hash}
                   </span>

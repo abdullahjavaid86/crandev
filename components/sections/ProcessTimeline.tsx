@@ -153,13 +153,13 @@ export function ProcessTimeline({ steps, className }: ProcessTimelineProps) {
               aria-hidden="true"
               custom={i}
               variants={haloVariants}
-              className="absolute -left-[0.6875rem] top-[0.1875rem] hidden size-5 rounded-full bg-accent-ink blur-[6px] md:block"
+              className="absolute top-[0.1875rem] -left-[0.6875rem] hidden size-5 rounded-full bg-accent-ink blur-[6px] md:block"
             />
             <motion.span
               aria-hidden="true"
               custom={i}
               variants={nodeVariants}
-              className="absolute -left-1 top-2 hidden size-2 rounded-full bg-accent-ink md:block"
+              className="absolute top-2 -left-1 hidden size-2 rounded-full bg-accent-ink md:block"
             />
 
             {/* Three parts, landing in order: the mono line reads as the log
@@ -167,13 +167,17 @@ export function ProcessTimeline({ steps, className }: ProcessTimelineProps) {
             <motion.p
               custom={at(i, 0)}
               variants={partVariants}
-              className="flex items-baseline gap-4 font-mono text-small uppercase tracking-[0.18em]"
+              className="flex items-baseline gap-4 font-mono text-small tracking-[0.18em] uppercase"
             >
               <span className="text-fg">{String(i + 1).padStart(2, "0")}</span>
               <span className="text-muted">{step.duration}</span>
             </motion.p>
 
-            <motion.h3 custom={at(i, 1)} variants={partVariants} className="mt-4 text-fg">
+            <motion.h3
+              custom={at(i, 1)}
+              variants={partVariants}
+              className="mt-4 text-fg"
+            >
               {step.title}
             </motion.h3>
 

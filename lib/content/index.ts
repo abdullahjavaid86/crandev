@@ -17,9 +17,27 @@ import {
   TeamMemberSchema,
   TestimonialSchema,
 } from "./schemas";
-import type { Brand, ProcessStep, Project, Role, Service, Stat, TeamMember, Testimonial } from "./schemas";
+import type {
+  Brand,
+  ProcessStep,
+  Project,
+  Role,
+  Service,
+  Stat,
+  TeamMember,
+  Testimonial,
+} from "./schemas";
 
-export type { Brand, ProcessStep, Project, Role, Service, Stat, TeamMember, Testimonial };
+export type {
+  Brand,
+  ProcessStep,
+  Project,
+  Role,
+  Service,
+  Stat,
+  TeamMember,
+  Testimonial,
+};
 
 /**
  * Parse at the module boundary, once. Everything downstream consumes the
@@ -28,7 +46,11 @@ export type { Brand, ProcessStep, Project, Role, Service, Stat, TeamMember, Test
  * `parse`, not `safeParse` — malformed content is a build failure, not a
  * runtime state to design for. The thrown error names the offending field.
  */
-function load<T>(schema: { parse: (v: unknown) => T[] }, raw: unknown, name: string): T[] {
+function load<T>(
+  schema: { parse: (v: unknown) => T[] },
+  raw: unknown,
+  name: string,
+): T[] {
   try {
     return schema.parse(raw);
   } catch (err) {
@@ -40,7 +62,11 @@ function load<T>(schema: { parse: (v: unknown) => T[] }, raw: unknown, name: str
 
 export const projects = load(ProjectSchema.array(), rawWork, "work");
 export const team = load(TeamMemberSchema.array(), rawTeam, "team");
-export const testimonials = load(TestimonialSchema.array(), rawTestimonials, "testimonials");
+export const testimonials = load(
+  TestimonialSchema.array(),
+  rawTestimonials,
+  "testimonials",
+);
 export const brands = load(BrandSchema.array(), rawBrands, "brands");
 export const roles = load(RoleSchema.array(), rawRoles, "roles");
 export const stats = load(StatSchema.array(), rawStats, "stats");
@@ -51,4 +77,5 @@ export const process = load(ProcessStepSchema.array(), rawProcess, "process");
 export const projectBySlug = (s: string): Project | undefined =>
   projects.find((p) => p.slug === s);
 
-export const roleBySlug = (s: string): Role | undefined => roles.find((r) => r.slug === s);
+export const roleBySlug = (s: string): Role | undefined =>
+  roles.find((r) => r.slug === s);

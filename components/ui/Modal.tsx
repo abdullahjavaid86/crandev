@@ -156,11 +156,7 @@ export function Modal({
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className={buttonStyles(
-                      "ghost",
-                      "sm",
-                      "size-11 shrink-0 px-0",
-                    )}
+                    className={buttonStyles("ghost", "sm", "size-11 shrink-0 px-0")}
                   >
                     <X aria-hidden="true" className="size-5" />
                   </button>

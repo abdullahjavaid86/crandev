@@ -1,13 +1,14 @@
 "use client";
 
 import { useBackground } from "@/hooks/useBackground";
+import { GridBackground } from "./GridBackground";
 import { LatticeBackground } from "./LatticeBackground";
 import { ScrollBackground } from "./ScrollBackground";
 
 /**
  * Renders whichever ambient background is selected. Temporary: this exists so
- * the two can be compared on the real page instead of argued about. When one
- * wins, this file, the loser, useBackground and BackgroundToggle all go.
+ * the options can be compared on the real page instead of argued about. When
+ * one wins, this file, the losers and the flag all go.
  *
  * Renders nothing until mounted, because the choice lives in localStorage and
  * the server cannot know it. A background is decorative, so a frame without one
@@ -16,5 +17,8 @@ import { ScrollBackground } from "./ScrollBackground";
 export function BackgroundLayer() {
   const { variant } = useBackground();
   if (variant === null) return null;
-  return variant === "lattice" ? <LatticeBackground /> : <ScrollBackground />;
+  if (variant === "none") return null;
+  if (variant === "lattice") return <LatticeBackground />;
+  if (variant === "grid") return <GridBackground />;
+  return <ScrollBackground />;
 }

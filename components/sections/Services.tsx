@@ -19,7 +19,11 @@ import { ServiceStack } from "./ServiceStack";
  */
 export function Services() {
   return (
-    <section id="services" aria-labelledby="services-heading" className="py-16 md:py-24">
+    <section
+      id="services"
+      aria-labelledby="services-heading"
+      className="py-16 md:py-24"
+    >
       <Container>
         <Reveal>
           <Eyebrow index="02">Services</Eyebrow>

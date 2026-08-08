@@ -36,10 +36,7 @@ export function CommitTicker({ commits, className }: CommitTickerProps) {
 
   useEffect(() => {
     if (isReduced || commits.length <= 1) return;
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % commits.length),
-      4200,
-    );
+    const id = setInterval(() => setIndex((i) => (i + 1) % commits.length), 4200);
     return () => clearInterval(id);
   }, [isReduced, commits.length]);
 
@@ -48,14 +45,11 @@ export function CommitTicker({ commits, className }: CommitTickerProps) {
 
   return (
     <div
-      className={cn(
-        "rounded-md border border-line bg-raised/60 px-4 py-3",
-        className,
-      )}
+      className={cn("rounded-md border border-line bg-raised/60 px-4 py-3", className)}
     >
       {/* One live region for the whole ticker, polite: a passing reader is
           told what changed without the announcement interrupting them. */}
-      <div className="flex items-center gap-2 font-mono text-small uppercase tracking-[0.18em] text-muted">
+      <div className="flex items-center gap-2 font-mono text-small tracking-[0.18em] text-muted uppercase">
         <span className="size-1.5 shrink-0 rounded-full bg-muted" aria-hidden="true" />
         <span>Latest commits</span>
       </div>

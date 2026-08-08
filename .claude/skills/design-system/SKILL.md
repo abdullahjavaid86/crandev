@@ -23,17 +23,17 @@ Design at 360px first: decide what the thing is when there is no room, then spen
 
 Declared once in `app/globals.css`, exposed to Tailwind via `@theme`. Never redeclared per component. **Both themes are first-class**: `.dark` on `<html>` swaps the values, so a token name can never mention a colour.
 
-| Utility | Role | Light | Dark |
-|---|---|---|---|
-| `bg-surface` | page background | `#FAFBFC` | `#06070A` |
-| `bg-raised` | cards, raised surfaces | `#FFFFFF` | `#0E1017` |
-| `bg-inset` | hover, inset panels | `#F1F3F6` | `#171A22` |
-| `border-line` / `border-line-strong` | every border, 1px | black 10% / 22% | ice 8% / 22% |
-| `text-fg` | primary text | `#0E1017` | `#E8EDF5` |
-| `text-muted` | secondary, captions | `#5A6274` | `#8A93A6` |
-| `bg-accent` + `text-accent-on` | the accent **fill** | cyan + dark ink | cyan + dark ink |
-| `text-accent-ink` | accent **text/border** | `#0A6B5E` | `#35F0DC` |
-| `--ion` | secondary glow | `#3A55D9` | `#4C6FFF` |
+| Utility                              | Role                   | Light           | Dark            |
+| ------------------------------------ | ---------------------- | --------------- | --------------- |
+| `bg-surface`                         | page background        | `#FAFBFC`       | `#06070A`       |
+| `bg-raised`                          | cards, raised surfaces | `#FFFFFF`       | `#0E1017`       |
+| `bg-inset`                           | hover, inset panels    | `#F1F3F6`       | `#171A22`       |
+| `border-line` / `border-line-strong` | every border, 1px      | black 10% / 22% | ice 8% / 22%    |
+| `text-fg`                            | primary text           | `#0E1017`       | `#E8EDF5`       |
+| `text-muted`                         | secondary, captions    | `#5A6274`       | `#8A93A6`       |
+| `bg-accent` + `text-accent-on`       | the accent **fill**    | cyan + dark ink | cyan + dark ink |
+| `text-accent-ink`                    | accent **text/border** | `#0A6B5E`       | `#35F0DC`       |
+| `--ion`                              | secondary glow         | `#3A55D9`       | `#4C6FFF`       |
 
 Radius: `rounded-sm` 8px, `rounded-md` 14px, `rounded-lg` 24px. Nothing fully rounded except avatars and pills.
 
@@ -43,7 +43,7 @@ Also themed: `--glass-tint`, `--glass-catch`, `--glass-drop`, `--grain-opacity`.
 
 `--accent` is a **fill**. `--accent-ink` is for **text and borders**. They are not interchangeable.
 
-Cyan `#35F0DC` as text on white is **1.43:1** — invisible. As a fill under dark ink it is 14:1 in both themes. So light mode keeps the cyan fill and swaps the *ink* role to a darkened teal at 6.4:1; dark mode collapses both roles back to the one cyan.
+Cyan `#35F0DC` as text on white is **1.43:1** — invisible. As a fill under dark ink it is 14:1 in both themes. So light mode keeps the cyan fill and swaps the _ink_ role to a darkened teal at 6.4:1; dark mode collapses both roles back to the one cyan.
 
 **Using `bg-accent`/`text-accent` where `text-accent-ink` belongs ships unreadable text to every light-mode visitor, and it looks fine on your dark screen.**
 
@@ -68,7 +68,7 @@ The scroll-background fields shipped invisible in light mode: a bright field at 
 
 ## Tailwind v4: CSS variables use PARENTHESES, not brackets
 
-`duration-[--d-base]` is wrong. The bracket form is an arbitrary *literal*, so
+`duration-[--d-base]` is wrong. The bracket form is an arbitrary _literal_, so
 it compiles to `transition-duration: --d-base` — a bare property name as a
 value, which is invalid, silently dropped, and falls back to `0s`.
 
@@ -91,8 +91,8 @@ background: linear-gradient(148deg, var(--glass-tint), var(--glass-tint-soft));
 border: 1px solid var(--line);
 backdrop-filter: blur(20px) saturate(140%);
 box-shadow:
-  0 1px 0 0 var(--glass-catch) inset,   /* top light catch */
-  0 24px 60px -24px var(--glass-drop);
+  0 1px 0 0 var(--glass-catch) inset,
+  /* top light catch */ 0 24px 60px -24px var(--glass-drop);
 ```
 
 Every value is themed. On light the tint darkens and the catch lightens — the recipe is one shape, not one set of numbers.
@@ -112,7 +112,7 @@ Three roles, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS v
 - **Body — Inter Tight**. Paragraphs, buttons, nav. Weight 400/500. Max measure `65ch`.
 - **Utility — JetBrains Mono**. Eyebrows, section numbers, stat labels, metadata. Always `uppercase tracking-[0.18em] text-small` in `text-muted`.
 
-The mono face is a signal, not decoration: it means *machine output*. Use it for repo names, dates, latency figures, stack labels, role IDs, timestamps. Never on prose.
+The mono face is a signal, not decoration: it means _machine output_. Use it for repo names, dates, latency figures, stack labels, role IDs, timestamps. Never on prose.
 
 Fluid scale via `clamp()`: display `2.5–6.5rem` · h2 `1.75–3.5rem` · h3 `1.25–1.5rem` · body `1.0625rem` · small `0.875rem`.
 Line height: `0.95` display · `1.1` h2 · `1.65` body.
@@ -131,6 +131,10 @@ Line height: `0.95` display · `1.1` h2 · `1.65` body.
 A thin vertical rail in the left gutter on desktop that tracks scroll. Each section is a "commit": monospace hash, timestamp, and a node that takes the accent as the section enters the viewport. In the hero it extends into a live commit ticker fed by the GitHub route handler.
 
 This is the one memorable thing on the site. **No other section gets a second scene-stealer.** Before adding a bold new visual idea, check it does not compete with the rail.
+
+**The rail parks above the footer — it is `sticky`, not `fixed`.** Fixed chrome scrolls straight over the footer. The rail lives inside `<main>` in an absolutely positioned, zero-width container spanning only the content area, with `sticky top-1/2` inside it, so it stops at the end of the last section on its own. No IntersectionObserver, no fade, no JS.
+
+The first attempt at this hid the rail with an observer instead, and needed the clearance measured to avoid a visible overlap during the fade. Parking is better than hiding: the information stays on screen, and CSS enforces the boundary exactly rather than approximately. **Prefer a sticky container over fixed positioning plus a visibility hack for any side chrome.**
 
 **Below `lg` the rail changes form rather than shrinking** — there is no gutter to pin to at 360px. Mobile gets a 2px cyan scroll-progress bar fixed under the header, and the active section's mono hash and number ride in that section's own eyebrow. Same information, same voice, no rail. The hero commit ticker stays on every size; it is content, not chrome.
 

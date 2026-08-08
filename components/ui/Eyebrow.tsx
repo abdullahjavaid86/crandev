@@ -18,7 +18,7 @@ export function Eyebrow({ children, className, index }: EyebrowProps) {
   return (
     <p
       className={cn(
-        "font-mono text-small uppercase tracking-[0.18em] text-muted",
+        "font-mono text-small tracking-[0.18em] text-muted uppercase",
         className,
       )}
     >

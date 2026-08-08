@@ -30,11 +30,7 @@ function getSnapshot(): Theme {
 }
 
 export function useTheme() {
-  const theme = useSyncExternalStore<Theme | null>(
-    subscribe,
-    getSnapshot,
-    () => null,
-  );
+  const theme = useSyncExternalStore<Theme | null>(subscribe, getSnapshot, () => null);
 
   const setTheme = useCallback((next: Theme) => {
     const root = document.documentElement;
