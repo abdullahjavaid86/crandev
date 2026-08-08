@@ -9,6 +9,7 @@ Nothing is "done" until this passes. Run it yourself before reporting — do not
 
 ## Build
 
+- [ ] `yarn typecheck` passes — **not** a bare `tsc --noEmit`, which reads clean off a stale `.next` and fails on a clean checkout.
 - [ ] `yarn build` passes with **zero TypeScript errors**. Strict mode, no `any`, no `@ts-expect-error` added to get past the gate.
 - [ ] `yarn lint` clean.
 - [ ] Zero console warnings in the browser, and **no `console.log` left in shipped code**.

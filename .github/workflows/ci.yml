@@ -46,8 +46,13 @@ jobs:
       - name: Install
         run: yarn install --immutable
 
+      # `yarn typecheck` runs `next typegen` first. Next generates route and
+      # layout types (LayoutProps, PageProps) into .next/types, and tsconfig
+      # includes them — so a bare `tsc --noEmit` on a clean checkout fails with
+      # "Cannot find name 'LayoutProps'". Locally it passes only because a
+      # previous build left .next behind, which is a false pass.
       - name: Typecheck
-        run: yarn tsc --noEmit
+        run: yarn typecheck
 
       - name: Lint
         run: yarn lint

@@ -53,8 +53,10 @@ Everything below serves that job.
 yarn dev      # local
 yarn build    # must pass with zero TS errors before any section is "done"
 yarn lint
-yarn tsc --noEmit
+yarn typecheck  # next typegen && tsc --noEmit
 ```
+
+**Typecheck with `yarn typecheck`, never a bare `tsc --noEmit`.** Next generates `LayoutProps`/`PageProps` into `.next/types` during a build, and `tsconfig` includes them — so bare `tsc` passes locally off a stale `.next` and fails on a clean checkout. `yarn typecheck` runs `next typegen` first.
 
 **The package manager is Yarn Berry (4.x), via corepack — not npm.** `packageManager` in `package.json` pins it, so `corepack enable` once and the right version is used automatically. `yarn.lock` is the lockfile; there is no `package-lock.json`. Add dependencies with `yarn add`, never `npm install` — mixing the two produces two lockfiles that disagree.
 
