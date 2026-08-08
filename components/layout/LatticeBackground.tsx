@@ -30,7 +30,10 @@ export function LatticeBackground() {
 
   // Read once per resize rather than per frame — getComputedStyle is a forced
   // style resolution and has no business inside a frame loop.
-  const palette = useRef({ line: "rgba(128,128,128,0.4)", node: "rgba(128,128,128,0.6)" });
+  const palette = useRef({
+    line: "rgba(128,128,128,0.4)",
+    node: "rgba(128,128,128,0.6)",
+  });
 
   const readPalette = useCallback(() => {
     const cs = getComputedStyle(document.documentElement);

@@ -47,7 +47,10 @@ export function GridBackground() {
     resize();
     window.addEventListener("resize", resize, { passive: true });
     const mo = new MutationObserver(readPalette);
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
     return () => {
       window.removeEventListener("resize", resize);
       mo.disconnect();

@@ -95,7 +95,9 @@ function Panel({ sections, className }: ReadingPanelProps) {
             key={c.id}
             className={cn(
               "h-px w-6 origin-left",
-              isReduced ? null : "transition-transform duration-(--d-base) ease-out-soft",
+              isReduced
+                ? null
+                : "transition-transform duration-(--d-base) ease-out-soft",
               i === index ? "scale-x-150 bg-line-strong" : "bg-line",
             )}
           />

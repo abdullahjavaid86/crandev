@@ -71,7 +71,7 @@ export function Hero() {
           first. md moves it out to the right where it has room to be seen. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-40 md:left-auto md:right-0 md:w-1/2 md:opacity-100"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-40 md:right-0 md:left-auto md:w-1/2 md:opacity-100"
       >
         <WireSolid className="max-w-[26rem] md:max-w-[34rem]" />
       </div>
@@ -82,11 +82,7 @@ export function Hero() {
             <Eyebrow index="00">CraneDev</Eyebrow>
           </Reveal>
 
-          <MaskedText
-            as="h1"
-            lines={HEADLINE}
-            className="mt-6 max-w-[18ch]"
-          />
+          <MaskedText as="h1" lines={HEADLINE} className="mt-6 max-w-[18ch]" />
 
           <Reveal delay={0.15}>
             <p className="mt-6 max-w-[52ch] text-muted">{SUBCOPY}</p>

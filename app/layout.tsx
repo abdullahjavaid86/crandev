@@ -1,10 +1,6 @@
 import "./globals.css";
 
-import {
-  Bricolage_Grotesque,
-  Inter_Tight,
-  JetBrains_Mono,
-} from "next/font/google";
+import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
 
 import { Footer } from "@/components/layout/Footer";
 import dynamic from "next/dynamic";

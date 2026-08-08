@@ -33,7 +33,10 @@ export function CtaBand() {
             </p>
 
             {/* The page's single accent element. */}
-            <Link href={primaryCta.href} className={buttonStyles("primary", "md", "mt-10")}>
+            <Link
+              href={primaryCta.href}
+              className={buttonStyles("primary", "md", "mt-10")}
+            >
               {primaryCta.label}
             </Link>
           </div>

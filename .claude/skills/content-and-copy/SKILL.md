@@ -36,7 +36,7 @@ Rules:
 
 ## Banned
 
-Hype vocabulary: *cutting-edge, synergy, leverage (as a verb), seamless, robust, world-class, passionate, we're excited to, revolutionize, empower, best-in-class, game-changing, solutions provider, digital transformation.*
+Hype vocabulary: _cutting-edge, synergy, leverage (as a verb), seamless, robust, world-class, passionate, we're excited to, revolutionize, empower, best-in-class, game-changing, solutions provider, digital transformation._
 
 Also banned: exclamation marks in body copy, em-dash-heavy breathless sentences, rhetorical questions as headlines ("Ready to scale?"), and any claim with no number behind it.
 
@@ -44,13 +44,13 @@ Also banned: exclamation marks in body copy, em-dash-heavy breathless sentences,
 
 ## Copy that is easy to get wrong
 
-**Empty states** — say what would appear here and offer an action. Never "No data." → *"No open roles right now. Tell us what you'd want to work on and we'll reach out when there is."*
+**Empty states** — say what would appear here and offer an action. Never "No data." → _"No open roles right now. Tell us what you'd want to work on and we'll reach out when there is."_
 
-**Error states** — what happened and what to do, in the interface's voice. No apology, no stack trace, no "Oops!" → *"That didn't send. Check the email field, or write to hello@… directly."*
+**Error states** — what happened and what to do, in the interface's voice. No apology, no stack trace, no "Oops!" → _"That didn't send. Check the email field, or write to hello@… directly."_
 
 **Loading** — a skeleton, not a sentence. If you must label it, name the thing being fetched.
 
-**Alt text** — describes the image's information, not its existence. A project cover: *"Dashboard showing p95 latency dropping from 1.4s to 180ms after the migration."* Decorative images get `alt=""`.
+**Alt text** — describes the image's information, not its existence. A project cover: _"Dashboard showing p95 latency dropping from 1.4s to 180ms after the migration."_ Decorative images get `alt=""`.
 
 **Meta descriptions** — one specific sentence per page. Never repeat the site tagline across routes.
 

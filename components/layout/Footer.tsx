@@ -61,13 +61,9 @@ export function Footer() {
               CraneDev
             </Link>
             <p className="mt-2 max-w-[34ch] text-small text-muted">
-              A senior software team building and maintaining production
-              systems.
+              A senior software team building and maintaining production systems.
             </p>
-            <a
-              href={`mailto:${CONTACT.email}`}
-              className={cn(linkStyles, "mt-2")}
-            >
+            <a href={`mailto:${CONTACT.email}`} className={cn(linkStyles, "mt-2")}>
               {CONTACT.email}
             </a>
           </div>
@@ -89,9 +85,7 @@ export function Footer() {
                     and sits on one line everywhere, which is the point: base
                     styles supply the face and tracking, and the
                     `overflow-wrap: normal` there stops the mid-word break. */}
-                <h2 className="font-display text-h3 text-fg">
-                  {group.heading}
-                </h2>
+                <h2 className="font-display text-h3 text-fg">{group.heading}</h2>
                 <ul className="mt-1">
                   {group.items.map((item) => (
                     <li key={item.href}>

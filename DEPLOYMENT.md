@@ -41,9 +41,9 @@ the one that was tested.
 **If that command ever fails**, the officially documented alternative is a
 project environment variable:
 
-| Name | Value | Environments |
-|---|---|---|
-| `ENABLE_EXPERIMENTAL_COREPACK` | `1` | Production, Preview, Development |
+| Name                           | Value | Environments                     |
+| ------------------------------ | ----- | -------------------------------- |
+| `ENABLE_EXPERIMENTAL_COREPACK` | `1`   | Production, Preview, Development |
 
 Then delete `installCommand` from `vercel.json` and let Vercel detect Yarn itself.
 
@@ -61,12 +61,12 @@ so this is the one setting most likely to need revisiting.
 Set these in **Project → Settings → Environment Variables**. All are server-only
 except the last, which is deliberately public.
 
-| Name | Environments | Notes |
-|---|---|---|
-| `MONGODB_URI` | Production, Preview | Contains credentials. **Use a separate database for Preview** — preview deployments are publicly reachable, and a shared URI means every PR writes into production data. |
-| `MONGODB_DB` | Production, Preview | e.g. `cranedev` / `cranedev_preview` |
-| `GITHUB_TOKEN` | Production, Preview | Optional. Without it the Ship Log still works at the lower unauthenticated rate limit. `public_repo` scope only — never a token with write access. |
-| `GITHUB_OWNER` | Production, Preview | Which account the Ship Log reads |
+| Name                   | Environments        | Notes                                                                                                                                                                             |
+| ---------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MONGODB_URI`          | Production, Preview | Contains credentials. **Use a separate database for Preview** — preview deployments are publicly reachable, and a shared URI means every PR writes into production data.          |
+| `MONGODB_DB`           | Production, Preview | e.g. `cranedev` / `cranedev_preview`                                                                                                                                              |
+| `GITHUB_TOKEN`         | Production, Preview | Optional. Without it the Ship Log still works at the lower unauthenticated rate limit. `public_repo` scope only — never a token with write access.                                |
+| `GITHUB_OWNER`         | Production, Preview | Which account the Ship Log reads                                                                                                                                                  |
 | `NEXT_PUBLIC_SITE_URL` | Production, Preview | Absolute origin, no trailing slash. Used for OG tags and canonical URLs. **This one reaches the browser** — that is intended, and it is why it holds nothing but a public origin. |
 
 Never prefix anything else with `NEXT_PUBLIC_`. Doing so ships the value to
@@ -78,12 +78,12 @@ every visitor.
 
 ## 3. Settings that cannot be set from the repo
 
-| Setting | Where | Value |
-|---|---|---|
-| Node.js version | Settings → General | Match local (**Node 24**) or the nearest supported major. Deliberately *not* pinned via `engines` in `package.json`: an unsupported value there fails the build rather than falling back. |
-| Production branch | Settings → Git | **`main`** — not `staging`. `staging` then produces preview deployments, which matches how the branches are used (`CLAUDE.md §17`). |
-| Root directory | Settings → General | Repository root. |
-| Framework preset | auto-detected | Next.js. Also pinned in `vercel.json`. |
+| Setting           | Where              | Value                                                                                                                                                                                     |
+| ----------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Node.js version   | Settings → General | Match local (**Node 24**) or the nearest supported major. Deliberately _not_ pinned via `engines` in `package.json`: an unsupported value there fails the build rather than falling back. |
+| Production branch | Settings → Git     | **`main`** — not `staging`. `staging` then produces preview deployments, which matches how the branches are used (`CLAUDE.md §17`).                                                       |
+| Root directory    | Settings → General | Repository root.                                                                                                                                                                          |
+| Framework preset  | auto-detected      | Next.js. Also pinned in `vercel.json`.                                                                                                                                                    |
 
 ---
 

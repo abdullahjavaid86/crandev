@@ -32,12 +32,37 @@ import { Work } from "@/components/sections/Work";
  */
 const SECTIONS: ShipLogSection[] = [
   { id: "hero", index: "00", note: "What the team does, in one line.", label: "Intro" },
-  { id: "proof", index: "01", note: "Four figures from shipped systems.", label: "Proof" },
-  { id: "services", index: "02", note: "Four engagements, and what each leaves behind.", label: "Services" },
-  { id: "work", index: "03", note: "Six systems, each with the number that changed.", label: "Work" },
-  { id: "testimonials", index: "04", note: "Three clients, named and attributed.", label: "Clients" },
+  {
+    id: "proof",
+    index: "01",
+    note: "Four figures from shipped systems.",
+    label: "Proof",
+  },
+  {
+    id: "services",
+    index: "02",
+    note: "Four engagements, and what each leaves behind.",
+    label: "Services",
+  },
+  {
+    id: "work",
+    index: "03",
+    note: "Six systems, each with the number that changed.",
+    label: "Work",
+  },
+  {
+    id: "testimonials",
+    index: "04",
+    note: "Three clients, named and attributed.",
+    label: "Clients",
+  },
   { id: "brands", index: "05", note: "Who the work was for.", label: "Teams" },
-  { id: "process", index: "06", note: "Four steps, with the real durations.", label: "Process" },
+  {
+    id: "process",
+    index: "06",
+    note: "Four steps, with the real durations.",
+    label: "Process",
+  },
 ];
 
 export default function Home() {
@@ -49,9 +74,7 @@ export default function Home() {
         it occupies the gutter without taking part in the layout, and hidden
         below lg where there is no gutter to occupy.
       */}
-      <div
-        className="pointer-events-none absolute inset-y-0 left-4 z-30 hidden w-0 lg:block"
-      >
+      <div className="pointer-events-none absolute inset-y-0 left-4 z-30 hidden w-0 lg:block">
         <div className="pointer-events-auto h-full">
           <ShipLog sections={SECTIONS} />
         </div>

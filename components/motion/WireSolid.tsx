@@ -61,10 +61,9 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "10% 0px" },
-    );
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      rootMargin: "10% 0px",
+    });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -82,23 +81,26 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
   }, [hasHover, isReduced, px, py]);
 
   /** Rotate, project, split by depth, write two path strings. */
-  const draw = useCallback((yawR: number, pitchR: number) => {
-    const points = geometry.points.map((v: Vec3) =>
-      project(rotate(v, yawR, pitchR), radius),
-    );
-    let back = "";
-    let front = "";
-    for (const [i, j] of geometry.edges) {
-      const a = points[i];
-      const b = points[j];
-      const seg = `M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
-      // Midpoint depth decides which layer the edge belongs to.
-      if ((a[2] + b[2]) / 2 < 0) back += seg;
-      else front += seg;
-    }
-    backRef.current?.setAttribute("d", back);
-    frontRef.current?.setAttribute("d", front);
-  }, [radius, geometry]);
+  const draw = useCallback(
+    (yawR: number, pitchR: number) => {
+      const points = geometry.points.map((v: Vec3) =>
+        project(rotate(v, yawR, pitchR), radius),
+      );
+      let back = "";
+      let front = "";
+      for (const [i, j] of geometry.edges) {
+        const a = points[i];
+        const b = points[j];
+        const seg = `M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
+        // Midpoint depth decides which layer the edge belongs to.
+        if ((a[2] + b[2]) / 2 < 0) back += seg;
+        else front += seg;
+      }
+      backRef.current?.setAttribute("d", back);
+      frontRef.current?.setAttribute("d", front);
+    },
+    [radius, geometry],
+  );
 
   useAnimationFrame((t) => {
     if (isReduced || !visible) return;

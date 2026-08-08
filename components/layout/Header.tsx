@@ -194,10 +194,7 @@ export function Header() {
             keeps the base honest: hidden below md, added at md.
           */}
           <div className="hidden md:block">
-            <Link
-              href={primaryCta.href}
-              className={buttonStyles("primary", "sm")}
-            >
+            <Link href={primaryCta.href} className={buttonStyles("primary", "sm")}>
               {primaryCta.label}
             </Link>
           </div>

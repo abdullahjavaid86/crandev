@@ -80,8 +80,7 @@ export function ScrollBackground() {
           x: aX,
           opacity: aOpacity,
           filter: "blur(120px)",
-          background:
-            "var(--field-a)",
+          background: "var(--field-a)",
         }}
         className="absolute -top-[18%] -left-[20%] h-[62vmax] w-[62vmax]"
       />
@@ -90,8 +89,7 @@ export function ScrollBackground() {
           y: bY,
           opacity: bOpacity,
           filter: "blur(120px)",
-          background:
-            "var(--field-b)",
+          background: "var(--field-b)",
         }}
         className="absolute top-[22%] -right-[24%] h-[58vmax] w-[58vmax]"
       />
@@ -100,8 +98,7 @@ export function ScrollBackground() {
           y: cY,
           opacity: cOpacity,
           filter: "blur(120px)",
-          background:
-            "var(--field-c)",
+          background: "var(--field-c)",
         }}
         className="absolute -bottom-[28%] left-[8%] h-[50vmax] w-[50vmax]"
       />

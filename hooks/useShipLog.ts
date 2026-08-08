@@ -105,9 +105,7 @@ export function useShipLog(sections: readonly ShipLogSection[]) {
     index: section.index ?? String(i + 1).padStart(2, "0"),
   }));
 
-  const [activeId, setActiveId] = useState<string | null>(
-    sections[0]?.id ?? null,
-  );
+  const [activeId, setActiveId] = useState<string | null>(sections[0]?.id ?? null);
 
   // A primitive key, so an inline array literal from the caller does not tear
   // the observer down and rebuild it on every render.
@@ -124,9 +122,7 @@ export function useShipLog(sections: readonly ShipLogSection[]) {
 
     // Reading order, so overlapping sections resolve to the earlier one
     // instead of flickering between them.
-    const order = new Map<Element, number>(
-      elements.map((element, i) => [element, i]),
-    );
+    const order = new Map<Element, number>(elements.map((element, i) => [element, i]));
     const inBand = new Set<Element>();
 
     const observer = new IntersectionObserver(

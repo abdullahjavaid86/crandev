@@ -65,9 +65,8 @@ Every section shares one shell so vertical rhythm never drifts:
 ```tsx
 <section id="work" aria-labelledby="work-heading" className="py-28 md:py-40">
   <Container>
-    <Eyebrow index="02">Selected work</Eyebrow>   {/* mono, text-muted */}
-    <h2 id="work-heading">…</h2>                    {/* display face, text-balance */}
-    …
+    <Eyebrow index="02">Selected work</Eyebrow> {/* mono, text-muted */}
+    <h2 id="work-heading">…</h2> {/* display face, text-balance */}…
   </Container>
 </section>
 ```

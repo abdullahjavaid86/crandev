@@ -34,15 +34,14 @@ export function Card({
    * (§5.3). Reading layout on every mousemove is what makes this pattern
    * janky; rAF collapses a burst of events into a single paint.
    */
-  const onMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const el = ref.current;
-      if (!el) return;
-      const { clientX, clientY } = e;
-      cancelAnimationFrame(frame.current);
-      frame.current = requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        /*
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const { clientX, clientY } = e;
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
+      /*
           ServiceStack scales the card's wrapper as the next card covers it,
           so `getBoundingClientRect()` returns SCALED pixels while the
           gradients underneath are resolved in the card's own CSS pixels.
@@ -52,13 +51,11 @@ export function Card({
           `offsetWidth` is the unscaled border-box width, the same box the
           rect measures, so the ratio is the live scale factor.
         */
-        const k = rect.width ? el.offsetWidth / rect.width : 1;
-        el.style.setProperty("--mx", `${(clientX - rect.left) * k}px`);
-        el.style.setProperty("--my", `${(clientY - rect.top) * k}px`);
-      });
-    },
-    [],
-  );
+      const k = rect.width ? el.offsetWidth / rect.width : 1;
+      el.style.setProperty("--mx", `${(clientX - rect.left) * k}px`);
+      el.style.setProperty("--my", `${(clientY - rect.top) * k}px`);
+    });
+  }, []);
 
   /*
     The light exists for a real pointer only (§4.7). `useHasHover` is false on
@@ -107,7 +104,7 @@ export function Card({
           that need `var()` — hence `duration-(--d-base)` on the next line,
           which is `dur.base` + `ease.out` from lib/motion.ts (§5).
         */
-        "[--mx:50%] [--my:50%] [--lit:0] hover:[--lit:1]",
+        "[--lit:0] [--mx:50%] [--my:50%] hover:[--lit:1]",
         "[transition-property:--lit] duration-(--d-base) ease-out-soft",
 
         /*

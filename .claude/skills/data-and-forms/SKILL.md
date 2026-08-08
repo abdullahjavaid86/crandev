@@ -12,13 +12,13 @@ There is no backend, no database, and no auth. Everything async is either a Next
 `lib/api/client.ts` exports the single configured instance. **Nothing else creates one, and no component imports `axios` directly.**
 
 ```ts
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({ timeout: 8000 });
 
 api.interceptors.response.use(
   (res) => res,
-  (err) => Promise.reject(normalizeError(err)),   // -> { status, message, code }
+  (err) => Promise.reject(normalizeError(err)), // -> { status, message, code }
 );
 ```
 
@@ -38,10 +38,10 @@ Never a bag of booleans (`isLoading`, `isError`, `data`) — that lets `isLoadin
 
 ```ts
 type Async<T> =
-  | { status: 'idle' }
-  | { status: 'loading' }
-  | { status: 'success'; data: T }
-  | { status: 'error'; error: string };
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: string };
 ```
 
 The same shape covers form submission (`idle | submitting | success | error`). Switch on `status` and the compiler tells you when a state has no UI.

@@ -156,10 +156,7 @@ function Rail({ sections, className }: ShipLogProps) {
                 >
                   <span className={cn("text-muted", settle)}>{commit.index}</span>
                   <span
-                    className={cn(
-                      settle,
-                      isCurrent ? "text-accent-ink" : "text-muted",
-                    )}
+                    className={cn(settle, isCurrent ? "text-accent-ink" : "text-muted")}
                   >
                     {commit.hash}
                   </span>

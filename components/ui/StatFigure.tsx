@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { animate, motion, useInView, useMotionValue, useReducedMotion } from "motion/react";
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+} from "motion/react";
 import { StaggerItem } from "@/components/motion/StaggerGroup";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import type { Stat } from "@/lib/content";

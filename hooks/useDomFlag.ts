@@ -19,21 +19,22 @@ export function useDomFlag<T extends string>(
   values: readonly T[],
   storageKey: string,
 ) {
-  const subscribe = useCallback((onChange: () => void) => {
-    if (typeof document === "undefined") return () => {};
-    const observer = new MutationObserver(onChange);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: [attribute],
-    });
-    return () => observer.disconnect();
-  }, [attribute]);
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (typeof document === "undefined") return () => {};
+      const observer = new MutationObserver(onChange);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: [attribute],
+      });
+      return () => observer.disconnect();
+    },
+    [attribute],
+  );
 
   const getSnapshot = useCallback((): T => {
     const raw = document.documentElement.getAttribute(attribute);
-    return (values as readonly string[]).includes(raw ?? "")
-      ? (raw as T)
-      : values[0];
+    return (values as readonly string[]).includes(raw ?? "") ? (raw as T) : values[0];
   }, [attribute, values]);
 
   // null until mounted: the server cannot know a localStorage value, and
