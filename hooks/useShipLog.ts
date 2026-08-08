@@ -33,6 +33,19 @@ export interface ShipLogSection {
    * from `id` — deterministic, so it never differs between server and client.
    */
   hash?: string;
+  /**
+   * One line describing what the section actually shows. Used by the reading
+   * panel in the right gutter, not by the rail. Describes the PAGE, so it is
+   * not a claim about the business and needs no substantiation.
+   */
+  note?: string;
+  /**
+   * Overrides the derived ordinal. The section's own Eyebrow carries this
+   * number too (§ "The section shell"), and the two MUST agree — the hero is
+   * authored as "00", so a rail deriving i+1 would label every section one
+   * ahead of itself.
+   */
+  index?: string;
 }
 
 export interface ShipLogCommit {
@@ -42,6 +55,8 @@ export interface ShipLogCommit {
   hash: string;
   /** 1-based ordinal, zero-padded: "01", "02". An index, not a timestamp. */
   index: string;
+  /** Passed through from the section; see ShipLogSection.note. */
+  note?: string;
 }
 
 /**
@@ -86,7 +101,8 @@ export function useShipLog(sections: readonly ShipLogSection[]) {
     id: section.id,
     label: section.label,
     hash: section.hash ?? shortHash(section.id),
-    index: String(i + 1).padStart(2, "0"),
+    note: section.note,
+    index: section.index ?? String(i + 1).padStart(2, "0"),
   }));
 
   const [activeId, setActiveId] = useState<string | null>(
