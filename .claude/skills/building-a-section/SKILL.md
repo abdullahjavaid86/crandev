@@ -39,6 +39,7 @@ This matters most when sections are built in parallel by separate agents (`CLAUD
 - Accessible by default: wire `aria-*`, support keyboard interaction, expose `disabled` and `aria-invalid`.
 - Presentational primitives stay server components unless they need interactivity, and never fetch data — pass it in as props.
 - Non-trivial stateful logic becomes a custom hook in `hooks/`, named for its owner (`hooks/useShipLog.ts`).
+- **Shared style functions and helpers live in a module with no `'use client'`.** A helper exported from a client module cannot be called by a server component — it fails at prerender, and re-exporting it through another file does not help. Put the helper in its own plain module and have the client component import it too.
 
 ## Anatomy
 
