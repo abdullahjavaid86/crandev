@@ -58,10 +58,10 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 2.1 | `layout/Header` — sticky, blurs past 40px, mobile overlay | todo | |
+| 2.1 | `layout/Header` — sticky, blurs past 40px, mobile overlay | done 2026-08-08 | Radix Dialog for the overlay. Glass is a separate layer whose blur class is **absent** below 40px, not faded — a blurred layer at `opacity:0` still costs GPU. Scroll state via `useSyncExternalStore` on motion's `scrollY`, since `set-state-in-effect` now errors. |
 | 2.2 | Shared nav source consumed by Header + Footer | done 2026-08-08 | `lib/nav.ts` — primaryNav, primaryCta, footerNav, `isActive()`. Prefix match keeps Work active on `/work/[slug]`, including as an intercepted modal. |
-| 2.3 | `layout/Footer` | todo | |
-| 2.4 | Ship Log rail — section registration + scroll tracking | todo | the signature element |
+| 2.3 | `layout/Footer` | done 2026-08-08 | Server component. lucide v1 ships no brand glyphs, so GitHub is a labelled text link + `ArrowUpRight`. Email and GitHub handle are flagged `NEEDS CONFIRMING` (D8). |
+| 2.4 | Ship Log rail — section registration + scroll tracking | done 2026-08-08 | Explicit array prop, not a context hook — a registration hook would force `'use client'` onto every section wrapper. IntersectionObserver for active section, one `useScroll` for the fill. Gated at `lg` (not `md`) since the rail needs a real gutter. |
 | 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | |
 | 2.6 | Hero commit ticker (mocked data) | todo | |
 
@@ -141,6 +141,7 @@ Things that need a human answer. Do not guess past these.
 | D2 | Real content — client names, project outcomes, stats, testimonials, logos, team bios, comp bands. Every one of these must be real. | 2026-08-08 | open |
 | D3 | Which GitHub org/user feeds the Ship Log and open-source section? | 2026-08-08 | open |
 | D5 | MongoDB hosting — Atlas or self-hosted? Affects `MONGODB_URI` and whether IP allow-listing is needed. `.env.example` covers both forms. | 2026-08-08 | open |
+| D8 | Footer contact details are placeholders: `hello@cranedev.com` and `github.com/cranedev`. The real domain is `cranedev.ai.studio`, so both are likely wrong. `GITHUB_OWNER` in `.env.example` is blank too. | 2026-08-08 | open |
 | D7 | Light mode changes the ambient glows and the Ship Log rail's look — both were designed against `--void`. Worth your eye once M2 lands. | 2026-08-08 | open |
 | D6 | Submissions are write-only with no admin UI, so nothing in the app reads them back. How do you want to be notified of a new contact query — email, Slack, or checking the collection directly? | 2026-08-08 | open |
 | D4 | Ship Log below `lg`: proposed a 2px cyan progress bar under the header, with the active section's hash/number in that section's eyebrow. The rail has no gutter to pin to at 360px. Written into CLAUDE.md §4.5 as the default — flag if you want a different mobile form for the signature element. | 2026-08-08 | proposed |
