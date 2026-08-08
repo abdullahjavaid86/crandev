@@ -45,7 +45,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | done 2026-08-08 | `buttonStyles()` shared with button-styled links so there is one Button. `Button` extends `HTMLMotionProps`, not React's — the drag handler signatures collide. `Field` is a render-prop so input/textarea/select need no special-casing. |
 | 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work; needs a browser |
 | 1.9 | **Light + dark theming** — role-based tokens, `ThemeScript` (no FOUC), `useTheme`, `ThemeToggle` | done 2026-08-08 | Tokens renamed to roles; all components migrated. Accent split into fill (`--accent`) vs ink (`--accent-ink`) because cyan text on white is 1.43:1. |
-| 1.7 | Scroll-reactive background layer (§4.6) | todo | one `useScroll` driver for the whole site; static below `md` and under reduced motion |
+| 1.7 | Scroll-reactive background layer (§4.6) | done 2026-08-08 | Three fields, transform+opacity only, blur and gradient static. Frozen at mid-scroll below `md` and under reduced motion by flattening the output range, not branching JSX. Ion capped at 0.14 — it is the token that muddies on light. |
 | 1.8 | `<Modal />` primitive — focus trap, scroll lock, Escape, `router.back()` | todo | **Radix Dialog is the right call here** — focus trap + scroll lock + ARIA is exactly the behaviour §2 now permits a primitive for. Restyle to our tokens; animate open/close with `motion`. Consumed by 5.2. |
 
 **Exit:** every primitive renders correctly with `prefers-reduced-motion: reduce`.

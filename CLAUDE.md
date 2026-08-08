@@ -201,7 +201,9 @@ This is the one memorable thing on the page. It earns the GitHub integration, it
 
 One `fixed inset-0 -z-10` layer in `layout.tsx`, below content and below the grain. It is the only element in the site that responds continuously to scroll.
 
-- **One driver.** A single `useScroll()` in one client component feeds everything. Never a second scroll listener; never a per-section listener.
+- **One ambient driver.** The background owns a single page-level `useScroll()`, in this one component. No section adds its own ambient layer or its own page-progress read.
+  - Element-relative `useScroll({ target })` is fine where the effect genuinely is element-relative — that is what `Parallax` needs, and it cannot be derived from page progress.
+  - Motion reads scroll from a `ScrollTimeline` inside its single shared frameloop, not a listener per hook, so N `useScroll` calls are N cheap per-frame reads rather than N scroll listeners. The rule here is about not scattering ambient effects, not about listener count.
 - **Two or three large radial fields** in `--cyan` and `--ion` at very low opacity, `blur(120px)`, whose position and opacity map to scroll progress through `useTransform`. The hue shifts as sections pass; it never becomes a *different* background.
 - **Transform and opacity only.** Never animate `background-image`, gradient stops, or `backdrop-filter`. Those repaint the whole viewport every frame.
 - **It is ambient, not a feature.** If you notice it while reading, it is too strong. It must never compete with the Ship Log rail or pull attention from a CTA.

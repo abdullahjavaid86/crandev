@@ -67,6 +67,7 @@ Motion here is mobile-first like everything else: the base case runs on a phone,
 - **Desktop-only enhancements:** magnetic pull, cursor-following radial highlight, parallax, sticky card stacking. None of them are the base case.
 - **Ambient hero glows are the mobile perf risk.** Two infinite-looping `blur(120px)` layers on a mid-range Android will drop frames. Below `md`, render them static — the drift is imperceptible on a small screen and the loop is not worth the battery.
 - **The rail is desktop.** Below `lg`, scroll progress is a 2px bar under the header, not a rail. Do not animate a rail that has nowhere to sit.
+- **Scroll reads are cheap; scattered ambient effects are not.** Motion reads scroll from a `ScrollTimeline` in one shared frameloop, so several `useScroll` calls are not several listeners. Element-relative `useScroll({ target })` is correct for `Parallax`. What is banned is a second ambient background or a per-section page-progress read — the background owns that (§4.6).
 - **`dvh`, never `vh`**, for any motion tied to viewport height.
 - Reduced motion still overrides everything above.
 

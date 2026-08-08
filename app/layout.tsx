@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Grain } from "@/components/layout/Grain";
+import { ScrollBackground } from "@/components/layout/ScrollBackground";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 import "./globals.css";
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeScript />
       </head>
       <body className="flex min-h-full flex-col">
+        <ScrollBackground />
         {children}
         <Grain />
       </body>
