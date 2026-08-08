@@ -1,26 +1,136 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   Tokens — the single source of truth. CLAUDE.md §4.
+   Nothing in a component may introduce a colour, radius, or
+   duration that does not resolve to one of these.
+   ───────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces */
+  --void: #06070a;      /* page background, deepest layer */
+  --carbon: #0e1017;    /* raised surfaces, cards */
+  --graphite: #171a22;  /* hover state, inset panels */
+
+  /* Line */
+  --hairline: rgba(232, 237, 245, 0.08);  /* every border, 1px, never heavier */
+
+  /* Text */
+  --ice: #e8edf5;   /* primary */
+  --mist: #8a93a6;  /* secondary, captions */
+
+  /* Accent — one cyan element per viewport-height of scroll */
+  --cyan: #35f0dc;
+  --ion: #4c6fff;   /* secondary glow, gradient partner */
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 24px;
+
+  /* Fluid type — floors are set from 360px, not from the desktop end.
+     A 56px display at 360px fits ~7 characters per line. */
+  --t-display: clamp(2.5rem, 1.35rem + 5.1vw, 6.5rem);
+  --t-h2: clamp(1.75rem, 1.24rem + 2.27vw, 3.5rem);
+  --t-h3: clamp(1.25rem, 1.18rem + 0.32vw, 1.5rem);
+  --t-body: 1.0625rem;
+  --t-small: 0.875rem;
+
+  /* Motion — mirrors lib/motion.ts. CSS transitions read from here. */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-micro: 180ms;
+  --d-base: 500ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-void: var(--void);
+  --color-carbon: var(--carbon);
+  --color-graphite: var(--graphite);
+  --color-hairline: var(--hairline);
+  --color-ice: var(--ice);
+  --color-mist: var(--mist);
+  --color-cyan: var(--cyan);
+  --color-ion: var(--ion);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+
+  --text-display: var(--t-display);
+  --text-h2: var(--t-h2);
+  --text-h3: var(--t-h3);
+  --text-body: var(--t-body);
+  --text-small: var(--t-small);
+
+  --ease-out-soft: var(--e-out);
+  --ease-in-out-soft: var(--e-in-out);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--void);
+  color: var(--ice);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.65;
+  /* Long repo names and URLs in mono must never widen the page. */
+  overflow-wrap: break-word;
+}
+
+/* Display face. text-balance keeps headlines from orphaning a word. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-display);
+  line-height: 0.95;
+}
+
+h2 {
+  font-size: var(--t-h2);
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: var(--t-h3);
+  line-height: 1.25;
+}
+
+/* The one cyan border that is legal, per §4.1. */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--void);
+}
+
+/* Reduced motion is a floor, not a preference. Components still call
+   useReducedMotion(); this catches anything that slips through. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

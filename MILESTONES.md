@@ -20,7 +20,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 |---|---|---|---|
 | 0.1 | `create-next-app` — App Router, TypeScript strict, Tailwind | done 2026-08-08 | Scaffolded in a temp dir and moved in, since `create-next-app` refuses a non-empty directory. Repo initialized by the scaffold (one commit, scaffold files only). `motion` + `lucide-react` installed; build and lint clean. |
 | 0.2 | Fonts via `next/font/google`: Bricolage Grotesque, Inter Tight, JetBrains Mono | done 2026-08-08 | All three resolve as variable — no `weight` needed. Exposed as `--font-display` / `--font-body` / `--font-mono`. Placeholder metadata replaced; real agency name still pending (D2). |
-| 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | todo | |
+| 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | done 2026-08-08 | Palette, radius, fluid type, easings. `cn()` is dependency-free per §10 and does **not** resolve conflicting utilities — revisit `tailwind-merge` when variant maps land in M1.5. |
 | 0.4 | `lib/motion.ts` — ease, dur, spring, viewport | todo | |
 | 0.5 | Grain overlay + `<Container>` in `app/layout.tsx` | todo | |
 | 0.6 | `lib/api/client.ts` axios instance + `normalizeError`; `.env.example` | todo | |
