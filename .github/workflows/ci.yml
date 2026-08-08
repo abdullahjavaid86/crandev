@@ -54,6 +54,11 @@ jobs:
       - name: Typecheck
         run: yarn typecheck
 
+      # Same two checks the pre-push hook runs, so a push that passed locally
+      # cannot fail here on formatting.
+      - name: Format check
+        run: yarn format:check
+
       - name: Lint
         run: yarn lint
 

@@ -1,0 +1,10 @@
+# Generated or vendored — never format these.
+.next
+.yarn
+node_modules
+yarn.lock
+next-env.d.ts
+
+# Content is data. Reformatting it produces noise in diffs that should read as
+# content changes, and it is authored by hand.
+content/*.json

@@ -1,0 +1,9 @@
+# Runs before every `git push`. Pre-push rather than pre-commit on purpose:
+# committing should stay cheap so work-in-progress can be saved freely, but
+# nothing unformatted or lint-dirty should reach a branch other people pull.
+#
+# These are the same checks CI runs, so a push that passes here will not fail
+# CI on lint or formatting.
+
+yarn format:check
+yarn lint
