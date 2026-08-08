@@ -62,7 +62,8 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 2.2 | Shared nav source consumed by Header + Footer | done 2026-08-08 | `lib/nav.ts` — primaryNav, primaryCta, footerNav, `isActive()`. Prefix match keeps Work active on `/work/[slug]`, including as an intercepted modal. |
 | 2.3 | `layout/Footer` | done 2026-08-08 | Server component. lucide v1 ships no brand glyphs, so GitHub is a labelled text link + `ArrowUpRight`. Email and GitHub handle are flagged `NEEDS CONFIRMING` (D8). |
 | 2.4 | Ship Log rail — section registration + scroll tracking | done 2026-08-08 | Explicit array prop, not a context hook — a registration hook would force `'use client'` onto every section wrapper. IntersectionObserver for active section, one `useScroll` for the fill. Gated at `lg` (not `md`) since the rail needs a real gutter. |
-| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | |
+| 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | copy needs D2; will draft and flag |
+| 2.7 | `<WireSolid />` — cursor-tracking wireframe solid, hero only | done 2026-08-08 | Code-generated icosahedron (`lib/solid.ts`), 2 SVG paths on motion's shared frameloop. **No new dependency** — three+R3F+drei measured at 23MB/2.2MB/1.8MB unpacked. Paused off-screen, idle drift on touch, static under reduced motion, never takes the accent. |
 | 2.6 | Hero commit ticker (mocked data) | todo | |
 
 ---
