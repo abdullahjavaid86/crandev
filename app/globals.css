@@ -46,6 +46,11 @@
   --field-b: radial-gradient(circle at center, rgba(58, 85, 217, 0.36) 0%, transparent 68%);
   --field-c: radial-gradient(circle at center, rgba(10, 107, 94, 0.34) 0%, transparent 66%);
 
+  /* Lattice background. Thin 1px lines need more alpha than a huge blurred
+     field to register at all, and on a light ground they must DARKEN. */
+  --lattice-line: rgba(6, 7, 10, 0.13);
+  --lattice-node: rgba(6, 7, 10, 0.22);
+
   /* Radius */
   --r-sm: 8px;
   --r-md: 14px;
@@ -92,6 +97,9 @@
   --field-a: radial-gradient(circle at center, rgba(53, 240, 220, 0.24) 0%, transparent 68%);
   --field-b: radial-gradient(circle at center, rgba(76, 111, 255, 0.22) 0%, transparent 68%);
   --field-c: radial-gradient(circle at center, rgba(53, 240, 220, 0.20) 0%, transparent 66%);
+
+  --lattice-line: rgba(232, 237, 245, 0.11);
+  --lattice-node: rgba(232, 237, 245, 0.20);
 }
 
 @keyframes marquee {
