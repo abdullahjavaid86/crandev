@@ -53,9 +53,7 @@
   --color-cyan: var(--cyan);
   --color-ion: var(--ion);
 
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
-  --font-mono: var(--font-mono);
+  /* Fonts are provided by next/font via <html> class variables; don't redeclare them here (prevents a CSS variable cycle). */
 
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
