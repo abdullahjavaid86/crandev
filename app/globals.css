@@ -132,52 +132,59 @@
    Base
    ───────────────────────────────────────────────────────────── */
 
-body {
-  background: var(--surface);
-  color: var(--fg);
-  font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
-  font-size: var(--t-body);
-  line-height: 1.65;
-  /* Long repo names and URLs in mono must never widen the page. */
-  overflow-wrap: break-word;
-}
+/* Wrapped in @layer base so UTILITIES CAN OVERRIDE THESE.
+   Unlayered CSS beats anything inside a cascade layer, and Tailwind puts its
+   utilities in @layer utilities — so a bare `h2 { font-size }` silently wins
+   over `text-small` on that element. The footer's column headings rendered at
+   display size for exactly this reason. */
+@layer base {
+  body {
+    background: var(--surface);
+    color: var(--fg);
+    font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--t-body);
+    line-height: 1.65;
+    /* Long repo names and URLs in mono must never widen the page. */
+    overflow-wrap: break-word;
+  }
 
-/* Display face. text-balance keeps headlines from orphaning a word. */
-h1,
-h2,
-h3 {
-  font-family: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
+  /* Display face. text-balance keeps headlines from orphaning a word. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
 
-h1 {
-  font-size: var(--t-display);
-  line-height: 0.95;
-}
+  h1 {
+    font-size: var(--t-display);
+    line-height: 0.95;
+  }
 
-h2 {
-  font-size: var(--t-h2);
-  line-height: 1.1;
-}
+  h2 {
+    font-size: var(--t-h2);
+    line-height: 1.1;
+  }
 
-h3 {
-  font-size: var(--t-h3);
-  line-height: 1.25;
-}
+  h3 {
+    font-size: var(--t-h3);
+    line-height: 1.25;
+  }
 
-/* The one accent border that is legal, per §4.1. Uses --accent-ink so it
-   stays visible on a light background. */
-:focus-visible {
-  outline: 2px solid var(--accent-ink);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
+  /* The one accent border that is legal, per §4.1. Uses --accent-ink so it
+     stays visible on a light background. */
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 
-::selection {
-  background: var(--accent);
-  color: var(--accent-on);
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
 }
 
 /* Reduced motion is a floor, not a preference. Components still call
