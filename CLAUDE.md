@@ -24,6 +24,7 @@ Everything below serves that job.
 
 | Concern | Choice |
 |---|---|
+| Package manager | **Yarn Berry 4.x** via corepack. Not npm. |
 | Framework | Next.js (App Router), TypeScript, strict mode |
 | Styling | Tailwind CSS (v4 if the installer scaffolds it) |
 | Animation | Framer Motion — npm package is **`motion`**, not `framer-motion`. Import from `motion/react`. |
@@ -49,10 +50,15 @@ Everything below serves that job.
 **Commands**
 
 ```bash
-npm run dev      # local
-npm run build    # must pass with zero TS errors before any section is "done"
-npm run lint
+yarn dev      # local
+yarn build    # must pass with zero TS errors before any section is "done"
+yarn lint
+yarn tsc --noEmit
 ```
+
+**The package manager is Yarn Berry (4.x), via corepack — not npm.** `packageManager` in `package.json` pins it, so `corepack enable` once and the right version is used automatically. `yarn.lock` is the lockfile; there is no `package-lock.json`. Add dependencies with `yarn add`, never `npm install` — mixing the two produces two lockfiles that disagree.
+
+`nodeLinker: node-modules` in `.yarnrc.yml`, deliberately not Plug'n'Play: PnP changes module resolution for Next, Tailwind's PostCSS plugin and ESLint all at once, and that is a separate change from swapping package manager.
 
 ---
 
@@ -470,7 +476,7 @@ Things that will get the work sent back:
 
 ## 13. Before calling anything done
 
-- [ ] `npm run build` passes, zero TS errors, zero console warnings.
+- [ ] `yarn build` passes, zero TS errors, zero console warnings.
 - [ ] Keyboard-only pass through the section works, focus is always visible.
 - [ ] `prefers-reduced-motion: reduce` — no travel, no loops, page still legible and complete.
 - [ ] 360px viewport: nothing overflows, nothing sticky-stacks, tap targets ≥ 44px.

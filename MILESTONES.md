@@ -28,7 +28,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 0.8 | Error surfaces — `error.tsx`, `global-error.tsx`, `not-found.tsx`; `.env.example` | done 2026-08-08 | Built on tokens only, no primitives needed. `global-error` renders its own `<html>`/`<body>` and degrades without the font variables. |
 | 0.9 | Install `zod` + `mongodb`; `lib/content/` loaders, `lib/db/client.ts` | done 2026-08-08 | Official driver, not Mongoose. JSON files ship **empty** — honest until D2. Schema enforces kebab-case slugs and rejects an outcome line with no digit in it (§8). **Validation only runs when a page imports the loader** — an unimported content file is unvalidated. |
 
-**Exit:** `npm run build` clean, blank page shows the palette, type scale, and grain.
+**Exit:** `yarn build` clean, blank page shows the palette, type scale, and grain.
 
 ---
 

@@ -109,7 +109,7 @@ Never `push --force` to a shared branch, never rebase anything already pushed, a
 ## Before you commit — the short list
 
 - [ ] On `feature/fast-track` — not `staging`, not `main`.
-- [ ] The task passed [quality-gate](../quality-gate/SKILL.md); `npm run build` and `npm run lint` are clean.
+- [ ] The task passed [quality-gate](../quality-gate/SKILL.md); `yarn build` and `yarn lint` are clean.
 - [ ] `git status` shows only files belonging to this task.
 - [ ] No secrets, no `settings.local.json`, no build output.
 - [ ] Subject references the `MILESTONES.md` row; body explains why.
