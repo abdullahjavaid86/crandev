@@ -65,7 +65,7 @@ Every section shares one shell so vertical rhythm never drifts:
 ```tsx
 <section id="work" aria-labelledby="work-heading" className="py-28 md:py-40">
   <Container>
-    <Eyebrow>02 / Selected work</Eyebrow>          {/* mono, --mist */}
+    <Eyebrow index="02">Selected work</Eyebrow>   {/* mono, text-muted */}
     <h2 id="work-heading">…</h2>                    {/* display face, text-balance */}
     …
   </Container>
@@ -93,7 +93,7 @@ Every section shares one shell so vertical rhythm never drifts:
 
 **Testimonials** — attributed or cut. A quote needs a name, a role, and a company; an unattributed quote reads as fabricated to exactly the audience we are addressing. Prefer 3 substantial quotes over 8 thin ones. No star ratings, no carousel that auto-advances. Stacked on mobile, grid at `md`.
 
-**Brands / associations** — a hairline-bordered logo strip, monochrome at `--mist` opacity, lifting to full `--ice` on hover (desktop only — on touch they sit at rest). Logos as inline SVG or `next/image` with explicit dimensions; never raster logos scaled up. Label it honestly ("Teams we've shipped for" vs "Partners") — the wrong label here is a credibility leak. On mobile the strip scrolls horizontally inside its own container with `overscroll-behavior-x: contain` and a fade mask on both edges; it must never scroll the page sideways. Auto-scroll marquee only if the logos exceed one row on desktop.
+**Brands / associations** — a hairline-bordered logo strip, monochrome at `text-muted`, lifting to `text-fg` on hover (desktop only — on touch they sit at rest). Logos as inline SVG or `next/image` with explicit dimensions; never raster logos scaled up. Label it honestly ("Teams we've shipped for" vs "Partners") — the wrong label here is a credibility leak. On mobile the strip scrolls horizontally inside its own container with `overscroll-behavior-x: contain` and a fade mask on both edges; it must never scroll the page sideways. Auto-scroll marquee only if the logos exceed one row on desktop.
 
 **Process** — genuinely sequential, so `01 → 04` numbering is legitimate. Tied to the Ship Log rail, one reveal per step.
 
