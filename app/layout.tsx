@@ -5,21 +5,21 @@ import "./globals.css";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
-  variable: "--font-display",
+  variable: "--font-display-src",
   subsets: ["latin"],
   display: "swap",
 });
 
 /** Body face — paragraphs, buttons, nav. */
 const body = Inter_Tight({
-  variable: "--font-body",
+  variable: "--font-body-src",
   subsets: ["latin"],
   display: "swap",
 });
 
 /** Utility face — eyebrows, section numbers, metadata. Reads as machine output. */
 const mono = JetBrains_Mono({
-  variable: "--font-mono",
+  variable: "--font-mono-src",
   subsets: ["latin"],
   display: "swap",
 });

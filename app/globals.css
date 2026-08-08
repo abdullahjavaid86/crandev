@@ -53,7 +53,13 @@
   --color-cyan: var(--cyan);
   --color-ion: var(--ion);
 
-  /* Fonts are provided by next/font via <html> class variables; don't redeclare them here (prevents a CSS variable cycle). */
+  /* next/font sets --font-*-src on <html>. The theme keys must NOT share those
+     names — `--font-mono: var(--font-mono)` is a self-reference, and Tailwind
+     resolves the cycle by dropping the utility, silently falling back to its
+     default stack. The -src suffix keeps both halves distinct. */
+  --font-display: var(--font-display-src);
+  --font-body: var(--font-body-src);
+  --font-mono: var(--font-mono-src);
 
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
@@ -76,7 +82,7 @@
 body {
   background: var(--void);
   color: var(--ice);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
   font-size: var(--t-body);
   line-height: 1.65;
   /* Long repo names and URLs in mono must never widen the page. */
@@ -87,7 +93,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
   font-weight: 650;
   letter-spacing: -0.03em;
   text-wrap: balance;
