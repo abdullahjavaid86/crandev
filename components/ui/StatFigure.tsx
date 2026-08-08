@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { animate, useInView, useMotionValue, useReducedMotion } from "motion/react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion } from "motion/react";
 import { StaggerItem } from "@/components/motion/StaggerGroup";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import type { Stat } from "@/lib/content";
@@ -70,7 +70,7 @@ export function StatFigure({ stat }: StatFigureProps) {
     }
 
     const controls = animate(count, stat.value, {
-      duration: dur.reveal,
+      duration: dur.count,
       ease: ease.out,
     });
 
@@ -91,9 +91,25 @@ export function StatFigure({ stat }: StatFigureProps) {
         </span>
         {/* `whitespace-pre` keeps a leading space in suffixes like " yrs",
             which HTML would otherwise collapse away. Verbatim, as authored. */}
-        <span aria-hidden="true" className="whitespace-pre text-muted">
+        <motion.span
+          aria-hidden="true"
+          className="whitespace-pre text-muted"
+          initial={isReduced ? { opacity: 0 } : { opacity: 0, x: -6 }}
+          animate={
+            inView
+              ? { opacity: 1, x: 0 }
+              : isReduced
+                ? { opacity: 0 }
+                : { opacity: 0, x: -6 }
+          }
+          transition={{
+            duration: dur.base,
+            ease: ease.out,
+            delay: isReduced ? 0 : dur.count * 0.55,
+          }}
+        >
           {stat.suffix}
-        </span>
+        </motion.span>
         <span className="sr-only">
           {final}
           {stat.suffix}

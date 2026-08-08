@@ -101,7 +101,12 @@ export function Card({
           Timing is still `--d-base` / `--e-out`, i.e. `dur.base` + `ease.out`
           from lib/motion.ts (§5).
         */
-        "transition-[border-color,box-shadow] duration-(--d-base) ease-out-soft",
+        // A real lift on hover, not just a glow. transform joins the
+        // transition so the rise interpolates rather than snapping, and it is
+        // motion-safe: a card that jumps position is exactly the movement
+        // reduced motion asks us to drop, while the glow can stay.
+        "transition-[border-color,box-shadow,transform] duration-(--d-base) ease-out-soft",
+        "motion-safe:hover:-translate-y-1",
 
         /*
           Tailwind v4 wraps `hover:` in `@media (hover: hover)`, so the glow is

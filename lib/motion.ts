@@ -22,6 +22,12 @@ export const dur = {
   reveal: 0.8,
   /** Hero only. Nothing else earns this much time. */
   hero: 1.2,
+  /**
+   * Counting figures. Longer than a reveal on purpose: a count that finishes
+   * in 0.8s is over before the eye has settled on it, so it reads as the
+   * number having simply appeared.
+   */
+  count: 1.8,
 } as const;
 
 export const spring: Transition = {
