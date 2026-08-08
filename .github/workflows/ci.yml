@@ -1,0 +1,92 @@
+name: CI
+
+# Gates the merge. Vercel already builds a preview for every push, but a
+# preview deploying is not the same as the branch being correct — it does not
+# block a merge on a type error, a lint failure, or invalid content. This does.
+on:
+  pull_request:
+    branches: [staging, main]
+  push:
+    branches: [staging, main]
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: this workflow only ever reads the repository.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: typecheck · lint · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # MUST come before setup-node. setup-node resolves the yarn cache
+      # directory by running `yarn config get cacheFolder` for v2+, so `yarn`
+      # has to already be Berry — otherwise it probes the bundled Yarn 1 and
+      # caches the wrong path, and every run reinstalls from scratch.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          # Tracks the local toolchain and the Vercel project setting. If one
+          # moves, move all three — see DEPLOYMENT.md.
+          node-version: 24
+          cache: yarn
+
+      # --immutable fails if yarn.lock would change. A lockfile that drifts in
+      # CI is a different dependency tree from the one that was tested.
+      - name: Install
+        run: yarn install --immutable
+
+      - name: Typecheck
+        run: yarn tsc --noEmit
+
+      - name: Lint
+        run: yarn lint
+
+      # Also validates every content/*.json against its zod schema, since the
+      # loaders parse at module scope and the sections import them.
+      - name: Build
+        run: yarn build
+
+      # Regressions that a green build does not catch, because each one fails
+      # silently. All three have already happened in this repo.
+      - name: Guards
+        run: |
+          set -euo pipefail
+          fail=0
+
+          # Tailwind v4 CSS-variable utilities take PARENTHESES. The bracket
+          # form is an arbitrary literal, so `duration-[--d-base]` emits
+          # `transition-duration: --d-base` — invalid, dropped, 0s. It looked
+          # like a fast transition for 21 usages across 11 files.
+          if grep -rnE '(duration|ease|delay)-\[--' app components lib hooks 2>/dev/null; then
+            echo "::error::CSS-variable utility using brackets. Use parentheses: duration-(--d-base)"
+            fail=1
+          fi
+
+          # Colour tokens renamed to roles when light mode landed. A component
+          # referencing a deleted token silently gets no colour.
+          if grep -rnE 'var\(--(void|carbon|graphite|ice|mist|hairline|cyan)\)' app components lib hooks 2>/dev/null; then
+            echo "::error::Retired colour token. Use the role tokens: surface/raised/inset/line/fg/muted/accent."
+            fail=1
+          fi
+
+          # The dev variant picker is excluded by a NODE_ENV-gated dynamic
+          # import. A plain static import dead-codes the JSX but KEEPS the
+          # module — it shipped to production once already.
+          if grep -rl "DevVariantPicker" .next/static/chunks/*.js 2>/dev/null; then
+            echo "::error::Dev variant picker leaked into the production client bundle."
+            fail=1
+          fi
+
+          if [ "$fail" -eq 0 ]; then echo "guards passed"; fi
+          exit "$fail"

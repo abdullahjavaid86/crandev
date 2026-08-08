@@ -139,11 +139,19 @@ A broken CSP is worse than none.
 
 ## 7. Not set up, and why
 
-**No GitHub Actions workflow.** Vercel's native Git integration already builds
-every push and comments preview URLs on PRs. A parallel Actions pipeline would
-duplicate that and double the build minutes. Add one only when there is
-something to gate on — end-to-end tests before promotion, for example, at which
-point `vercel build --prebuilt` plus `vercel promote` is the shape to use.
+**No deploy-from-Actions pipeline.** Vercel's native Git integration already
+builds every push and comments preview URLs on PRs; re-implementing that in
+Actions would duplicate it and double the build minutes.
+
+There IS a `.github/workflows/ci.yml`, but it deploys nothing — it gates the
+merge. A Vercel preview deploying successfully is not the same as the branch
+being correct: it does not block a merge on a type error, a lint failure, or
+malformed content. CI runs typecheck, lint, build and a set of regression
+guards on every PR into `staging` or `main`.
+
+Move deployment into Actions only when there is something to gate promotion on
+— end-to-end tests against a preview, for example — at which point
+`vercel build --prebuilt` plus `vercel promote` is the shape to use.
 
 **No `regions` pinned.** Worth setting once the MongoDB region is known, so the
 Server Action writing submissions is not crossing an ocean per request.
