@@ -94,7 +94,15 @@
   --field-c: radial-gradient(circle at center, rgba(53, 240, 220, 0.20) 0%, transparent 66%);
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  /* The track holds the list twice, so -50% is exactly one full set. */
+  to   { transform: translateX(-50%); }
+}
+
 @theme inline {
+  --animate-marquee: marquee 60s linear infinite;
+
   --color-surface: var(--surface);
   --color-raised: var(--raised);
   --color-inset: var(--inset);
@@ -138,6 +146,18 @@
    over `text-small` on that element. The footer's column headings rendered at
    display size for exactly this reason. */
 @layer base {
+  html {
+    /* The Ship Log rail and any in-page anchor jump smoothly. The
+       reduced-motion block below forces this back to `auto`, which is the
+       correct behaviour there — a long smooth scroll is motion too. */
+    scroll-behavior: smooth;
+  }
+
+  /* Anchor targets clear the sticky header instead of landing under it. */
+  section[id] {
+    scroll-margin-top: 6rem;
+  }
+
   body {
     background: var(--surface);
     color: var(--fg);

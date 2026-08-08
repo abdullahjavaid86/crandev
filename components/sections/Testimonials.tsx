@@ -24,7 +24,7 @@ export function Testimonials() {
     <section
       id="testimonials"
       aria-labelledby="testimonials-heading"
-      className="py-28 md:py-40"
+      className="py-16 md:py-24"
     >
       <Container>
         <Reveal>

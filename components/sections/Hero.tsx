@@ -65,7 +65,7 @@ export function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative overflow-hidden py-28 md:py-40"
+      className="relative overflow-hidden py-16 md:py-24"
     >
       {/* Base: sits behind the text, faint, so a 360px screen still reads copy
           first. md moves it out to the right where it has room to be seen. */}

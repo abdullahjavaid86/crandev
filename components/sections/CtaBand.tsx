@@ -19,7 +19,7 @@ import { primaryCta } from "@/lib/nav";
  */
 export function CtaBand() {
   return (
-    <section id="cta" aria-labelledby="cta-heading" className="py-28 md:py-40">
+    <section id="cta" aria-labelledby="cta-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
           <div className="rounded-lg border border-line bg-raised p-8 md:p-16">

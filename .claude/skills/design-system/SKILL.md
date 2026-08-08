@@ -110,7 +110,7 @@ Line height: `0.95` display · `1.1` h2 · `1.65` body.
 ## Space and layout
 
 - 4px grid. No `p-[13px]`.
-- Section rhythm: `py-28 md:py-40`. Do not fight this per section.
+- Section rhythm: `py-16 md:py-24`. **This is the gap BETWEEN two sections** — adjacent sections each contribute half, so the visible space is 128px mobile / 192px desktop. Reading it as per-section padding doubles every gap. Do not fight it per section.
 - Container: `max-w-[1240px] px-6 md:px-10`. One container component, used everywhere.
 - Grain overlay lives once in `app/layout.tsx`: SVG `feTurbulence` at `var(--grain-opacity)`, `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the dark read as film rather than `#000`, and it lightens on the light theme.
 

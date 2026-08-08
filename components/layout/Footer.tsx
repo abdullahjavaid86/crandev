@@ -47,7 +47,7 @@ export function Footer() {
     // The safe-area inset sits on the element, not folded into a calc(), so the
     // vertical rhythm below stays on the shared scale (§4.4).
     <footer className="border-t border-line pb-[env(safe-area-inset-bottom)]">
-      <Container className="py-28 md:py-40">
+      <Container className="py-20 md:py-28">
         {/* Stacks until lg, not md. At 768 a side-by-side brand block plus three
             nav tracks leaves each column ~82px, which is narrower than the
             headings — the squeeze is at md, not at 360. Stacked, the nav grid

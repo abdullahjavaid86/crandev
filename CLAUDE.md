@@ -182,7 +182,8 @@ The display floor is `2.5rem`, not `3.5rem`. At 360px the container is 312px wid
 
 ### 4.4 Space, radius, layout
 
-- Spacing on a 4px grid. Section vertical rhythm: `py-28 md:py-40`. Never fight this per-section.
+- Spacing on a 4px grid. **Section rhythm is `py-16 md:py-24` per section, which is the gap between two sections — 128px on mobile, 192px on desktop.**
+  The rhythm is the SPACE BETWEEN sections, not the padding of one. Adjacent sections each contribute half; setting `py-40` per section produced 320px of dead air between every pair, which is what it looked like. Never fight this per-section.
 - Container: `max-w-[1240px] px-6 md:px-10`.
 - Radius: `--r-sm 8px`, `--r-md 14px`, `--r-lg 24px`. Nothing fully rounded except avatars and pills.
 - One faint full-page grain/noise overlay in `layout.tsx`: SVG `feTurbulence`, `opacity: 0.028`, `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the dark read as film rather than as `#000`.

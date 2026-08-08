@@ -20,7 +20,7 @@ import { process } from "@/lib/content";
  */
 export function Process() {
   return (
-    <section id="process" aria-labelledby="process-heading" className="py-28 md:py-40">
+    <section id="process" aria-labelledby="process-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
           <Eyebrow index="06">Process</Eyebrow>

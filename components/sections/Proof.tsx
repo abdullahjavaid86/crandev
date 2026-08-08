@@ -19,7 +19,7 @@ import { stats } from "@/lib/content";
  */
 export function Proof() {
   return (
-    <section id="proof" aria-labelledby="proof-heading" className="py-28 md:py-40">
+    <section id="proof" aria-labelledby="proof-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
           <Eyebrow index="01">Proof</Eyebrow>

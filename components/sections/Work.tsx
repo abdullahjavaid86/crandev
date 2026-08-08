@@ -33,7 +33,7 @@ const SUBCOPY =
  */
 export function Work() {
   return (
-    <section id="work" aria-labelledby="work-heading" className="py-28 md:py-40">
+    <section id="work" aria-labelledby="work-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
           <Eyebrow index="03">Selected work</Eyebrow>
