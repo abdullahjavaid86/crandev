@@ -24,6 +24,17 @@ import { useIsDesktop } from "@/hooks/useMediaQuery";
  * of its own to get wrong.
  */
 
+/**
+ * Field colour AND alpha come from --field-a/b/c, which are themed. The themes
+ * need very different amounts of paint: a bright field at 0.14 over near-black
+ * is a 2.8x luminance step; the same field over #FAFBFC is 1.04x, which reads
+ * as nothing at all. Light therefore uses deeper, more saturated hues at
+ * roughly double the alpha.
+ *
+ * The values below are a RELATIVE band (0..1) multiplied onto that, so scroll
+ * behaviour is identical in both themes and only the paint differs.
+ */
+
 /** Scroll progress the fields are keyed to: top, middle, bottom. */
 const STOPS = [0, 0.5, 1];
 
@@ -48,15 +59,15 @@ export function ScrollBackground() {
   // Field A — accent, top left. Sinks slowly and fades as the page runs on.
   const aY = useTransform(scrollYProgress, STOPS, range(["-6%", "6%", "18%"]));
   const aX = useTransform(scrollYProgress, STOPS, range(["-4%", "0%", "6%"]));
-  const aOpacity = useTransform(scrollYProgress, STOPS, range([0.18, 0.14, 0.1]));
+  const aOpacity = useTransform(scrollYProgress, STOPS, range([1, 0.78, 0.55]));
 
   // Field B — ion, right. Rises against A so the hue crosses over mid-page.
   const bY = useTransform(scrollYProgress, STOPS, range(["14%", "0%", "-14%"]));
-  const bOpacity = useTransform(scrollYProgress, STOPS, range([0.1, 0.14, 0.11]));
+  const bOpacity = useTransform(scrollYProgress, STOPS, range([0.55, 0.8, 0.62]));
 
   // Field C — accent, bottom. Carries the lower half of long pages.
   const cY = useTransform(scrollYProgress, STOPS, range(["16%", "4%", "-10%"]));
-  const cOpacity = useTransform(scrollYProgress, STOPS, range([0.1, 0.13, 0.18]));
+  const cOpacity = useTransform(scrollYProgress, STOPS, range([0.55, 0.72, 1]));
 
   return (
     <div
@@ -70,7 +81,7 @@ export function ScrollBackground() {
           opacity: aOpacity,
           filter: "blur(120px)",
           background:
-            "radial-gradient(circle at center, var(--accent) 0%, transparent 68%)",
+            "var(--field-a)",
         }}
         className="absolute -top-[18%] -left-[20%] h-[62vmax] w-[62vmax]"
       />
@@ -80,7 +91,7 @@ export function ScrollBackground() {
           opacity: bOpacity,
           filter: "blur(120px)",
           background:
-            "radial-gradient(circle at center, var(--ion) 0%, transparent 68%)",
+            "var(--field-b)",
         }}
         className="absolute top-[22%] -right-[24%] h-[58vmax] w-[58vmax]"
       />
@@ -90,7 +101,7 @@ export function ScrollBackground() {
           opacity: cOpacity,
           filter: "blur(120px)",
           background:
-            "radial-gradient(circle at center, var(--accent) 0%, transparent 66%)",
+            "var(--field-c)",
         }}
         className="absolute -bottom-[28%] left-[8%] h-[50vmax] w-[50vmax]"
       />

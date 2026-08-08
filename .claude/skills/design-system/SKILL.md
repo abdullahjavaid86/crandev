@@ -58,6 +58,14 @@ The accent appears on **one element per viewport-height of scroll** — the thin
 
 When adding a section, ask what already glows in this viewport. If something does, your new element does not.
 
+## Translucent layers do not translate between themes
+
+A colour that works on dark will not work on light by symmetry, and this bites hardest on anything semi-transparent — ambient washes, tinted overlays, glass.
+
+The scroll-background fields shipped invisible in light mode: a bright field at `0.14` alpha is a **2.8x luminance step** over near-black and **1.04x** over `#FAFBFC`. Same alpha, same colour, one theme sees it and the other sees nothing.
+
+**Bake the alpha into a themed token** (`--field-a/b/c`), so light can use a deeper, more saturated hue at roughly double the alpha, and let the component animate only a relative `0..1` band on top. Never theme this by reading the theme in JS — that costs a flash on first paint.
+
 ## Checking a change
 
 Both themes, every time. `--muted` is the token that fails first — the dark-mode `#8A93A6` is only 3.09:1 on white. Toggle and re-read before calling anything done.

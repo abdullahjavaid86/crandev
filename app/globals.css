@@ -36,6 +36,16 @@
   --glass-drop: rgba(6, 7, 10, 0.12);
   --grain-opacity: 0.02;
 
+  /* Scroll-background fields. The ALPHA lives here, not in the component,
+     because the two themes need very different amounts of it: a bright field
+     at 0.14 over near-black is a 2.8x luminance step, and the same field over
+     #FAFBFC is 1.04x — invisible. Light therefore uses deeper, more saturated
+     hues at roughly double the alpha. The component only animates a relative
+     opacity band on top, so scroll variation stays identical in both themes. */
+  --field-a: radial-gradient(circle at center, rgba(15, 185, 166, 0.42) 0%, transparent 68%);
+  --field-b: radial-gradient(circle at center, rgba(58, 85, 217, 0.36) 0%, transparent 68%);
+  --field-c: radial-gradient(circle at center, rgba(10, 107, 94, 0.34) 0%, transparent 66%);
+
   /* Radius */
   --r-sm: 8px;
   --r-md: 14px;
@@ -78,6 +88,10 @@
   --glass-catch: rgba(232, 237, 245, 0.06);
   --glass-drop: rgba(0, 0, 0, 0.7);
   --grain-opacity: 0.028;
+
+  --field-a: radial-gradient(circle at center, rgba(53, 240, 220, 0.24) 0%, transparent 68%);
+  --field-b: radial-gradient(circle at center, rgba(76, 111, 255, 0.22) 0%, transparent 68%);
+  --field-c: radial-gradient(circle at center, rgba(53, 240, 220, 0.20) 0%, transparent 66%);
 }
 
 @theme inline {

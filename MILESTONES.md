@@ -165,6 +165,7 @@ One line per milestone, per `maintaining-skills`. A no-op audit is a valid entry
 | Date | Milestone | Result |
 |---|---|---|
 | 2026-08-08 | — | Skills authored: design-system, motion-system, building-a-section, adding-a-page, content-and-copy, data-and-forms, quality-gate, maintaining-skills. |
+| 2026-08-08 | M2 | **`design-system` corrected: a token that works on dark does not work on light by symmetry.** The scroll fields were invisible in light mode — a bright field at 0.14 alpha is a 2.8x luminance step on near-black and 1.04x on `#FAFBFC`. Fix: bake the alpha into themed `--field-*` tokens and let motion animate only a relative band. |
 | 2026-08-08 | M0.1 | `motion-system` corrected: package is `motion`, not `framer-motion` (no `./react` subpath on the latter). `CLAUDE.md §2` stack row updated to match, and a Next 16 warning added at the top of `CLAUDE.md` pointing at `node_modules/next/dist/docs/`. |
 | 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row. Branch created; existing work committed as two commits. |
 | 2026-08-08 | — | **Architecture change: backend added.** §2 constraints reversed — MongoDB for submissions (write-only), JSON + zod for page content, server-first with Server Actions. New `data-persistence` skill. §6.2 project details via parallel + intercepting routes (modal on client nav, full page on direct load). §4.6 scroll-reactive background. `.env.example` written. |
