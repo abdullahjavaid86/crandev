@@ -43,7 +43,8 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 1.3 | `components/motion/MaskedText.tsx` — line split | done 2026-08-08 | Lines are authored, not measured — a resize observer re-splitting mid-animation thrashes layout. Animated spans are `aria-hidden` with an `sr-only` copy of the full phrase. |
 | 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | done 2026-08-08 | Added `hooks/useMediaQuery.ts` (+ `useIsDesktop`, `useHasHover`) — shared by every desktop-only enhancement. `ScrollProgress` animates `scaleX`, never width. |
 | 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | done 2026-08-08 | `buttonStyles()` shared with button-styled links so there is one Button. `Button` extends `HTMLMotionProps`, not React's — the drag handler signatures collide. `Field` is a render-prop so input/textarea/select need no special-casing. |
-| 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work |
+| 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work; needs a browser |
+| 1.9 | **Light + dark theming** — role-based tokens, `ThemeScript` (no FOUC), `useTheme`, `ThemeToggle` | done 2026-08-08 | Tokens renamed to roles; all components migrated. Accent split into fill (`--accent`) vs ink (`--accent-ink`) because cyan text on white is 1.43:1. |
 | 1.7 | Scroll-reactive background layer (§4.6) | todo | one `useScroll` driver for the whole site; static below `md` and under reduced motion |
 | 1.8 | `<Modal />` primitive — focus trap, scroll lock, Escape, `router.back()` | todo | **Radix Dialog is the right call here** — focus trap + scroll lock + ARIA is exactly the behaviour §2 now permits a primitive for. Restyle to our tokens; animate open/close with `motion`. Consumed by 5.2. |
 
@@ -140,6 +141,7 @@ Things that need a human answer. Do not guess past these.
 | D2 | Real content — client names, project outcomes, stats, testimonials, logos, team bios, comp bands. Every one of these must be real. | 2026-08-08 | open |
 | D3 | Which GitHub org/user feeds the Ship Log and open-source section? | 2026-08-08 | open |
 | D5 | MongoDB hosting — Atlas or self-hosted? Affects `MONGODB_URI` and whether IP allow-listing is needed. `.env.example` covers both forms. | 2026-08-08 | open |
+| D7 | Light mode changes the ambient glows and the Ship Log rail's look — both were designed against `--void`. Worth your eye once M2 lands. | 2026-08-08 | open |
 | D6 | Submissions are write-only with no admin UI, so nothing in the app reads them back. How do you want to be notified of a new contact query — email, Slack, or checking the collection directly? | 2026-08-08 | open |
 | D4 | Ship Log below `lg`: proposed a 2px cyan progress bar under the header, with the active section's hash/number in that section's eyebrow. The rail has no gutter to pin to at 360px. Written into CLAUDE.md §4.5 as the default — flag if you want a different mobile form for the signature element. | 2026-08-08 | proposed |
 

@@ -18,13 +18,13 @@ export function Eyebrow({ children, className, index }: EyebrowProps) {
   return (
     <p
       className={cn(
-        "font-mono text-small uppercase tracking-[0.18em] text-mist",
+        "font-mono text-small uppercase tracking-[0.18em] text-muted",
         className,
       )}
     >
       {index ? (
         <>
-          <span className="text-ice">{index}</span>
+          <span className="text-fg">{index}</span>
           <span aria-hidden="true"> / </span>
         </>
       ) : null}

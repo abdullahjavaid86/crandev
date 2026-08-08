@@ -15,9 +15,9 @@ type Size = "sm" | "md";
 const variants: Record<Variant, string> = {
   /** THE accent. One per viewport-height of scroll (§4.1). */
   primary:
-    "bg-cyan text-void shadow-[0_0_0_0_rgba(53,240,220,0)] hover:shadow-[0_8px_32px_-8px_rgba(53,240,220,0.45)]",
-  secondary: "border border-hairline bg-carbon text-ice hover:bg-graphite",
-  ghost: "border border-transparent text-mist hover:text-ice",
+    "bg-accent text-accent-on shadow-[0_0_0_0_rgba(53,240,220,0)] hover:shadow-[0_8px_32px_-8px_rgba(53,240,220,0.45)]",
+  secondary: "border border-line bg-raised text-fg hover:bg-inset",
+  ghost: "border border-transparent text-muted hover:text-fg",
 };
 
 const sizes: Record<Size, string> = {

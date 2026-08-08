@@ -1,34 +1,47 @@
 @import "tailwindcss";
 
+/* Class-based, not prefers-color-scheme: the toggle has to win over the OS.
+   The OS is only the initial guess, resolved before paint in layout.tsx. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─────────────────────────────────────────────────────────────
    Tokens — the single source of truth. CLAUDE.md §4.
-   Nothing in a component may introduce a colour, radius, or
-   duration that does not resolve to one of these.
+   Names are ROLES, not colours. `--carbon` can't be light, but
+   `--raised` can, and every component reads roles.
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  /* Surfaces */
-  --void: #06070a;      /* page background, deepest layer */
-  --carbon: #0e1017;    /* raised surfaces, cards */
-  --graphite: #171a22;  /* hover state, inset panels */
+  /* Light — the default. Dark overrides below. */
+  --surface: #fafbfc;   /* page background */
+  --raised: #ffffff;    /* cards, raised surfaces */
+  --inset: #f1f3f6;     /* hover, inset panels */
+  --line: rgba(6, 7, 10, 0.1);
+  --line-strong: rgba(6, 7, 10, 0.22);   /* hover / invalid */
 
-  /* Line */
-  --hairline: rgba(232, 237, 245, 0.08);  /* every border, 1px, never heavier */
+  --fg: #0e1017;        /* primary text */
+  --muted: #5a6274;     /* secondary text — 5.9:1 on --surface */
 
-  /* Text */
-  --ice: #e8edf5;   /* primary */
-  --mist: #8a93a6;  /* secondary, captions */
+  /* The accent has TWO roles and they are not interchangeable.
+     --accent is a FILL. Cyan under dark ink is 14:1 in both themes.
+     --accent-ink is for TEXT and BORDERS. Cyan as text on white is
+     1.43:1, so light mode uses a darkened teal at 6.4:1. */
+  --accent: #35f0dc;
+  --accent-on: #06070a;  /* ink that sits ON --accent */
+  --accent-ink: #0a6b5e;
+  --ion: #3a55d9;
 
-  /* Accent — one cyan element per viewport-height of scroll */
-  --cyan: #35f0dc;
-  --ion: #4c6fff;   /* secondary glow, gradient partner */
+  --glass-tint: rgba(6, 7, 10, 0.04);
+  --glass-tint-soft: rgba(6, 7, 10, 0.015);
+  --glass-catch: rgba(255, 255, 255, 0.7);
+  --glass-drop: rgba(6, 7, 10, 0.12);
+  --grain-opacity: 0.02;
 
   /* Radius */
   --r-sm: 8px;
   --r-md: 14px;
   --r-lg: 24px;
 
-  /* Fluid type — floors are set from 360px, not from the desktop end.
+  /* Fluid type — floors set from 360px, not from the desktop end.
      A 56px display at 360px fits ~7 characters per line. */
   --t-display: clamp(2.5rem, 1.35rem + 5.1vw, 6.5rem);
   --t-h2: clamp(1.75rem, 1.24rem + 2.27vw, 3.5rem);
@@ -36,27 +49,53 @@
   --t-body: 1.0625rem;
   --t-small: 0.875rem;
 
-  /* Motion — mirrors lib/motion.ts. CSS transitions read from here. */
+  /* Motion — mirrors lib/motion.ts. */
   --e-out: cubic-bezier(0.16, 1, 0.3, 1);
   --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --d-micro: 180ms;
   --d-base: 500ms;
 }
 
+.dark {
+  --surface: #06070a;
+  --raised: #0e1017;
+  --inset: #171a22;
+  --line: rgba(232, 237, 245, 0.08);
+  --line-strong: rgba(232, 237, 245, 0.22);
+
+  --fg: #e8edf5;
+  --muted: #8a93a6;
+
+  /* On dark the accent can be text — 14:1 on --surface — so both roles
+     collapse back to the one signature cyan. */
+  --accent: #35f0dc;
+  --accent-on: #06070a;
+  --accent-ink: #35f0dc;
+  --ion: #4c6fff;
+
+  --glass-tint: rgba(232, 237, 245, 0.055);
+  --glass-tint-soft: rgba(232, 237, 245, 0.015);
+  --glass-catch: rgba(232, 237, 245, 0.06);
+  --glass-drop: rgba(0, 0, 0, 0.7);
+  --grain-opacity: 0.028;
+}
+
 @theme inline {
-  --color-void: var(--void);
-  --color-carbon: var(--carbon);
-  --color-graphite: var(--graphite);
-  --color-hairline: var(--hairline);
-  --color-ice: var(--ice);
-  --color-mist: var(--mist);
-  --color-cyan: var(--cyan);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-inset: var(--inset);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-on: var(--accent-on);
+  --color-accent-ink: var(--accent-ink);
   --color-ion: var(--ion);
 
-  /* next/font sets --font-*-src on <html>. The theme keys must NOT share those
-     names — `--font-mono: var(--font-mono)` is a self-reference, and Tailwind
-     resolves the cycle by dropping the utility, silently falling back to its
-     default stack. The -src suffix keeps both halves distinct. */
+  /* next/font sets --font-*-src on <html>. Theme keys must NOT share those
+     names — a self-reference is a cycle, and Tailwind resolves a cycle by
+     dropping the utility, silently falling back to its default stack. */
   --font-display: var(--font-display-src);
   --font-body: var(--font-body-src);
   --font-mono: var(--font-mono-src);
@@ -80,8 +119,8 @@
    ───────────────────────────────────────────────────────────── */
 
 body {
-  background: var(--void);
-  color: var(--ice);
+  background: var(--surface);
+  color: var(--fg);
   font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
   font-size: var(--t-body);
   line-height: 1.65;
@@ -114,16 +153,17 @@ h3 {
   line-height: 1.25;
 }
 
-/* The one cyan border that is legal, per §4.1. */
+/* The one accent border that is legal, per §4.1. Uses --accent-ink so it
+   stays visible on a light background. */
 :focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
 ::selection {
-  background: var(--cyan);
-  color: var(--void);
+  background: var(--accent);
+  color: var(--accent-on);
 }
 
 /* Reduced motion is a floor, not a preference. Components still call

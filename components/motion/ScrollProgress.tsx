@@ -34,7 +34,7 @@ export function ScrollProgress({ className }: ScrollProgressProps) {
       aria-hidden="true"
       style={{ scaleX: isReduced ? scrollYProgress : smoothed }}
       className={cn(
-        "fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-cyan",
+        "fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-accent",
         className,
       )}
     />

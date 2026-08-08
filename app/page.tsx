@@ -35,7 +35,7 @@ const content = [
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+    <p className="font-mono text-small uppercase tracking-[0.18em] text-muted">
       {children}
     </p>
   );
@@ -47,7 +47,7 @@ export default function TokenProof() {
       <Container>
         <Label>M0.7 / token proof</Label>
         <h1 className="mt-6 max-w-[16ch]">Every token, rendered once.</h1>
-        <p className="mt-6 max-w-[65ch] text-mist">
+        <p className="mt-6 max-w-[65ch] text-muted">
           If a colour, radius, or type step looks wrong here, it is wrong
           everywhere. This page is replaced by the real home composition in M2.
         </p>
@@ -64,7 +64,7 @@ export default function TokenProof() {
             is 2.5rem so a headline holds two or three lines at 360px rather
             than five.
           </p>
-          <p className="mt-4 text-small text-mist">Small — captions, metadata.</p>
+          <p className="mt-4 text-small text-muted">Small — captions, metadata.</p>
         </section>
 
         {/* ── Surfaces ───────────────────────────────────────────────── */}
@@ -77,14 +77,14 @@ export default function TokenProof() {
             {surfaces.map((s) => (
               <li
                 key={s.token}
-                className="rounded-md border border-hairline p-6"
+                className="rounded-md border border-line p-6"
                 style={{ background: `var(${s.token})` }}
               >
-                <p className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+                <p className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                   {s.token}
                 </p>
-                <p className="mt-2 text-small text-mist">{s.value}</p>
-                <p className="mt-1 text-small text-mist">{s.role}</p>
+                <p className="mt-2 text-small text-muted">{s.value}</p>
+                <p className="mt-1 text-small text-muted">{s.role}</p>
               </li>
             ))}
           </ul>
@@ -101,13 +101,13 @@ export default function TokenProof() {
               <li key={i.token} className="flex flex-wrap items-center gap-4">
                 <span
                   aria-hidden="true"
-                  className="size-6 shrink-0 rounded-sm border border-hairline"
+                  className="size-6 shrink-0 rounded-sm border border-line"
                   style={{ background: `var(${i.token})` }}
                 />
-                <span className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+                <span className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                   {i.token}
                 </span>
-                <span className="text-small text-mist">{i.role}</span>
+                <span className="text-small text-muted">{i.role}</span>
               </li>
             ))}
           </ul>
@@ -124,7 +124,7 @@ export default function TokenProof() {
             <div
               aria-hidden="true"
               className="absolute -left-10 top-0 size-64 rounded-full opacity-30 blur-[120px]"
-              style={{ background: "var(--cyan)" }}
+              style={{ background: "var(--accent)" }}
             />
             <div
               aria-hidden="true"
@@ -132,7 +132,7 @@ export default function TokenProof() {
               style={{ background: "var(--ion)" }}
             />
             <div
-              className="relative rounded-lg border border-hairline p-8 backdrop-blur-[20px] backdrop-saturate-[140%]"
+              className="relative rounded-lg border border-line p-8 backdrop-blur-[20px] backdrop-saturate-[140%]"
               style={{
                 background:
                   "linear-gradient(148deg, rgba(232,237,245,0.055), rgba(232,237,245,0.015))",
@@ -140,7 +140,7 @@ export default function TokenProof() {
                   "0 1px 0 0 rgba(232,237,245,0.06) inset, 0 24px 60px -24px rgba(0,0,0,0.7)",
               }}
             >
-              <p className="text-mist">
+              <p className="text-muted">
                 Glass sits above the grain layer or a soft glow — never over
                 flat void. Capped at two blurred surfaces below <code>md</code>.
               </p>
@@ -165,11 +165,11 @@ export default function TokenProof() {
               <div
                 key={r.name}
                 className={cn(
-                  "flex size-24 items-center justify-center border border-hairline bg-carbon",
+                  "flex size-24 items-center justify-center border border-line bg-raised",
                   r.className,
                 )}
               >
-                <span className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+                <span className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                   {r.name}
                 </span>
               </div>
@@ -183,27 +183,27 @@ export default function TokenProof() {
           <h2 id="focus" className="mt-4">
             Tab through these
           </h2>
-          <p className="mt-4 max-w-[65ch] text-mist">
+          <p className="mt-4 max-w-[65ch] text-muted">
             The cyan ring is the one cyan border that is legal. Every
             interactive element on the site must show it.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button
               type="button"
-              className="rounded-md border border-hairline bg-carbon px-5 py-3 transition-colors duration-[--d-micro] hover:bg-graphite"
+              className="rounded-md border border-line bg-raised px-5 py-3 transition-colors duration-[--d-micro] hover:bg-inset"
             >
               Button
             </button>
             <a
               href="#type"
-              className="rounded-md border border-hairline bg-carbon px-5 py-3 transition-colors duration-[--d-micro] hover:bg-graphite"
+              className="rounded-md border border-line bg-raised px-5 py-3 transition-colors duration-[--d-micro] hover:bg-inset"
             >
               Link
             </a>
             <input
               aria-label="Sample input"
               placeholder="Input"
-              className="rounded-md border border-hairline bg-carbon px-5 py-3 placeholder:text-mist"
+              className="rounded-md border border-line bg-raised px-5 py-3 placeholder:text-muted"
             />
           </div>
         </section>
@@ -214,7 +214,7 @@ export default function TokenProof() {
           <h2 id="content" className="mt-4">
             JSON behind a schema
           </h2>
-          <p className="mt-4 max-w-[65ch] text-mist">
+          <p className="mt-4 max-w-[65ch] text-muted">
             All empty until real content lands (D2). Empty is honest; invented
             projects are not. A malformed entry fails the build.
           </p>
@@ -222,12 +222,12 @@ export default function TokenProof() {
             {content.map((c) => (
               <div
                 key={c.file}
-                className="flex items-baseline justify-between gap-4 rounded-md border border-hairline bg-carbon px-5 py-4"
+                className="flex items-baseline justify-between gap-4 rounded-md border border-line bg-raised px-5 py-4"
               >
-                <dt className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+                <dt className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                   {c.file}
                 </dt>
-                <dd className="font-mono text-small text-ice">{c.count}</dd>
+                <dd className="font-mono text-small text-fg">{c.count}</dd>
               </div>
             ))}
           </dl>
@@ -240,19 +240,19 @@ export default function TokenProof() {
             Values only — primitives land in M1
           </h2>
           <dl className="mt-8 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-md border border-hairline bg-carbon px-5 py-4">
-              <dt className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+            <div className="rounded-md border border-line bg-raised px-5 py-4">
+              <dt className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                 ease.out
               </dt>
-              <dd className="mt-1 font-mono text-small text-ice">
+              <dd className="mt-1 font-mono text-small text-fg">
                 {ease.out.join(", ")}
               </dd>
             </div>
-            <div className="rounded-md border border-hairline bg-carbon px-5 py-4">
-              <dt className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+            <div className="rounded-md border border-line bg-raised px-5 py-4">
+              <dt className="font-mono text-small uppercase tracking-[0.18em] text-muted">
                 dur
               </dt>
-              <dd className="mt-1 font-mono text-small text-ice">
+              <dd className="mt-1 font-mono text-small text-fg">
                 {Object.entries(dur)
                   .map(([k, v]) => `${k} ${v}s`)
                   .join(" · ")}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Grain } from "@/components/layout/Grain";
+import { ThemeScript } from "@/components/layout/ThemeScript";
 import "./globals.css";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
@@ -36,6 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="flex min-h-full flex-col">
         {children}
         <Grain />

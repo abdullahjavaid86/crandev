@@ -24,18 +24,18 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body className="min-h-dvh">
         <main className="flex min-h-dvh flex-col justify-center px-6 py-28 md:px-10">
           <div className="mx-auto w-full max-w-[1240px]">
-            <p className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+            <p className="font-mono text-small uppercase tracking-[0.18em] text-muted">
               Error
             </p>
 
             <h1 className="mt-6 max-w-[20ch]">The site failed to load.</h1>
 
-            <p className="mt-6 max-w-[65ch] text-mist">
+            <p className="mt-6 max-w-[65ch] text-muted">
               This one is on us, not on your connection. Reload to try again.
             </p>
 
             {error.digest ? (
-              <p className="mt-4 font-mono text-small uppercase tracking-[0.18em] text-mist">
+              <p className="mt-4 font-mono text-small uppercase tracking-[0.18em] text-muted">
                 Ref {error.digest}
               </p>
             ) : null}
@@ -43,7 +43,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <button
               type="button"
               onClick={reset}
-              className="mt-10 rounded-md border border-hairline bg-carbon px-5 py-3 text-ice transition-colors duration-[--d-micro] hover:bg-graphite"
+              className="mt-10 rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
             >
               Reload
             </button>

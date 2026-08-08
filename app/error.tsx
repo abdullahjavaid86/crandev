@@ -18,19 +18,19 @@ export default function Error({ error, reset }: ErrorProps) {
   return (
     <main className="flex min-h-dvh flex-col justify-center px-6 py-28 md:px-10 md:py-40">
       <div className="mx-auto w-full max-w-[1240px]">
-        <p className="font-mono text-small uppercase tracking-[0.18em] text-mist">
+        <p className="font-mono text-small uppercase tracking-[0.18em] text-muted">
           Error
         </p>
 
         <h1 className="mt-6 max-w-[20ch]">Something on this page failed.</h1>
 
-        <p className="mt-6 max-w-[65ch] text-mist">
+        <p className="mt-6 max-w-[65ch] text-muted">
           The rest of the site is fine. Try again — if it keeps happening, tell
           us and we&rsquo;ll fix it.
         </p>
 
         {error.digest ? (
-          <p className="mt-4 font-mono text-small uppercase tracking-[0.18em] text-mist">
+          <p className="mt-4 font-mono text-small uppercase tracking-[0.18em] text-muted">
             Ref {error.digest}
           </p>
         ) : null}
@@ -39,13 +39,13 @@ export default function Error({ error, reset }: ErrorProps) {
           <button
             type="button"
             onClick={reset}
-            className="rounded-md border border-hairline bg-carbon px-5 py-3 text-ice transition-colors duration-[--d-micro] hover:bg-graphite"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
           >
             Try again
           </button>
           <Link
             href="/contact"
-            className="rounded-md border border-hairline bg-carbon px-5 py-3 text-ice transition-colors duration-[--d-micro] hover:bg-graphite"
+            className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"
           >
             Tell us
           </Link>

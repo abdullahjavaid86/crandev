@@ -43,17 +43,17 @@ export function Field({
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <label htmlFor={id} className="text-small text-ice">
+      <label htmlFor={id} className="text-small text-fg">
         {label}
         {required ? (
-          <span className="text-mist"> (required)</span>
+          <span className="text-muted"> (required)</span>
         ) : (
-          <span className="text-mist"> (optional)</span>
+          <span className="text-muted"> (optional)</span>
         )}
       </label>
 
       {description ? (
-        <p id={descriptionId} className="text-small text-mist">
+        <p id={descriptionId} className="text-small text-muted">
           {description}
         </p>
       ) : null}
@@ -66,7 +66,7 @@ export function Field({
       })}
 
       {/* Announced when it appears, without stealing focus. */}
-      <p role="status" aria-live="polite" className="min-h-5 text-small text-ice">
+      <p role="status" aria-live="polite" className="min-h-5 text-small text-fg">
         {error}
       </p>
     </div>
@@ -75,8 +75,8 @@ export function Field({
 
 /** Shared control styling so input, textarea and select can't drift apart. */
 export const controlStyles = cn(
-  "min-h-11 w-full rounded-md border border-hairline bg-carbon px-4 py-3",
-  "text-ice placeholder:text-mist",
-  "transition-colors duration-[--d-micro] hover:border-[rgba(232,237,245,0.16)]",
-  "aria-[invalid=true]:border-[rgba(232,237,245,0.35)]",
+  "min-h-11 w-full rounded-md border border-line bg-raised px-4 py-3",
+  "text-fg placeholder:text-muted",
+  "transition-colors duration-[--d-micro] hover:border-line-strong",
+  "aria-[invalid=true]:border-line-strong",
 );

@@ -100,6 +100,34 @@ Rule: a component that renders more than ~120 lines of JSX gets split. A section
 
 The direction is fixed: **deep obsidian, neon cyan, restrained glass.** These tokens are not suggestions — derive every color from them and add no others.
 
+### 4.0 Two themes
+
+The site supports **dark and light**. Dark is the signature; light is a first-class equivalent, not an afterthought.
+
+**Token names are roles, not colours.** `--carbon` cannot be light, so it doesn't exist — `--raised` does. Components read `bg-raised`, `text-fg`, `text-muted`, `border-line`. A component naming a colour has bypassed the system.
+
+| Role | Light | Dark |
+|---|---|---|
+| `--surface` page | `#FAFBFC` | `#06070A` |
+| `--raised` cards | `#FFFFFF` | `#0E1017` |
+| `--inset` hover | `#F1F3F6` | `#171A22` |
+| `--line` / `--line-strong` | black 10% / 22% | ice 8% / 22% |
+| `--fg` text | `#0E1017` | `#E8EDF5` |
+| `--muted` secondary | `#5A6274` | `#8A93A6` |
+
+**The accent has two roles and they are not interchangeable.**
+
+- `--accent` is a **fill**. Cyan `#35F0DC` under `--accent-on` ink is 14:1 in both themes, so the fill is identical either way.
+- `--accent-ink` is for **text and borders**. Cyan as text on white is **1.43:1** — unusable. Light mode uses a darkened teal `#0A6B5E` at 6.4:1; dark mode collapses both roles back to the one signature cyan.
+
+Get this wrong and light mode ships invisible text. Never use `--accent` where `--accent-ink` belongs.
+
+**Mechanism.** Class-based `.dark` on `<html>`, resolved **before paint** by `ThemeScript` in `<head>`. Precedence is stored choice > OS. Not a `prefers-color-scheme` media query — the toggle has to be able to win. No client provider wraps the tree; `useTheme` reads the DOM through `useSyncExternalStore`, and `ThemeToggle` is a leaf.
+
+**Glass and grain are themed too** — `--glass-tint`, `--glass-catch`, `--glass-drop`, `--grain-opacity`. On light, glass tints dark and the grain lightens to `0.02`.
+
+**Contrast is checked in both themes**, and `--muted` is the one that fails first: the old `#8A93A6` is only 3.09:1 on white.
+
 ### 4.1 Color
 
 Define in `globals.css` as CSS variables, expose to Tailwind via `@theme`.

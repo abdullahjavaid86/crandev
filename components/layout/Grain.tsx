@@ -10,7 +10,8 @@ export function Grain() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-50 opacity-[0.028]"
+      style={{ opacity: "var(--grain-opacity)" }}
+      className="pointer-events-none fixed inset-0 z-50"
     >
       <svg className="h-full w-full">
         <filter id="grain-noise">

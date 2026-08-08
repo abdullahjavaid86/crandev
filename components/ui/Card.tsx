@@ -49,11 +49,11 @@ export function Card({
       ref={ref}
       onMouseMove={wantsHighlight ? onMouseMove : undefined}
       className={cn(
-        "relative overflow-hidden rounded-md border border-hairline",
-        "transition-colors duration-[--d-base] hover:border-[rgba(232,237,245,0.16)]",
+        "relative overflow-hidden rounded-md border border-line",
+        "transition-colors duration-[--d-base] hover:border-line-strong",
         glass
-          ? "bg-[linear-gradient(148deg,rgba(232,237,245,0.055),rgba(232,237,245,0.015))] md:backdrop-blur-[20px] md:backdrop-saturate-[140%]"
-          : "bg-carbon",
+          ? "bg-[linear-gradient(148deg,var(--glass-tint),var(--glass-tint-soft))] md:backdrop-blur-[20px] md:backdrop-saturate-[140%]"
+          : "bg-raised",
         className,
       )}
       {...props}
@@ -61,7 +61,7 @@ export function Card({
       {wantsHighlight ? (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-[--d-base] [background:radial-gradient(240px_circle_at_var(--mx)_var(--my),rgba(53,240,220,0.06),transparent_70%)] group-hover:opacity-100 hover:opacity-100"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-[--d-base] [background:radial-gradient(240px_circle_at_var(--mx)_var(--my),color-mix(in_srgb,var(--accent)_12%,transparent),transparent_70%)] group-hover:opacity-100 hover:opacity-100"
         />
       ) : null}
       {children}

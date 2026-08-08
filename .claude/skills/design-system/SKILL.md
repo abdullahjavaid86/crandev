@@ -19,33 +19,48 @@ Design at 360px first: decide what the thing is when there is no room, then spen
 - Touch has no hover: every interactive element is legible and obviously interactive at rest. Hover affordances go behind `@media (hover: hover)`; touch gets a real `:active` state.
 - Horizontal scrollers use `overscroll-behavior-x: contain` and never scroll the page sideways.
 
-## Tokens
+## Tokens — roles, never colours
 
-Declared once in `app/globals.css` as CSS variables, exposed to Tailwind via `@theme`. Never redeclare them per component.
+Declared once in `app/globals.css`, exposed to Tailwind via `@theme`. Never redeclared per component. **Both themes are first-class**: `.dark` on `<html>` swaps the values, so a token name can never mention a colour.
 
-| Token | Value | Role |
-|---|---|---|
-| `--void` | `#06070A` | page background, deepest layer |
-| `--carbon` | `#0E1017` | raised surfaces, cards |
-| `--graphite` | `#171A22` | hover state, inset panels |
-| `--hairline` | `rgba(232,237,245,0.08)` | every border, 1px, never heavier |
-| `--ice` | `#E8EDF5` | primary text |
-| `--mist` | `#8A93A6` | secondary text, captions |
-| `--cyan` | `#35F0DC` | THE accent — signature only |
-| `--ion` | `#4C6FFF` | secondary glow, gradient partner to cyan |
+| Utility | Role | Light | Dark |
+|---|---|---|---|
+| `bg-surface` | page background | `#FAFBFC` | `#06070A` |
+| `bg-raised` | cards, raised surfaces | `#FFFFFF` | `#0E1017` |
+| `bg-inset` | hover, inset panels | `#F1F3F6` | `#171A22` |
+| `border-line` / `border-line-strong` | every border, 1px | black 10% / 22% | ice 8% / 22% |
+| `text-fg` | primary text | `#0E1017` | `#E8EDF5` |
+| `text-muted` | secondary, captions | `#5A6274` | `#8A93A6` |
+| `bg-accent` + `text-accent-on` | the accent **fill** | cyan + dark ink | cyan + dark ink |
+| `text-accent-ink` | accent **text/border** | `#0A6B5E` | `#35F0DC` |
+| `--ion` | secondary glow | `#3A55D9` | `#4C6FFF` |
 
-Radius: `--r-sm 8px`, `--r-md 14px`, `--r-lg 24px`. Nothing fully rounded except avatars and pills.
+Radius: `rounded-sm` 8px, `rounded-md` 14px, `rounded-lg` 24px. Nothing fully rounded except avatars and pills.
 
-## Accent discipline — the rule people break first
+Also themed: `--glass-tint`, `--glass-catch`, `--glass-drop`, `--grain-opacity`.
 
-Cyan appears on **one element per viewport-height of scroll**. It marks the thing you want clicked or read first.
+## The accent's two roles — the thing that breaks light mode
+
+`--accent` is a **fill**. `--accent-ink` is for **text and borders**. They are not interchangeable.
+
+Cyan `#35F0DC` as text on white is **1.43:1** — invisible. As a fill under dark ink it is 14:1 in both themes. So light mode keeps the cyan fill and swaps the *ink* role to a darkened teal at 6.4:1; dark mode collapses both roles back to the one cyan.
+
+**Using `bg-accent`/`text-accent` where `text-accent-ink` belongs ships unreadable text to every light-mode visitor, and it looks fine on your dark screen.**
+
+## Accent discipline
+
+The accent appears on **one element per viewport-height of scroll** — the thing you want clicked or read first.
 
 - If two things glow, nothing glows.
-- Body copy is never cyan.
-- Borders are never cyan, except `:focus-visible` and the active nav item.
-- Tailwind's stock `cyan-400` is not our cyan. Use the token.
+- Body copy never takes the accent.
+- Borders never take it, except `:focus-visible` and the active nav item.
+- Tailwind's stock `cyan-400` is not our accent. Use the token.
 
-When adding a section, ask: what already glows in this viewport? If something does, your new element does not.
+When adding a section, ask what already glows in this viewport. If something does, your new element does not.
+
+## Checking a change
+
+Both themes, every time. `--muted` is the token that fails first — the dark-mode `#8A93A6` is only 3.09:1 on white. Toggle and re-read before calling anything done.
 
 ## Glass recipe
 
