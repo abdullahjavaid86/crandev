@@ -1,26 +1,37 @@
 import { ShipLog, type ShipLogSection } from "@/components/layout/ShipLog";
+import { Brands } from "@/components/sections/Brands";
+import { CtaBand } from "@/components/sections/CtaBand";
 import { Hero } from "@/components/sections/Hero";
+import { Process } from "@/components/sections/Process";
+import { Proof } from "@/components/sections/Proof";
+import { Services } from "@/components/sections/Services";
+import { Testimonials } from "@/components/sections/Testimonials";
+import { Work } from "@/components/sections/Work";
 
 /**
- * Side-effect import, deliberately. The zod schemas in lib/content only run
- * when something imports the loader, so dropping the M0.7 token proof — which
- * was the only importer — would have silently stopped validating every JSON
- * content file. This keeps malformed content a build failure until M3.3 wires
- * the work grid and imports `projects` for real.
- */
-import "@/lib/content";
-
-/**
- * Home. Composes sections and nothing else — it defines no markup of its own
+ * Home. Composes sections and nothing else — it declares no markup of its own
  * beyond the rail's section list (§3).
  *
- * Replaces the M0.7 token proof, which did its job and is in git history if a
- * palette or type-scale reference is wanted again.
+ * The rail's list is explicit rather than collected at runtime, which is what
+ * lets every section stay a server component (§4.5). Its ids and order must
+ * match the sections below, and the Eyebrow index inside each section.
  *
- * The rail's list is explicit rather than collected at runtime, so each section
- * stays a server component (§4.5). Rows are added here as M3 lands.
+ * The CTA band is not a rail entry: it is a repeated page ending, not a
+ * numbered part of the argument.
+ *
+ * lib/content no longer needs a side-effect import here — Proof, Services,
+ * Work, Testimonials, Brands and Process all import it directly, so the zod
+ * schemas run at build regardless.
  */
-const SECTIONS: ShipLogSection[] = [{ id: "hero", label: "Intro" }];
+const SECTIONS: ShipLogSection[] = [
+  { id: "hero", label: "Intro" },
+  { id: "proof", label: "Proof" },
+  { id: "services", label: "Services" },
+  { id: "work", label: "Work" },
+  { id: "testimonials", label: "Clients" },
+  { id: "brands", label: "Teams" },
+  { id: "process", label: "Process" },
+];
 
 export default function Home() {
   return (
@@ -28,6 +39,13 @@ export default function Home() {
       <ShipLog sections={SECTIONS} />
       <main>
         <Hero />
+        <Proof />
+        <Services />
+        <Work />
+        <Testimonials />
+        <Brands />
+        <Process />
+        <CtaBand />
       </main>
     </>
   );

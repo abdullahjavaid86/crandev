@@ -74,14 +74,14 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 
 | # | Task | Status | Notes |
 |---|---|---|---|
-| 3.1 | Proof strip — 4 real stats, count-up | todo | real numbers or cut |
-| 3.2 | Services — card stacking, list on mobile | todo | |
-| 3.3 | Work grid — 4–6 projects, links to `/work/[slug]` | todo | |
-| 3.4 | Testimonials — attributed quotes only | todo | |
-| 3.5 | Brands / associations strip | todo | label honestly |
-| 3.6 | Process — `01→04`, tied to the rail | todo | |
+| 3.1 | Proof strip — 4 real stats, count-up | done 2026-08-08 | Count-up extracted to `ui/StatFigure` so the section stays a server component; server-rendered at final value, so it is correct with no JS. |
+| 3.2 | Services — card stacking, list on mobile | done 2026-08-08 | List-first, stack added at `lg`. `lg:gap-48` is load-bearing — it makes the progress slices land on real hand-off points regardless of card height. |
+| 3.3 | Work grid — 4–6 projects, links to `/work/[slug]` | done 2026-08-08 | `ui/ProjectCard` is separate — /work and the modal both consume it. Remote covers use `fill` in a fixed aspect box; `sizes` set, no `priority`. |
+| 3.4 | Testimonials — attributed quotes only | done 2026-08-08 | `<figure>`/`<blockquote>`/`<figcaption><cite>` — `<cite>` inside a quote would name the work, not the speaker. |
+| 3.5 | Brands / associations strip | done 2026-08-08 | Name is the primary visual (six identical placeholder marks would look broken). Mark is a CSS mask, not `next/image`, so `currentColor` survives. |
+| 3.6 | Process — `01→04`, tied to the rail | done 2026-08-08 | Numbering derives from index; base is a plain list, `md` adds the rail. |
 | 3.7 | Contact section + form → Server Action → MongoDB | todo | zod re-validation server-side, rate limit, honeypot, length caps |
-| 3.8 | CTA band | todo | |
+| 3.8 | CTA band | done 2026-08-08 | The only section allowed the accent. CTA label/href from `lib/nav`. |
 
 ---
 
