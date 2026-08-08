@@ -3,7 +3,15 @@
 # nothing unformatted or lint-dirty should reach a branch other people pull.
 #
 # These are the same checks CI runs, so a push that passes here will not fail
-# CI on lint or formatting.
+# CI on formatting, lint, or types.
+#
+# Ordered cheapest first, so the most common failure is also the fastest to
+# hear about: ~2.7s / ~4.0s / ~3.1s, about ten seconds total.
+#
+# `typecheck` runs `next typegen` before tsc. A bare tsc reads clean off a
+# stale .next and then fails on a clean checkout — which is exactly how the
+# LayoutProps error got past a local check and into CI.
 
 yarn format:check
 yarn lint
+yarn typecheck
