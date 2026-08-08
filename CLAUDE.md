@@ -460,7 +460,13 @@ If the tracker and the code disagree, the code is right and the tracker is stale
 
 Full procedure in the `git-workflow` skill. The two rules that never bend:
 
-**One branch.** All work happens on `feature/fast-track`. No task branches, no topic branches. `main` is protected and receives milestone PRs only. Check `git branch --show-current` before starting a task, and never commit to `main` directly.
+**One branch.** All work happens on `feature/fast-track`. No task branches, no topic branches. `staging` and `main` are integration branches — never commit to either directly. Check `git branch --show-current` before starting a task.
+
+```
+main  ←  staging  ←  feature/fast-track
+```
+
+**PRs target `staging`.** Always. `main` is a PR base only when you explicitly ask for it in that request — a finished milestone is not permission. `staging` → `main` is a release and is the user's call.
 
 **One task, one commit.** A task is a numbered row in `MILESTONES.md`; it becomes exactly one commit, made *after* the quality gate passes. No mid-task checkpoints — use `git stash`. If a task turns out to be two things, split the row in the tracker first. `MILESTONES.md` is updated in the same commit as the code it describes.
 

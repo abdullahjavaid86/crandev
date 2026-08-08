@@ -9,11 +9,12 @@ Two rules carry everything else: **there is one working branch**, and **one task
 
 ## The one-branch rule
 
-`feature/fast-track` is the only branch work happens on. Do not create task branches, topic branches, or spike branches.
+`feature/fast-track` is the only branch work happens on. Do not create task branches, topic branches, or spike branches. `staging` and `main` are integration branches — **never commit to either directly.**
 
 ```
-main                       ← protected; only receives milestone PRs
- └── feature/fast-track    ← the ONLY working branch
+main                       ← release. PR base ONLY when explicitly asked for
+ └── staging               ← default PR base; integration
+      └── feature/fast-track    ← the ONLY working branch
 ```
 
 **Before starting any task**, confirm you are on it and current:
@@ -23,7 +24,7 @@ git branch --show-current    # must print: feature/fast-track
 git status --short           # must be clean before you start
 ```
 
-If you are on `main`, switch — never commit to `main` directly. If the tree is dirty from a previous task, finish or stash that work before starting a new one; a commit that mixes two tasks is not reviewable and is the main thing this workflow exists to prevent.
+If you are on `staging` or `main`, switch — never commit to either directly. If the tree is dirty from a previous task, finish or stash that work before starting a new one; a commit that mixes two tasks is not reviewable and is the main thing this workflow exists to prevent.
 
 ## One task, one commit
 
@@ -77,27 +78,37 @@ Claude-Session: https://claude.ai/code/session_019755Ccf7r19k6VWRaTyr7x
 
 **Stage deliberately.** `git add <paths>`, not `git add -A`. Read `git status` before every commit and confirm every listed file belongs to this task.
 
-## Milestones and `main`
+## PRs — the base is always `staging`
 
-`feature/fast-track` reaches `main` only through a PR, opened when a milestone in `MILESTONES.md` is complete — every row `done`, every gate passed.
+**Every PR targets `staging`. `main` is never a PR base unless the user explicitly asks for it in that request.** Not "it's a milestone", not "the work looks finished" — explicitly asked, that time.
+
+Open the PR when a milestone in `MILESTONES.md` is complete: every row `done`, every gate passed.
 
 ```bash
-gh pr create --base main --head feature/fast-track \
+gh pr create --base staging --head feature/fast-track \
   --title "M0 — Foundations" \
   --body "…what shipped, what was decided, what is still open…"
 ```
 
-The PR body lists the tasks with their commits, the decisions a reviewer should check, and anything left in **Known gaps**. After merge, keep working on `feature/fast-track` — it is long-lived and is not deleted.
+The body lists the tasks with their commits, the decisions a reviewer should check, and anything left in **Known gaps**. After merge, keep working on `feature/fast-track` — it is long-lived and is not deleted.
+
+**`staging` → `main` is a release, and it is the user's call.** Do it only when asked, in that request:
+
+```bash
+gh pr create --base main --head staging --title "Release: …"
+```
+
+If you catch yourself typing `--base main`, stop and confirm you were asked for it.
 
 ## Pushing is an outward action
 
 Committing is local and cheap. **Pushing publishes.** Push when the user asks, or at milestone close as part of opening the PR — not automatically after every task.
 
-Never `push --force` to a shared branch, never rebase anything already pushed, and never rewrite `main`.
+Never `push --force` to a shared branch, never rebase anything already pushed, and never rewrite `staging` or `main`.
 
 ## Before you commit — the short list
 
-- [ ] On `feature/fast-track`.
+- [ ] On `feature/fast-track` — not `staging`, not `main`.
 - [ ] The task passed [quality-gate](../quality-gate/SKILL.md); `npm run build` and `npm run lint` are clean.
 - [ ] `git status` shows only files belonging to this task.
 - [ ] No secrets, no `settings.local.json`, no build output.

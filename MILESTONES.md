@@ -155,5 +155,6 @@ One line per milestone, per `maintaining-skills`. A no-op audit is a valid entry
 |---|---|---|
 | 2026-08-08 | — | Skills authored: design-system, motion-system, building-a-section, adding-a-page, content-and-copy, data-and-forms, quality-gate, maintaining-skills. |
 | 2026-08-08 | M0.1 | `motion-system` corrected: package is `motion`, not `framer-motion` (no `./react` subpath on the latter). `CLAUDE.md §2` stack row updated to match, and a Next 16 warning added at the top of `CLAUDE.md` pointing at `node_modules/next/dist/docs/`. |
-| 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row, milestone PRs to `main`. Branch created; existing work committed as two commits. |
+| 2026-08-08 | — | **Git workflow adopted.** New `git-workflow` skill + `CLAUDE.md §17`: one branch (`feature/fast-track`), one commit per tracker row. Branch created; existing work committed as two commits. |
+| 2026-08-08 | — | **PR base corrected to `staging`.** `git-workflow` + §17 updated: every PR targets `staging`; `main` is a base only on explicit request in that request. Topology `main ← staging ← feature/fast-track`. |
 | 2026-08-08 | — | **Mobile-first adopted as a project constraint.** New `CLAUDE.md §4.6` (authoring rule); §4.2 glass budget split by breakpoint; §4.3 display floor lowered `3.5rem → 2.5rem`; §4.5 mobile Ship Log defined; §9 breakpoint matrix widened. Propagated to `design-system`, `motion-system`, `building-a-section`, `adding-a-page`, `quality-gate`. |
