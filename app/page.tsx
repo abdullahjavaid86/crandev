@@ -35,18 +35,29 @@ const SECTIONS: ShipLogSection[] = [
 
 export default function Home() {
   return (
-    <>
-      <ShipLog sections={SECTIONS} />
-      <main>
-        <Hero />
-        <Proof />
-        <Services />
-        <Work />
-        <Testimonials />
-        <Brands />
-        <Process />
-        <CtaBand />
-      </main>
-    </>
+    <main className="relative">
+      {/*
+        The rail lives inside <main> so its sticky container spans exactly the
+        content area and nothing else. Absolutely positioned and zero-width, so
+        it occupies the gutter without taking part in the layout, and hidden
+        below lg where there is no gutter to occupy.
+      */}
+      <div
+        className="pointer-events-none absolute inset-y-0 left-4 z-30 hidden w-0 lg:block"
+      >
+        <div className="pointer-events-auto h-full">
+          <ShipLog sections={SECTIONS} />
+        </div>
+      </div>
+
+      <Hero />
+      <Proof />
+      <Services />
+      <Work />
+      <Testimonials />
+      <Brands />
+      <Process />
+      <CtaBand />
+    </main>
   );
 }

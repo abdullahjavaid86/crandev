@@ -132,7 +132,9 @@ A thin vertical rail in the left gutter on desktop that tracks scroll. Each sect
 
 This is the one memorable thing on the site. **No other section gets a second scene-stealer.** Before adding a bold new visual idea, check it does not compete with the rail.
 
-**The rail retires before the footer.** It is fixed at the vertical centre, so without this it scrolls straight over the footer's divider. An IntersectionObserver on `<footer>` with a shrunk root fades it out — and the clearance has to be measured, not guessed: at a 40% shrink there were only 14px between the trigger and the rail's lowest row, which a fast scroll outruns during a 500ms fade. Any fixed chrome added later needs the same check.
+**The rail parks above the footer — it is `sticky`, not `fixed`.** Fixed chrome scrolls straight over the footer. The rail lives inside `<main>` in an absolutely positioned, zero-width container spanning only the content area, with `sticky top-1/2` inside it, so it stops at the end of the last section on its own. No IntersectionObserver, no fade, no JS.
+
+The first attempt at this hid the rail with an observer instead, and needed the clearance measured to avoid a visible overlap during the fade. Parking is better than hiding: the information stays on screen, and CSS enforces the boundary exactly rather than approximately. **Prefer a sticky container over fixed positioning plus a visibility hack for any side chrome.**
 
 **Below `lg` the rail changes form rather than shrinking** — there is no gutter to pin to at 360px. Mobile gets a 2px cyan scroll-progress bar fixed under the header, and the active section's mono hash and number ride in that section's own eyebrow. Same information, same voice, no rail. The hero commit ticker stays on every size; it is content, not chrome.
 
