@@ -1,1 +1,97 @@
-[]
+[
+  {
+    "slug": "ledger-core",
+    "client": "Northwind Pay",
+    "category": "Fintech",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80",
+    "outcome": "Cut p95 write latency from 1.4s to 180ms across the ledger.",
+    "problem": "Settlement writes contended on a single table and blocked reconciliation nightly.",
+    "built": "An append-only ledger with per-account partitioning and a replay-safe reconciler.",
+    "stack": [
+      "Go",
+      "Postgres",
+      "Kafka"
+    ],
+    "year": 2025,
+    "weeks": 14
+  },
+  {
+    "slug": "atlas-ingest",
+    "client": "Atlas Health",
+    "category": "Data",
+    "cover": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&q=80",
+    "outcome": "Backfills went from 9 hours to 22 minutes.",
+    "problem": "Every ingest reprocessed the full window, so a one-row fix cost a night.",
+    "built": "Incremental ingestion with watermarking and idempotent upserts.",
+    "stack": [
+      "Python",
+      "dbt",
+      "BigQuery"
+    ],
+    "year": 2025,
+    "weeks": 9
+  },
+  {
+    "slug": "relay-events",
+    "client": "Relay",
+    "category": "Platform",
+    "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=1200&q=80",
+    "outcome": "One slow consumer no longer stalls the other 40.",
+    "problem": "A shared retry pool meant a single failing sink backed up every subscriber.",
+    "built": "Per-consumer retry budgets with dead-letter isolation and replay.",
+    "stack": [
+      "TypeScript",
+      "NATS",
+      "Postgres"
+    ],
+    "year": 2024,
+    "weeks": 11
+  },
+  {
+    "slug": "harbor-console",
+    "client": "Harbor Logistics",
+    "category": "Product",
+    "cover": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80",
+    "outcome": "Dispatchers handle 3x the daily loads with the same headcount.",
+    "problem": "Dispatch ran on 4 spreadsheets and a phone, with no audit trail.",
+    "built": "A real-time console with optimistic assignment and a full event log.",
+    "stack": [
+      "Next.js",
+      "Postgres",
+      "Redis"
+    ],
+    "year": 2024,
+    "weeks": 16
+  },
+  {
+    "slug": "sentinel-audit",
+    "client": "Sentinel",
+    "category": "Security",
+    "cover": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "outcome": "Cut the SOC2 evidence pull from 3 weeks to 2 days.",
+    "problem": "Evidence lived across 6 systems and was gathered by hand each cycle.",
+    "built": "A collector that snapshots controls on a schedule and diffs them.",
+    "stack": [
+      "Go",
+      "Terraform",
+      "S3"
+    ],
+    "year": 2023,
+    "weeks": 8
+  },
+  {
+    "slug": "meridian-search",
+    "client": "Meridian",
+    "category": "Product",
+    "cover": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&q=80",
+    "outcome": "Search p99 fell below 90ms on a 40M document corpus.",
+    "problem": "Query latency grew with the corpus and nobody could say why.",
+    "built": "A rebuilt index with tiered shards and a tracing layer over every query.",
+    "stack": [
+      "Rust",
+      "OpenSearch"
+    ],
+    "year": 2023,
+    "weeks": 12
+  }
+]

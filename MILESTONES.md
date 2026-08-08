@@ -153,6 +153,8 @@ Things that need a human answer. Do not guess past these.
 
 Real problems we shipped past on purpose. Not a wishlist.
 
+- **ALL of `content/` is invented sample data.** See `content/README.md` for the per-file list. Authorised by the owner so the sections have a correct shape to build against, and to be replaced before launch. The numbers in `work.json` and `stats.json` are fabricated, and `testimonials.json` attributes invented quotes to invented people — that is the entry with the most reputational weight if it ever ships.
+- **Project covers and team photos are remote Unsplash URLs.** They must become static imports from `/public` for the blur placeholder and intrinsic sizing (§7.0) — a schema change, not just a value swap. `next.config.ts` `remotePatterns` exists only to serve them and should be removed with them.
 - **Hero commit ticker renders invented commits.** `PLACEHOLDER_COMMITS` in `components/sections/Hero.tsx`. §4.5 sanctions a mock while the GitHub route is built, but this section's entire job is being real, so it **must not reach production**. Removed by M4.4.
 - **Hero copy is a draft.** Headline and subcopy in `components/sections/Hero.tsx` were written to the §8 rules but describe a team whose actual positioning has not been supplied (D2).
 

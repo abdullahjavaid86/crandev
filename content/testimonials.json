@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "quote": "They rebuilt our ledger without a single day of downtime, then stayed on for the six months it took us to trust it. That second part is the rare bit.",
+    "name": "Dana Okafor",
+    "role": "CTO",
+    "company": "Northwind Pay"
+  },
+  {
+    "quote": "We had three teams argue about the ingest design for a quarter. CraneDev shipped a working version in nine weeks and the argument stopped.",
+    "name": "Marcus Feld",
+    "role": "VP Engineering",
+    "company": "Atlas Health"
+  },
+  {
+    "quote": "The handover was a repo we could actually read, with the reasoning written down. We have added to it for a year without calling them.",
+    "name": "Priya Raman",
+    "role": "Head of Platform",
+    "company": "Relay"
+  }
+]
