@@ -59,7 +59,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | # | Task | Status | Notes |
 |---|---|---|---|
 | 2.1 | `layout/Header` — sticky, blurs past 40px, mobile overlay | todo | |
-| 2.2 | Shared nav source consumed by Header + Footer | todo | |
+| 2.2 | Shared nav source consumed by Header + Footer | done 2026-08-08 | `lib/nav.ts` — primaryNav, primaryCta, footerNav, `isActive()`. Prefix match keeps Work active on `/work/[slug]`, including as an intercepted modal. |
 | 2.3 | `layout/Footer` | todo | |
 | 2.4 | Ship Log rail — section registration + scroll tracking | todo | the signature element |
 | 2.5 | Hero — masked headline, subcopy, CTA, ambient glows | todo | |
