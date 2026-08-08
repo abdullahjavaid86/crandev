@@ -102,6 +102,26 @@
   --lattice-node: rgba(232, 237, 245, 0.20);
 }
 
+/* The 0→1 driver for the card's cursor-light hover state (Card.tsx).
+   It has to be REGISTERED: an unregistered custom property is not
+   interpolable, so `--lit` would jump 0→1 at the halfway point and the light
+   would snap on instead of rising. Registered, one transition drives every
+   derived value at once — the light layer's opacity, the radius of its
+   gradient and of its mask, and the depth shadow — with a single paint
+   invalidation per frame rather than four transitions racing each other.
+
+   `inherits: true` because the card sets it and the light layer inside reads
+   it; the child re-inherits the animating value every frame for free.
+
+   @property is Chrome 85 / Safari 16.4 / Firefox 128 — inside Tailwind v4's
+   own support baseline. Where it is missing the hover state still applies, it
+   just arrives instantly, which is also exactly what reduced motion asks for. */
+@property --lit {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   /* The track holds the list twice, so -50% is exactly one full set. */
