@@ -40,7 +40,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 |---|---|---|---|
 | 1.1 | `components/motion/Reveal.tsx` | done 2026-08-08 | opacity + 24px + blur(6px)→0, `once: true`, `delay` prop. Reduced motion drops travel and blur entirely. |
 | 1.2 | `components/motion/StaggerGroup.tsx` | done 2026-08-08 | Parent owns the trigger; `StaggerItem` reads reduced-motion from context so a child can never declare its own viewport. |
-| 1.3 | `components/motion/MaskedText.tsx` — line split | todo | |
+| 1.3 | `components/motion/MaskedText.tsx` — line split | done 2026-08-08 | Lines are authored, not measured — a resize observer re-splitting mid-animation thrashes layout. Animated spans are `aria-hidden` with an `sr-only` copy of the full phrase. |
 | 1.4 | `components/motion/Parallax.tsx`, `ScrollProgress.tsx` | todo | |
 | 1.5 | `ui/Button`, `ui/Card`, `ui/Eyebrow`, `ui/Badge`, `ui/Field` | todo | |
 | 1.6 | Reduced-motion verified on every primitive | todo | blocks all downstream work |
