@@ -32,7 +32,7 @@ export function getClient(): Promise<MongoClient> {
 
 export async function getDb(): Promise<Db> {
   const client = await getClient();
-  return client.db(process.env.MONGODB_DB ?? "crandev");
+  return client.db(process.env.MONGODB_DB ?? "cranedev");
 }
 
 /** The only collections that exist. All write-only — nothing reads them back. */

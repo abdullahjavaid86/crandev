@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Not found — Crandev",
+  title: "Not found — CraneDev",
   description: "That page doesn't exist.",
 };
 
@@ -21,7 +21,10 @@ export default function NotFound() {
           broken on our end.
         </p>
 
-        <nav aria-label="Suggested pages" className="mt-10 flex flex-wrap gap-3">
+        <nav
+          aria-label="Suggested pages"
+          className="mt-10 flex flex-wrap gap-3"
+        >
           <Link
             href="/"
             className="rounded-md border border-line bg-raised px-5 py-3 text-fg transition-colors duration-[--d-micro] hover:bg-inset"

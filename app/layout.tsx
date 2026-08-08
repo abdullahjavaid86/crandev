@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
+
+import {
+  Bricolage_Grotesque,
+  Inter_Tight,
+  JetBrains_Mono,
+} from "next/font/google";
+
 import { Grain } from "@/components/layout/Grain";
+import type { Metadata } from "next";
 import { ScrollBackground } from "@/components/layout/ScrollBackground";
 import { ThemeScript } from "@/components/layout/ThemeScript";
-import "./globals.css";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
@@ -27,7 +33,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Crandev — software that ships",
+  title: "CraneDev — software that ships",
   description:
     "A senior software team that builds and maintains production systems for funded startups and product companies.",
 };
