@@ -23,7 +23,7 @@ Stack as installed: **Next 16.3.0 · React 19.2.8 · TypeScript 5 (strict) · Ta
 | 0.3 | Tokens in `globals.css` + `@theme`; `lib/utils.ts` (`cn`) | done 2026-08-08 | Palette, radius, fluid type, easings. `cn()` is dependency-free per §10 and does **not** resolve conflicting utilities — revisit `tailwind-merge` when variant maps land in M1.5. |
 | 0.4 | `lib/motion.ts` — ease, dur, spring, viewport | done 2026-08-08 | Also carries `revealVariants`, `staggerVariants`, and `reduced()` so components never hand-roll a fifth reveal. |
 | 0.5 | Grain overlay + `<Container>` in `app/layout.tsx` | done 2026-08-08 | `Grain` is static and server-rendered — no client boundary. `Container` takes an `as` prop so sections keep correct semantics without a second wrapper. |
-| 0.6 | `lib/api/client.ts` axios instance + `normalizeError` | todo | |
+| 0.6 | `lib/api/client.ts` axios instance + `normalizeError` | done 2026-08-08 | One shape for every failure mode (HTTP/timeout/network), with `RATE_LIMITED` split out since GitHub 429s are routine. |
 | 0.7 | Blank page proving every token renders | todo | |
 | 0.8 | Error surfaces — `error.tsx`, `global-error.tsx`, `not-found.tsx`; `.env.example` | done 2026-08-08 | Built on tokens only, no primitives needed. `global-error` renders its own `<html>`/`<body>` and degrades without the font variables. |
 | 0.9 | Install `zod` + `mongodb`; `lib/content/` loaders, `lib/db/client.ts` | todo | official driver, not Mongoose (§7.3) |
