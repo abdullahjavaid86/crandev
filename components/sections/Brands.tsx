@@ -24,11 +24,10 @@ import { cn } from "@/lib/utils";
  * name without tracking it. The track holds the list twice and translates
  * -50%, which is exactly one set, so the loop has no seam.
  *
- * It is `motion-safe:` only. An infinite loop is precisely what
+ * It runs continuously — it does not pause on hover. It is `motion-safe:` only. An infinite loop is precisely what
  * prefers-reduced-motion asks us to remove, so under `reduce` the animation is
  * never applied and the strip becomes a static, manually scrollable row.
- * Hover pauses it, so a pointer user can stop and read.
- *
+ * *
  * A server component. No client boundary — the marquee is pure CSS.
  */
 
@@ -66,7 +65,7 @@ export function Brands() {
         <Reveal delay={0.1}>
           <div
             className={cn(
-              "group mt-12 overflow-hidden rounded-lg border border-line bg-raised md:mt-16",
+              "mt-12 overflow-hidden rounded-lg border border-line bg-raised md:mt-16",
               // The fade width matches the track's padding, so names are never
               // dimmed at rest — only as they pass under the edge.
               "[mask-image:linear-gradient(to_right,transparent,black_1.5rem,black_calc(100%_-_1.5rem),transparent)]",
@@ -75,8 +74,6 @@ export function Brands() {
             <div
               className={cn(
                 "flex w-max motion-safe:animate-marquee",
-                // A pointer user can stop the strip to read it.
-                "motion-safe:group-hover:[animation-play-state:paused]",
                 // Under reduce the track does not move, so it must stay
                 // reachable by hand instead.
                 "motion-reduce:w-full motion-reduce:overflow-x-auto motion-reduce:overscroll-x-contain",

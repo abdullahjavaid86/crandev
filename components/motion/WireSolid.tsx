@@ -8,7 +8,8 @@ import {
   useSpring,
 } from "motion/react";
 import { useHasHover } from "@/hooks/useMediaQuery";
-import { EDGES, VERTICES, project, rotate, type Vec3 } from "@/lib/solid";
+import { useHeroShape } from "@/hooks/useHeroShape";
+import { SHAPES, project, rotate, type Vec3 } from "@/lib/shapes";
 import { cn } from "@/lib/utils";
 
 interface WireSolidProps {
@@ -20,12 +21,12 @@ interface WireSolidProps {
 const VIEW = 220;
 
 /**
- * A wireframe solid that tracks the cursor anywhere on screen.
+ * A wireframe torus knot that tracks the cursor anywhere on screen.
  *
  * Code-generated geometry (lib/solid.ts), rendered as two SVG paths and
  * rotated on motion's shared frameloop. No WebGL, no model file, no new
  * dependency — three + @react-three/fiber + drei would be ~150–400KB of
- * runtime for a shape that is 12 points and 30 edges.
+ * runtime for a curve that is trigonometry on 190 points.
  *
  * Two paths, not thirty lines: edges are split into behind/in-front by their
  * midpoint depth each frame, so the whole thing is two `setAttribute` calls
@@ -35,6 +36,10 @@ const VIEW = 220;
  * so it draws in line and muted tones only.
  */
 export function WireSolid({ className, radius = 78 }: WireSolidProps) {
+  const { shape } = useHeroShape();
+  // Until the flag resolves, draw the first entry rather than nothing — a
+  // blank hero for a frame is worse than a shape that may change once.
+  const geometry = SHAPES[shape ?? "knot"];
   const isReduced = useReducedMotion();
   const hasHover = useHasHover();
 
@@ -78,12 +83,12 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
 
   /** Rotate, project, split by depth, write two path strings. */
   const draw = useCallback((yawR: number, pitchR: number) => {
-    const points = VERTICES.map((v: Vec3) =>
+    const points = geometry.points.map((v: Vec3) =>
       project(rotate(v, yawR, pitchR), radius),
     );
     let back = "";
     let front = "";
-    for (const [i, j] of EDGES) {
+    for (const [i, j] of geometry.edges) {
       const a = points[i];
       const b = points[j];
       const seg = `M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
@@ -93,7 +98,7 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
     }
     backRef.current?.setAttribute("d", back);
     frontRef.current?.setAttribute("d", front);
-  }, [radius]);
+  }, [radius, geometry]);
 
   useAnimationFrame((t) => {
     if (isReduced || !visible) return;
@@ -123,6 +128,7 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
         stroke="var(--line-strong)"
         strokeWidth={0.7}
         strokeLinecap="round"
+        strokeLinejoin="round"
         opacity={0.55}
       />
       <path
@@ -131,6 +137,7 @@ export function WireSolid({ className, radius = 78 }: WireSolidProps) {
         stroke="var(--muted)"
         strokeWidth={1.1}
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

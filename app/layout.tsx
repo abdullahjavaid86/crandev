@@ -45,11 +45,11 @@ const mono = JetBrains_Mono({
  * on the first attempt. Putting the dynamic() call in the eliminated branch
  * removes the reference itself.
  */
-const DevBackgroundToggle =
+const DevVariantPicker =
   process.env.NODE_ENV === "production"
     ? null
     : dynamic(() =>
-        import("@/components/ui/BackgroundToggle").then((m) => m.BackgroundToggle),
+        import("@/components/ui/DevVariantPicker").then((m) => m.DevVariantPicker),
       );
 
 export const metadata: Metadata = {
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <div className="flex-1">{children}</div>
         <Footer />
         <Grain />
-        {DevBackgroundToggle ? <DevBackgroundToggle /> : null}
+        {DevVariantPicker ? <DevVariantPicker /> : null}
       </body>
     </html>
   );
