@@ -1,0 +1,34 @@
+[
+  {
+    "slug": "architecture",
+    "title": "Architecture and discovery",
+    "icon": "Compass",
+    "summary": "We map the system you have against the one you need, and write down why.",
+    "deliverable": "A written architecture, a risk list, and a sequenced plan you own.",
+    "timeline": "2\u20133 weeks"
+  },
+  {
+    "slug": "build",
+    "title": "Build to production",
+    "icon": "Hammer",
+    "summary": "A senior team takes the plan to a running system, in your repo from day one.",
+    "deliverable": "A deployed service, tests, runbooks, and the CI that ships it.",
+    "timeline": "8\u201316 weeks"
+  },
+  {
+    "slug": "rescue",
+    "title": "Rescue and migration",
+    "icon": "LifeBuoy",
+    "summary": "For systems that work but cannot be changed safely any more.",
+    "deliverable": "Incremental migration with a rollback at every step, no big-bang cutover.",
+    "timeline": "6\u201314 weeks"
+  },
+  {
+    "slug": "run",
+    "title": "Run it with you",
+    "icon": "Activity",
+    "summary": "We stay on the system after launch instead of handing it to strangers.",
+    "deliverable": "On-call rotation, monthly reliability review, and a shrinking backlog.",
+    "timeline": "Ongoing"
+  }
+]

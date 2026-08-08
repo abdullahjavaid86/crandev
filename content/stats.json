@@ -1,0 +1,22 @@
+[
+  {
+    "value": 42,
+    "suffix": "",
+    "label": "Systems in production"
+  },
+  {
+    "value": 180,
+    "suffix": "ms",
+    "label": "Median p95 after migration"
+  },
+  {
+    "value": 99.98,
+    "suffix": "%",
+    "label": "Uptime across managed services"
+  },
+  {
+    "value": 9,
+    "suffix": " yrs",
+    "label": "Median engineer experience"
+  }
+]

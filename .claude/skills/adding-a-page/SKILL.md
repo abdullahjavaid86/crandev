@@ -30,8 +30,29 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
 4. Reuse the section shell (`py-28 md:py-40`, `<Container>`). One `h1` on the page, headings ordered. Compose and check the page at 360px before looking at it wide.
 5. Register the page's sections with the Ship Log rail.
 6. Dynamic routes: `generateStaticParams()` from the typed content file, plus `notFound()` for an unknown slug.
+   **`params` and `searchParams` are async in Next 15+/16 — you must `await` them.** This is the single most common way code written from memory breaks on this stack:
+
+   ```tsx
+   export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+     const { slug } = await params;
+   }
+   ```
+
+   `cookies()` and `headers()` are async too, and awaiting any of them opts the segment into dynamic rendering. A page reading only typed content from `content/` should stay static — don't reach for them.
 7. Every page ends with the same CTA band → footer. One cyan element in that band.
 8. Run [quality-gate](../quality-gate/SKILL.md), then update `MILESTONES.md`.
+
+## Route state files
+
+The three designed states from [data-and-forms](../data-and-forms/SKILL.md) have App Router file conventions. Co-locate them in the segment folder alongside `page.tsx` — do not hand-roll equivalents inside the page.
+
+| File | Role |
+|---|---|
+| `loading.tsx` | Route-level pending UI. Skeleton matching the final layout, never a spinner. |
+| `error.tsx` | Error boundary. **Must be a client component** (`'use client'`), and takes `reset`. |
+| `not-found.tsx` | Rendered by `notFound()`. The root one is the site 404. |
+
+Wrap a slow or uncacheable part in its own `<Suspense>` so the static shell paints immediately and the rest of the route stays cacheable — the GitHub-fed sections are the case for this. A route group `(group)` organizes files without adding a URL segment; use it if the marketing routes need a shared layout that `/` does not.
 
 ## Shared chrome on mobile
 

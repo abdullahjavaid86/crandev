@@ -17,11 +17,13 @@ Nothing is "done" until this passes. Run it yourself before reporting — do not
 ## Accessibility
 
 - [ ] Full keyboard path through the section or page. Tab order matches visual order. Nothing reachable only by mouse.
-- [ ] Visible `:focus-visible` ring — cyan, 2px, 2px offset — on **every** interactive element.
+- [ ] Visible `:focus-visible` ring — `--accent-ink`, 2px, 2px offset — on **every** interactive element. It must be visible in **both** themes.
 - [ ] Semantic landmarks. One `h1` per page, heading levels ordered, no skips.
-- [ ] Body text ≥ 4.5:1 against its **actual** backdrop. Check `--mist` on glass specifically — that is where dark themes fail.
+- [ ] Body text ≥ 4.5:1 against its **actual** backdrop. Check `text-muted` on glass in **both** themes — that is the pair that fails first.
 - [ ] Decorative motion wrappers carry `aria-hidden` where they add no meaning.
 - [ ] Every image uses `next/image` with explicit dimensions and real `alt` (`alt=""` if decorative).
+- [ ] Local images are **static imports** (blur placeholder + no layout shift), and `priority` is on at most the one real LCP image per route.
+- [ ] No component duplicates an existing primitive — `components/` was searched before anything new was created.
 - [ ] Interactive controls have accessible names; icon-only buttons have `aria-label`.
 
 ## Responsive — mobile first
@@ -54,8 +56,9 @@ This is the section that fails most often. Check it at 360 **first**, not last.
 ## System integrity
 
 - [ ] **Every color, radius, easing, and duration traces back to a token.** No raw hex, no magic duration, no off-grid spacing.
-- [ ] At most one cyan element per viewport-height.
-- [ ] Glass uses the one recipe, sits over grain or a glow, and is not stacked more than two deep.
+- [ ] At most one accent element per viewport-height.
+- [ ] Glass uses the one recipe with themed vars, sits over grain or a field, and is not stacked more than two deep.
+- [ ] **Any translucent layer was checked in both themes** — alpha tuned on dark reads as nothing on light.
 - [ ] No `<img>`, no `<a>` for internal routes.
 - [ ] Nothing competes with the Ship Log rail.
 

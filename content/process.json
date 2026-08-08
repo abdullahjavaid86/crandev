@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "read",
+    "title": "Read the system",
+    "duration": "Week 1",
+    "detail": "We read the code and the incidents before proposing anything. No discovery theatre."
+  },
+  {
+    "slug": "agree",
+    "title": "Agree the shape",
+    "duration": "Weeks 2\u20133",
+    "detail": "A written architecture with the trade-offs stated, so disagreement happens on paper."
+  },
+  {
+    "slug": "ship",
+    "title": "Ship in slices",
+    "duration": "Weeks 4+",
+    "detail": "Something runs in production early and keeps running. No integration phase at the end."
+  },
+  {
+    "slug": "hand-over",
+    "title": "Hand over, or stay",
+    "duration": "Ongoing",
+    "detail": "Your team owns it with the reasoning written down \u2014 or we keep the pager. Your call."
+  }
+]

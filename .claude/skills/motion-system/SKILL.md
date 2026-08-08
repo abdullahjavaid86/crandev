@@ -26,7 +26,7 @@ export const viewport = { once: true, margin: '-12% 0px -8% 0px' } as const;
 
 **The installed package is `motion` (v13), not `framer-motion`.** Framer Motion renamed itself; the `framer-motion` package is a mirror with no `./react` subpath, so `import { motion } from 'motion/react'` only resolves against the `motion` package. Never `npm i framer-motion` — you will get a second copy of the same library and an unresolvable import.
 
-It is the only animation library. No GSAP, AOS, or react-spring.
+It is the default animation library and stays the default. **Another library is permitted only where `motion` genuinely cannot do the job gracefully** — and you must name the specific capability it lacks before adding one, not reach for a familiar API. One extra library for one named reason; never a collection. In practice `motion` covers scroll, layout, gesture, spring, and timeline work, so this should almost never come up.
 
 ## Rules
 
@@ -67,6 +67,7 @@ Motion here is mobile-first like everything else: the base case runs on a phone,
 - **Desktop-only enhancements:** magnetic pull, cursor-following radial highlight, parallax, sticky card stacking. None of them are the base case.
 - **Ambient hero glows are the mobile perf risk.** Two infinite-looping `blur(120px)` layers on a mid-range Android will drop frames. Below `md`, render them static — the drift is imperceptible on a small screen and the loop is not worth the battery.
 - **The rail is desktop.** Below `lg`, scroll progress is a 2px bar under the header, not a rail. Do not animate a rail that has nowhere to sit.
+- **Scroll reads are cheap; scattered ambient effects are not.** Motion reads scroll from a `ScrollTimeline` in one shared frameloop, so several `useScroll` calls are not several listeners. Element-relative `useScroll({ target })` is correct for `Parallax`. What is banned is a second ambient background or a per-section page-progress read — the background owns that (§4.6).
 - **`dvh`, never `vh`**, for any motion tied to viewport height.
 - Reduced motion still overrides everything above.
 
