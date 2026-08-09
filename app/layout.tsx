@@ -3,11 +3,8 @@ import "./globals.css";
 import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
 
 import { Analytics } from "@vercel/analytics/next";
-import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
-import { Footer } from "@/components/layout/Footer";
-import { Grain } from "@/components/layout/Grain";
-import { Header } from "@/components/layout/Header";
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 import dynamic from "next/dynamic";
 
@@ -54,23 +51,46 @@ export const metadata: Metadata = {
     "A senior software team that builds and maintains production systems for funded startups and product companies.",
 };
 
+/**
+ * The one root layout: document, fonts, theme, and the analytics beacons.
+ *
+ * It deliberately renders NO chrome. Header, Footer, BackgroundLayer and Grain
+ * belong to the marketing site and live in `app/(site)/layout.tsx`; the admin
+ * portal (`app/(admin)/layout.tsx`) is a sibling nested layout under this same
+ * root and renders none of them. A nested layout cannot un-render what its
+ * parent already emitted, so anything not wanted by every route in the app has
+ * to sit one level down from here.
+ */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      /**
+       * ThemeScript runs before hydration and writes four things to this
+       * element that the server HTML cannot contain: the `dark` class,
+       * `style.colorScheme`, `data-bg` and `data-shape`. React sees the
+       * difference and warns on every load.
+       *
+       * That mismatch is the mechanism working, not a bug: the whole point of
+       * resolving the theme pre-paint is that the client knows something the
+       * server cannot. suppressHydrationWarning applies to THIS element's own
+       * attributes only — one level, not the tree — so nothing below it stops
+       * being checked.
+       *
+       * The alternative is rendering the theme from a cookie so the server can
+       * emit it, which trades a silent warning for a dynamic root and costs
+       * every static route its prerender.
+       */
+      suppressHydrationWarning
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
         <ThemeScript />
       </head>
       <body className="flex min-h-full flex-col">
-        <BackgroundLayer />
-        <Header />
-        {/* flex-1 so a short page still pins the footer to the bottom. */}
-        <div className="flex-1">{children}</div>
+        {children}
         <Analytics />
-        <Footer />
-        <Grain />
+        <SpeedInsights />
         {DevVariantPicker ? <DevVariantPicker /> : null}
       </body>
     </html>

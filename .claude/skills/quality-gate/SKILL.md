@@ -9,6 +9,12 @@ Nothing is "done" until this passes. Run it yourself before reporting — do not
 
 ## Build
 
+- [ ] **Stop `yarn dev` before running the gate, and `rm -rf .next` first.** The
+      dev server and `yarn build` share `.next`, so a build run beside a live
+      dev server produces output the guards read as passing when it is not. A
+      bundle-leak guard passed that way once and the leak was real — it was
+      caught only on a rebuild with the dev server stopped. Any check that
+      greps build output is worthless without this.
 - [ ] `yarn typecheck` passes — **not** a bare `tsc --noEmit`, which reads clean off a stale `.next` and fails on a clean checkout.
 - [ ] `yarn build` passes with **zero TypeScript errors**. Strict mode, no `any`, no `@ts-expect-error` added to get past the gate.
 - [ ] `yarn lint` clean.

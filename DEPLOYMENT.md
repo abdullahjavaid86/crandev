@@ -74,6 +74,24 @@ every visitor.
 
 `.env.example` in the repo is the source of truth for the list; keep them in step.
 
+**Verify before trusting the form.** `yarn db:check` connects with the current
+`MONGODB_URI`, pings, and prints document counts. Worth running because a
+misconfigured database is invisible from the UI — the contact action catches
+every failure and returns one deliberately vague sentence, so "nothing arrived"
+and "the URI is wrong" look identical in the browser.
+
+After setting the variables in Vercel, run `vercel env pull` to bring them into
+`.env.local`. A `.env.local` containing only `VERCEL_OIDC_TOKEN` means the
+project is linked but the database variables were never added.
+
+> **`vercel env pull` defaults to the Development environment.** So a working
+> `.env.local` proves the variables exist for Development and says nothing
+> about Production or Preview. If the form works locally and the deployed site
+> writes nothing, that is the first thing to check: the variable must be ticked
+> for **all three** environments, and a deployment made _before_ the variable
+> was added will not pick it up — env vars are read at build and runtime of
+> that deployment, so it needs redeploying.
+
 ---
 
 ## 3. Settings that cannot be set from the repo

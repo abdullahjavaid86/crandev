@@ -7,6 +7,11 @@
  * Also resolves the background and hero-shape variants from storage, for
  * the same reason: picking it after paint would swap backgrounds visibly.
  *
+ * And the admin rail's collapsed state, which is a REAL user preference
+ * rather than one of the temporary design flags — when the variant flags are
+ * deleted, `sidebar` stays. Resolving it here is what lets the rail render at
+ * the right width on the server and stay a server component.
+ *
  * Precedence: stored choice > OS preference. The OS is only the first guess;
  * an explicit toggle always wins, which is why this is class-based rather
  * than a prefers-color-scheme media query.
@@ -21,6 +26,8 @@ var b=localStorage.getItem('bg');
 document.documentElement.dataset.bg=BG.indexOf(b)>=0?b:BG[0];
 var sh=localStorage.getItem('shape');
 document.documentElement.dataset.shape=SH.indexOf(sh)>=0?sh:SH[0];
+var r=localStorage.getItem('sidebar');
+document.documentElement.dataset.sidebar=r==='icons'?'icons':'full';
 }catch(e){}})()`;
 
 export function ThemeScript() {
