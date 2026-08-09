@@ -68,7 +68,7 @@ jobs:
         run: yarn build
 
       # Regressions that a green build does not catch, because each one fails
-      # silently. All three have already happened in this repo.
+      # silently. Both have already happened in this repo.
       - name: Guards
         run: |
           set -euo pipefail
@@ -94,13 +94,12 @@ jobs:
             fail=1
           fi
 
-          # The dev variant picker is excluded by a NODE_ENV-gated dynamic
-          # import. A plain static import dead-codes the JSX but KEEPS the
-          # module — it shipped to production once already.
-          if grep -rl "DevVariantPicker" .next/static/chunks/*.js 2>/dev/null; then
-            echo "::error::Dev variant picker leaked into the production client bundle."
-            fail=1
-          fi
+          # There was a third guard here: the variant picker must not reach the
+          # production bundle. It ships deliberately now, while D9 is open and
+          # the choice is being made on the deployed site. Removed rather than
+          # left failing. If the production gate ever returns, so does this —
+          # and note that the picker must be mounted in the ROOT layout for the
+          # gate to work at all.
 
           if [ "$fail" -eq 0 ]; then echo "guards passed"; fi
           exit "$fail"

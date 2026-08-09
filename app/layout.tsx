@@ -5,8 +5,8 @@ import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/goog
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { DevVariantPicker } from "@/components/ui/DevVariantPicker";
 import { ThemeScript } from "@/components/layout/ThemeScript";
-import dynamic from "next/dynamic";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
@@ -28,22 +28,6 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
 });
-
-/**
- * Design-comparison control, development only.
- *
- * The import lives inside the dead branch on purpose. A static import at the
- * top plus a NODE_ENV check in the JSX does NOT keep it out of the bundle —
- * the JSX gets dead-coded but the module stays, which is exactly what shipped
- * on the first attempt. Putting the dynamic() call in the eliminated branch
- * removes the reference itself.
- */
-const DevVariantPicker =
-  process.env.NODE_ENV === "production"
-    ? null
-    : dynamic(() =>
-        import("@/components/ui/DevVariantPicker").then((m) => m.DevVariantPicker),
-      );
 
 export const metadata: Metadata = {
   title: "CraneDev — software that ships",
@@ -91,7 +75,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Analytics />
         <SpeedInsights />
-        {DevVariantPicker ? <DevVariantPicker /> : null}
+        {/*
+          Ships in production on purpose, while D9 is open: the choice of
+          background and hero shape is being made on the deployed site, not
+          on localhost. It excludes itself from /admin. Remove it — and the
+          losing variants — the moment D9 is decided.
+        */}
+        <DevVariantPicker />
       </body>
     </html>
   );

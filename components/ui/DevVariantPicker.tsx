@@ -1,25 +1,25 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { buttonStyles } from "./buttonStyles";
 import { useBackground } from "@/hooks/useBackground";
 import { useHeroShape } from "@/hooks/useHeroShape";
-import { buttonStyles } from "./buttonStyles";
+import { usePathname } from "next/navigation";
 
 /**
- * DEVELOPMENT ONLY — a design-comparison control, not a feature.
+ * A design-comparison control, not a feature — but one that currently SHIPS.
  *
  * Cycles the ambient background and the hero solid so both can be judged on
- * the real page instead of argued about. The caller gates this on NODE_ENV
- * from inside the dead branch, which is what actually keeps it out of the
- * production bundle — a static import plus a NODE_ENV check in the JSX
- * dead-codes the JSX but keeps the module.
+ * the real page instead of argued about. It used to be excluded from
+ * production behind a NODE_ENV-gated dynamic import; that gate is gone by
+ * request, because the decision (D9) is being made on the deployed site,
+ * where the backgrounds actually look like themselves. So it is visible to
+ * anyone who loads the site.
  *
  * It excludes itself from the admin portal rather than being mounted lower in
- * the tree. Moving the gated `dynamic()` into `app/(site)/layout.tsx` reads
- * better and DOES NOT WORK: the picker survives into the production client
- * bundle from there, referenced by the prerendered home page. Only the root
- * layout's copy is actually eliminated — verified by building both ways. The
- * route test costs nothing, because in production this module does not exist.
+ * the tree — the portal has no hero and no ambient background. Mounting it in
+ * `app/(site)/layout.tsx` instead would read better and is a trap worth
+ * remembering if the production gate ever comes back: from there the module
+ * survives dead-code elimination and ships anyway.
  *
  * All of this is temporary. When the choices are made, delete this, the flags,
  * the losing variants, and the ThemeScript lines that resolve them.
@@ -30,8 +30,7 @@ export function DevVariantPicker() {
   const { shape, cycle: cycleShape } = useHeroShape();
   // Hooks first, then bail: the portal has neither a hero nor an ambient
   // background, so the control has nothing to control there.
-  if (pathname.startsWith("/admin")) return null;
-  if (variant === null || shape === null) return null;
+  if (variant === null || shape === null || pathname.startsWith("/admin")) return null;
 
   const chip = "font-mono text-xs tracking-[0.18em] uppercase";
 

@@ -67,6 +67,28 @@ interface ContactsTableProps {
   rows: readonly ContactRow[];
 }
 
+/**
+ * Marks a submission whose honeypot was filled.
+ *
+ * These are stored rather than discarded, because the honeypot is evidence and
+ * not proof — a password manager filling an off-screen input produces exactly
+ * the same signal as a bot. The tag is the whole point of storing them: an
+ * unmarked flagged row would read as a genuine enquiry, and a discarded one
+ * would have been a real message thrown away in silence.
+ *
+ * Deliberately not the accent colour. It is a caveat, not the thing to click.
+ */
+function SuspectedBotTag() {
+  return (
+    <span
+      title="The honeypot field was filled. Usually a bot — but a password manager can do it too, so read it before deleting."
+      className="inline-flex shrink-0 items-center rounded-full border border-line px-2 py-0.5 font-mono text-small tracking-[0.18em] text-muted uppercase"
+    >
+      Suspected bot
+    </span>
+  );
+}
+
 export function ContactsTable({ rows }: ContactsTableProps) {
   return (
     <>
@@ -78,7 +100,10 @@ export function ContactsTable({ rows }: ContactsTableProps) {
             className="flex flex-col gap-4 rounded-md border border-line bg-raised p-4"
           >
             <div className="flex flex-col gap-1">
-              <p className="font-medium text-fg">{row.name}</p>
+              <p className="flex flex-wrap items-center gap-2 font-medium text-fg">
+                {row.name}
+                {row.suspectedBot ? <SuspectedBotTag /> : null}
+              </p>
               {/*
                 A sibling link, not a wrapper. The row is never one big link:
                 emailing, re-statusing and reading notes are three concerns and
@@ -178,7 +203,10 @@ export function ContactsTable({ rows }: ContactsTableProps) {
                   instead.
                 */}
                 <td className={TD}>
-                  <span className="block font-medium text-fg">{row.name}</span>
+                  <span className="flex flex-wrap items-center gap-2 font-medium text-fg">
+                    {row.name}
+                    {row.suspectedBot ? <SuspectedBotTag /> : null}
+                  </span>
                   <a
                     href={`mailto:${row.email}`}
                     className="font-mono text-small text-muted underline-offset-4 hover:text-fg hover:underline"
