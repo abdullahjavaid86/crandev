@@ -61,6 +61,34 @@ the gate blocks the portal's own assets.
 - The admin layout renders **no** Header, Footer, Ship Log, background or grain,
   and sets `robots: { index: false, follow: false }`.
 
+## Navigation
+
+`lib/admin/nav.ts` is the one source. A screen that is not in it is unreachable;
+a screen in it that does not exist teaches people not to trust the rail. Add
+the entry in the same commit as the page.
+
+Two containers render that source: `AdminSidebar` (a persistent rail at `lg`
+and up) and `AdminMobileNav` (a Radix drawer below it). Both mount the same
+`AdminNav`, so an item cannot appear in one and not the other.
+
+**The collapsed state is CSS, not React.** `html[data-sidebar]` holds it,
+`ThemeScript` resolves it before paint, and the `rail-icons:` variant reads it.
+That is why the rail is a **server component** and why there is no flash of the
+wrong width. Only `SidebarToggle` needs JavaScript.
+
+- The rail's width and the content offset both read `--rail-w`. Never hardcode
+  either — one number, two consumers, or they drift and leave a gap.
+- Tailwind v4 CSS-variable utilities take **parentheses**: `w-(--rail-w)`.
+  The bracket form silently emits an invalid value. CI guards this.
+- Collapsing must not remove a label from the accessibility tree. Use
+  `rail-icons:sr-only`, never `hidden` — an icon-only rail still has to
+  announce "Dashboard".
+- `AdminNav` takes `collapsible`. It is **off** in the drawer: the drawer is
+  full width, and collapsing its labels because the desktop rail happens to be
+  collapsed is nonsense.
+- The drawer closes on the link's `onClick`, not in an effect watching the
+  pathname — tapping the screen you are already on does not change the path.
+
 ## Data
 
 ```

@@ -78,8 +78,12 @@ jobs:
           # form is an arbitrary literal, so `duration-[--d-base]` emits
           # `transition-duration: --d-base` — invalid, dropped, 0s. It looked
           # like a fast transition for 21 usages across 11 files.
-          if grep -rnE '(duration|ease|delay)-\[--' app components lib hooks 2>/dev/null; then
-            echo "::error::CSS-variable utility using brackets. Use parentheses: duration-(--d-base)"
+          #
+          # Matches ANY utility, not just the timing ones it first bit: the
+          # admin rail's width and content offset both read `--rail-w`, and
+          # the bracket form there would collapse the rail to nothing.
+          if grep -rnE '[a-z]-\[--[a-z]' app components lib hooks 2>/dev/null; then
+            echo "::error::CSS-variable utility using brackets. Use parentheses: duration-(--d-base), w-(--rail-w)"
             fail=1
           fi
 

@@ -4,6 +4,12 @@
    The OS is only the initial guess, resolved before paint in layout.tsx. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* The admin rail's collapsed state, read from an ancestor attribute rather
+   than React state. Because CSS resolves it, the rail renders correctly on
+   the server AND before hydration — no flash of the wrong width, and the
+   rail itself stays a server component. Only the toggle needs JavaScript. */
+@custom-variant rail-icons (html[data-sidebar="icons"] &);
+
 /* ─────────────────────────────────────────────────────────────
    Tokens — the single source of truth. CLAUDE.md §4.
    Names are ROLES, not colours. `--carbon` can't be light, but
@@ -81,6 +87,17 @@
   --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --d-micro: 180ms;
   --d-base: 500ms;
+
+  /* Admin rail width. A variable rather than two sets of utilities because
+     the rail and the content offset MUST agree — one number, read by both,
+     so they cannot drift apart. Resolved before paint (see ThemeScript). */
+  --rail-w: 15rem;
+}
+
+/* Icon-only rail. 4.5rem keeps the 44px touch target centred with room to
+   breathe; anything narrower and the icons touch the edges. */
+html[data-sidebar="icons"] {
+  --rail-w: 4.5rem;
 }
 
 .dark {

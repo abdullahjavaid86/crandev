@@ -1,8 +1,6 @@
-import { Container } from "@/components/layout/Container";
-import Link from "next/link";
 import type { Metadata } from "next";
-import { buttonStyles } from "@/components/ui/buttonStyles";
-import { logout } from "@/lib/admin/actions";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { requireAdminOrNull } from "@/lib/admin/guard";
 
 /**
@@ -15,16 +13,12 @@ import { requireAdminOrNull } from "@/lib/admin/guard";
  * is still the one root layout and owns the document, the fonts and the theme
  * script, so both themes work in here for free.
  *
- * A fragment rather than a wrapper div, so the bar and the content stay direct
- * children of the `flex min-h-full flex-col` body and `flex-1` on <main> fills
- * a short page.
- *
  * This layout does NOT call requireAdmin(). A layout is preserved across soft
  * navigations within its segment, so a guard here would be checked less often
  * than it looks like it is — every page owns its own call instead (see
  * `app/(admin)/admin/page.tsx`). The `requireAdminOrNull()` below is the
  * non-redirecting variant and is used for CHROME only: /admin/login shares
- * this layout, and a login form with a "Sign out" button on it is nonsense.
+ * this layout, and navigation to screens you cannot open is not a login form.
  */
 
 export const metadata: Metadata = {
@@ -36,36 +30,26 @@ export const metadata: Metadata = {
 export default async function AdminLayout({ children }: LayoutProps<"/">) {
   const admin = await requireAdminOrNull();
 
+  // Signed out: no rail, no bar, just the page. /admin/login renders its own
+  // centred card, and everything else redirects before it gets this far.
+  if (!admin) {
+    return <main className="flex-1 pb-[env(safe-area-inset-bottom)]">{children}</main>;
+  }
+
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line bg-surface pt-[env(safe-area-inset-top)]">
-        <Container as="div" className="flex min-h-14 items-center gap-3">
-          <Link
-            href="/admin"
-            className="inline-flex min-h-11 items-center gap-2 font-display text-h3 font-semibold tracking-[-0.03em] text-fg"
-          >
-            CraneDev
-            <span className="font-mono text-small tracking-[0.18em] text-muted uppercase">
-              Admin
-            </span>
-          </Link>
+      <AdminSidebar admin={admin} />
+      <AdminMobileNav admin={admin} />
 
-          {/*
-            A Server Action in a plain form: no client component, no onClick, and
-            it still works with JavaScript off. `logout` destroys the session row
-            and clears the cookie before redirecting.
-          */}
-          {admin ? (
-            <form action={logout} className="ml-auto">
-              <button type="submit" className={buttonStyles("secondary", "sm")}>
-                Sign out
-              </button>
-            </form>
-          ) : null}
-        </Container>
-      </header>
-
-      <main className="flex-1 pb-[env(safe-area-inset-bottom)]">{children}</main>
+      {/*
+        The content offset reads the SAME `--rail-w` the rail is drawn from, so
+        the two cannot disagree — a hardcoded padding here is exactly how a
+        collapsed rail ends up with a gap beside it. Below `lg` the rail is
+        hidden and the offset is not applied.
+      */}
+      <div className="flex flex-1 flex-col transition-[padding] duration-(--d-micro) ease-(--e-in-out) lg:pl-(--rail-w)">
+        <main className="flex-1 pb-[env(safe-area-inset-bottom)]">{children}</main>
+      </div>
     </>
   );
 }
