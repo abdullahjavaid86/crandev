@@ -89,6 +89,28 @@ wrong width. Only `SidebarToggle` needs JavaScript.
 - The drawer closes on the link's `onClick`, not in an effect watching the
   pathname — tapping the screen you are already on does not change the path.
 
+### The navigation is the only scroll region
+
+`AccountSection` (Settings, Sign out, the address) is ~175px that cannot
+shrink. Pinned open above a `flex-1` nav it **starves the navigation**: at a
+290px-tall window the nav collapsed to a 39px strip and both of its links sat
+outside it, unreachable unless you noticed a scrollbar. It shipped that way
+once.
+
+So the account group is a **disclosure**, closed by default, and the nav keeps
+`min-h-0 flex-1 overflow-y-auto`. `min-h-0` is what makes the nav scrollable at
+all — a flex item's automatic minimum size is its content, so without it the
+nav refuses to shrink and pushes the group off the bottom instead.
+
+The disclosure opens permanently only where there is room for it:
+`lg:[@media(min-height:37.5rem)]`. **Width alone is not the rule** — a
+1280×290 window has the width and no room. The trigger's `hidden` query and the
+panel's `flex` query are the same query on purpose, so there is no size at
+which the group is both collapsed and uncollapsible.
+
+Test any rail change at **290px tall**, not just 360px wide. Vertical space is
+where this breaks, and the standard breakpoint sweep does not look at it.
+
 ## Data
 
 ```

@@ -1,15 +1,14 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { LogOut, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useState } from "react";
-import { logout } from "@/lib/admin/actions";
 import { dur, ease } from "@/lib/motion";
 import type { CurrentAdmin } from "@/lib/admin/types";
+import { AccountSection } from "./AccountSection";
 import { AdminNav } from "./AdminNav";
 import { AdminWordmark } from "./AdminWordmark";
-import { railIconStyles, railItemStyles, railLabelStyles } from "./railItemStyles";
 
 /**
  * Navigation below `lg`: a bar with a menu button, and the rail's contents in
@@ -89,7 +88,7 @@ export function AdminMobileNav({ admin }: { admin: CurrentAdmin }) {
                 transition={{ duration: dur.base, ease: ease.out }}
                 className="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-line bg-raised lg:hidden"
               >
-                <div className="flex items-center gap-2 border-b border-line p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+                <div className="flex shrink-0 items-center gap-2 border-b border-line p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
                   <Dialog.Title className="sr-only">Admin navigation</Dialog.Title>
                   <AdminWordmark className="min-w-0 flex-1 px-1" />
                   <Dialog.Close asChild>
@@ -103,34 +102,16 @@ export function AdminMobileNav({ admin }: { admin: CurrentAdmin }) {
                   </Dialog.Close>
                 </div>
 
+                {/* The only scroll region — see AdminSidebar for why `min-h-0`
+                    is what makes it one. */}
                 <nav
                   aria-label="Admin sections"
-                  className="flex-1 overflow-y-auto px-3 py-3"
+                  className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3"
                 >
                   <AdminNav idPrefix="drawer" onNavigate={close} />
                 </nav>
 
-                <div className="mt-auto flex flex-col gap-1 border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-                  <AdminNav
-                    idPrefix="drawer-footer"
-                    group="footer"
-                    onNavigate={close}
-                  />
-
-                  <form action={logout}>
-                    <button type="submit" className={railItemStyles()}>
-                      <LogOut aria-hidden="true" className={railIconStyles()} />
-                      <span className={railLabelStyles()}>Sign out</span>
-                    </button>
-                  </form>
-
-                  <div className="px-3 pt-2">
-                    <p className="truncate text-small text-muted">{admin.name}</p>
-                    <p className="truncate font-mono text-small text-muted/80">
-                      {admin.email}
-                    </p>
-                  </div>
-                </div>
+                <AccountSection admin={admin} idPrefix="drawer" onNavigate={close} />
               </motion.div>
             </Dialog.Content>
           </Dialog.Portal>

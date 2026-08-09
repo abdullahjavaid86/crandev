@@ -1,13 +1,12 @@
-import { LogOut } from "lucide-react";
-import { logout } from "@/lib/admin/actions";
 import type { CurrentAdmin } from "@/lib/admin/types";
+import { AccountSection } from "./AccountSection";
 import { AdminNav } from "./AdminNav";
 import { AdminWordmark } from "./AdminWordmark";
 import { SidebarToggle } from "./SidebarToggle";
-import { railIconStyles, railItemStyles, railLabelStyles } from "./railItemStyles";
 
 /**
- * The desktop rail. A SERVER component: nothing here holds state.
+ * The desktop rail. A server component apart from its two interactive leaves
+ * (the toggle and the account disclosure).
  *
  * Its width comes from `--rail-w`, which `html[data-sidebar]` sets and
  * ThemeScript resolves before paint. That is why collapsing does not need a
@@ -27,7 +26,7 @@ export function AdminSidebar({ admin }: { admin: CurrentAdmin }) {
       // body's own scroll container.
       className="fixed inset-y-0 left-0 z-40 hidden w-(--rail-w) flex-col border-r border-line bg-raised transition-[width] duration-(--d-micro) ease-(--e-in-out) lg:flex"
     >
-      <div className="flex flex-col gap-2 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+      <div className="flex shrink-0 flex-col gap-2 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
         {/* Side by side while there is room; stacked once there is not —
             a wordmark and a toggle do not both fit in 4.5rem. */}
         <div className="flex items-center gap-2 rail-icons:flex-col">
@@ -36,50 +35,20 @@ export function AdminSidebar({ admin }: { admin: CurrentAdmin }) {
         </div>
       </div>
 
-      <nav aria-label="Admin sections" className="flex-1 overflow-y-auto px-3 py-2">
+      {/*
+        The ONLY scroll region. `min-h-0` is what allows it to be one: a flex
+        item's automatic minimum size is its content, so without this the nav
+        refuses to shrink and pushes the account group off the bottom instead
+        of scrolling.
+      */}
+      <nav
+        aria-label="Admin sections"
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2"
+      >
         <AdminNav collapsible idPrefix="rail" />
       </nav>
 
-      {/*
-        The account group, pinned to the bottom. `mt-auto` is what pins it:
-        the nav above is `flex-1`, so this sits at the end of a short list and
-        stays put when the list grows.
-      */}
-      <div className="mt-auto flex flex-col gap-1 border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <AdminNav collapsible idPrefix="rail-footer" group="footer" />
-
-        {/*
-          A Server Action in a plain form: no client component, no onClick, and
-          it still works with JavaScript off. `logout` destroys the session row
-          and clears the cookie before redirecting.
-        */}
-        <form action={logout}>
-          <button
-            type="submit"
-            title={`Sign out of ${admin.email}`}
-            className={railItemStyles({ collapsible: true })}
-          >
-            <LogOut aria-hidden="true" className={railIconStyles()} />
-            <span className={railLabelStyles(true)}>Sign out</span>
-          </button>
-        </form>
-
-        {/*
-          Who you are signed in as. Worth the two lines: the whole portal is
-          one account's view of the data, and "which admin am I?" is otherwise
-          unanswerable without opening Settings.
-
-          Hidden outright when collapsed rather than made screen-reader-only —
-          an email is not navigation, and repeating it to a screen reader on
-          every page would be noise.
-        */}
-        <div className="px-3 pt-2 rail-icons:hidden">
-          <p className="truncate text-small text-muted" title={admin.email}>
-            {admin.name}
-          </p>
-          <p className="truncate font-mono text-small text-muted/80">{admin.email}</p>
-        </div>
-      </div>
+      <AccountSection admin={admin} collapsible idPrefix="rail" />
     </aside>
   );
 }
