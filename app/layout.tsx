@@ -65,6 +65,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      /**
+       * ThemeScript runs before hydration and writes four things to this
+       * element that the server HTML cannot contain: the `dark` class,
+       * `style.colorScheme`, `data-bg` and `data-shape`. React sees the
+       * difference and warns on every load.
+       *
+       * That mismatch is the mechanism working, not a bug: the whole point of
+       * resolving the theme pre-paint is that the client knows something the
+       * server cannot. suppressHydrationWarning applies to THIS element's own
+       * attributes only — one level, not the tree — so nothing below it stops
+       * being checked.
+       *
+       * The alternative is rendering the theme from a cookie so the server can
+       * emit it, which trades a silent warning for a dynamic root and costs
+       * every static route its prerender.
+       */
+      suppressHydrationWarning
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <head>
