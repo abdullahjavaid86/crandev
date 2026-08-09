@@ -1,7 +1,3 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
-import { dur, ease, viewport } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface MaskedTextProps {
@@ -19,28 +15,27 @@ interface MaskedTextProps {
  * Headline reveal: each line sits in an overflow-hidden box and rises from
  * 110% to 0.
  *
- * Split by LINE, never by character (§5.2). Per-character splitting on a
- * 60px headline is a gimmick, it costs layout thrash, and it hands screen
- * readers a pile of disconnected letters.
+ * Split by LINE, never by character (§5.2). Per-character splitting on a 60px
+ * headline is a gimmick, it costs layout thrash, and it hands screen readers a
+ * pile of disconnected letters.
  *
- * Reserved for the hero plus at most one section headline per page.
+ * **CSS-driven, and a server component.** This used to animate through motion,
+ * which meant the headline was clipped out of sight until React hydrated —
+ * the single largest piece of text on the page, invisible for over a second
+ * on a mid-range device, and invisible entirely without JavaScript. A CSS
+ * animation starts at first paint instead, and the whole headline now costs
+ * nothing in the client bundle.
+ *
+ * The lines animate `transform` only, never opacity. That is deliberate: an
+ * element at `opacity: 0` is ignored for LCP, whereas a translated one is
+ * measured from the first frame it paints.
+ *
+ * Reserved for the hero plus at most one section headline per page. Reduced
+ * motion is handled globally in `globals.css`, which collapses both duration
+ * and delay, so the lines simply appear in place.
  */
 export function MaskedText({ lines, className, as = "h2" }: MaskedTextProps) {
-  const isReduced = useReducedMotion();
   const Heading = as;
-
-  if (isReduced) {
-    return (
-      <Heading className={cn(className)}>
-        {lines.map((line, i) => (
-          <span key={line} className="block">
-            {line}
-            {i < lines.length - 1 ? " " : ""}
-          </span>
-        ))}
-      </Heading>
-    );
-  }
 
   return (
     <Heading className={cn(className)}>
@@ -48,35 +43,21 @@ export function MaskedText({ lines, className, as = "h2" }: MaskedTextProps) {
           animated spans are decorative duplicates. */}
       <span className="sr-only">{lines.join(" ")}</span>
 
-      <motion.span
-        aria-hidden="true"
-        className="block"
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewport}
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.08 } },
-        }}
-      >
-        {lines.map((line) => (
+      <span aria-hidden="true" className="block">
+        {lines.map((line, i) => (
           // Padding gives descenders room; without it the mask clips a "g".
           <span key={line} className="block overflow-hidden pb-[0.12em]">
-            <motion.span
-              className="block"
-              variants={{
-                hidden: { y: "110%" },
-                visible: {
-                  y: 0,
-                  transition: { duration: dur.reveal, ease: ease.out },
-                },
-              }}
+            <span
+              className="block animate-line-in"
+              // 0.08s stagger, matching §5.1. Per-instance, so it cannot be a
+              // Tailwind class.
+              style={i ? { animationDelay: `${i * 0.08}s` } : undefined}
             >
               {line}
-            </motion.span>
+            </span>
           </span>
         ))}
-      </motion.span>
+      </span>
     </Heading>
   );
 }

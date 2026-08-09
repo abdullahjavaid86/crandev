@@ -76,6 +76,37 @@ Motion here is mobile-first like everything else: the base case runs on a phone,
 - **`dvh`, never `vh`**, for any motion tied to viewport height.
 - Reduced motion still overrides everything above.
 
+## Above the fold, motion may MOVE but must not HIDE
+
+The single most expensive mistake available here, and it has already been made.
+
+**Anything visible on load animates with CSS, transform only, via `<RiseIn>`.**
+Below the fold, keep `<Reveal>` — it is scroll-triggered, so it can never be on
+the critical path.
+
+Two separate reasons, both measured on the deployed site:
+
+1. **`Reveal` starts at `opacity: 0` and waits for hydration.** LCP ignores an
+   element at zero opacity, so the hero subcopy — the LCP element — landed at
+   2.36s against a 0.93s FCP. None of that gap was network: the text was in the
+   server HTML the whole time, just invisible.
+2. **A fade defeats LCP even without JS.** After moving the hero to a CSS
+   animation that still faded in, the subcopy never registered as an LCP
+   candidate at all and the metric fell through to a commit-ticker line at
+   5.9s. Transform-only fixed it: LCP became 352ms, equal to FCP.
+
+The rule reads as a metric trick and is not one. An element the user cannot
+read is not painted, and LCP is right to say so. Never "fix" this by fading
+from `0.01` instead of `0`.
+
+`MaskedText` is CSS-driven and a server component for the same reason. Its
+clipped lines still cannot be an LCP candidate — a clipped element paints at
+near-zero size and LCP never re-measures an element that grows — so the
+headline is not the LCP element and must not be relied on to be.
+
+CI guards both halves: `rise-in` must stay transform-only, and `Hero.tsx` must
+not import `Reveal`.
+
 ## Performance
 
 - Long-running ambient loops (hero radial glows) use `blur(120px)` at very low opacity and a long `ease.inOut` infinite loop. Kill the loop entirely under reduced motion, not just slow it.
@@ -90,6 +121,7 @@ Motion here is mobile-first like everything else: the base case runs on a phone,
 - A second parallax element in one section.
 - A component that imports `motion/react` but not `lib/motion.ts`.
 - A motion component with no `useReducedMotion()` call.
+- `<Reveal>`, or any opacity-based entrance, on anything visible without scrolling.
 
 ## Related
 
