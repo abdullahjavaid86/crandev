@@ -64,6 +64,12 @@ const SECTIONS: ShipLogSection[] = [
     note: "Four steps, with the real durations.",
     label: "Process",
   },
+  {
+    id: "contact",
+    index: "07",
+    note: "One form, read by the people who would do the work.",
+    label: "Contact",
+  },
 ];
 
 export default function Home() {
