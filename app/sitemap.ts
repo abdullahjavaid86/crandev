@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { siteOrigin } from "@/lib/seo";
 
 /**
  * Public routes only. The admin portal is disallowed in robots.ts and must
@@ -10,10 +11,10 @@ import type { MetadataRoute } from "next";
  * is worse than a short one.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return [
     {
-      url: base,
+      url: siteOrigin,
+      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
     },

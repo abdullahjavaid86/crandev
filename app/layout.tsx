@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DevVariantPicker } from "@/components/ui/DevVariantPicker";
 import { ThemeScript } from "@/components/layout/ThemeScript";
+import { siteUrl } from "@/lib/seo";
 
 /**
  * Fonts. All three use `display: swap`, so NONE of them blocks first paint —
@@ -49,10 +50,49 @@ const mono = JetBrains_Mono({
   preload: false,
 });
 
+const TITLE = "CraneDev — software that ships";
+const DESCRIPTION =
+  "A senior software team that builds and maintains production systems for funded startups and product companies.";
+
+/**
+ * §9 asks for metadata and OG tags here, and only the title and description
+ * were ever emitted — no canonical, no Open Graph, no Twitter card. A link to
+ * the site pasted into Slack or LinkedIn rendered as a bare URL.
+ *
+ * `metadataBase` is what makes the rest of this work: every relative URL below
+ * is composed against it, so the canonical and the OG URL are absolute without
+ * anything hardcoding a domain. See lib/seo.ts for why that resolution is not
+ * simply an env var.
+ *
+ * `title.template` gives every child route "<page> — CraneDev" without each
+ * one repeating the suffix; `title.default` covers routes that set none.
+ */
 export const metadata: Metadata = {
-  title: "CraneDev — software that ships",
-  description:
-    "A senior software team that builds and maintains production systems for funded startups and product companies.",
+  metadataBase: siteUrl,
+  title: { default: TITLE, template: "%s — CraneDev" },
+  description: DESCRIPTION,
+  applicationName: "CraneDev",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "CraneDev",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+    locale: "en",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  // The portal opts out individually; everything public is indexable, and
+  // saying so explicitly stops a stray default from deciding otherwise.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 /**
