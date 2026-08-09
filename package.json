@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "db:check": "node scripts/check-db.mjs"
+    "db:check": "node scripts/check-db.mjs",
+    "admin:seed": "node scripts/seed-admin.mjs",
+    "admin:reset-2fa": "node scripts/reset-2fa.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
