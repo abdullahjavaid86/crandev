@@ -110,6 +110,27 @@ jobs:
             fail=1
           fi
 
+          # Every blurred ambient field must be promoted to its own compositor
+          # layer. Transforming a blur(120px) element otherwise re-runs the
+          # blur every frame: 640ms worst interaction vs 48ms, measured.
+          # The style declaration, not the prose: the doc comment names the
+          # blur too, and counting that made the guard fail on its own docs.
+          blurs=$(grep -c 'filter: "blur(120px)"' components/layout/ScrollBackground.tsx || true)
+          promoted=$(grep -c 'willChange' components/layout/ScrollBackground.tsx || true)
+          if [ "$blurs" -ne "$promoted" ]; then
+            echo "::error::ScrollBackground has $blurs blurred fields but $promoted promoted. Each needs willChange, or interaction latency collapses."
+            fail=1
+          fi
+
+          # Font preloads compete with the stylesheet, and the stylesheet is
+          # what blocks FCP. Fonts use display:swap so they never block paint.
+          # Three preloads cost 188ms of FCP on a 1.6Mbps link.
+          preloads=$(grep -o 'as="font"' .next/server/app/index.html 2>/dev/null | wc -l | tr -d ' ')
+          if [ "${preloads:-0}" -gt 1 ]; then
+            echo "::error::$preloads fonts preloaded on /. Only the display face should be; the rest swap."
+            fail=1
+          fi
+
           # There was a third guard here: the variant picker must not reach the
           # production bundle. It ships deliberately now, while D9 is open and
           # the choice is being made on the deployed site. Removed rather than
