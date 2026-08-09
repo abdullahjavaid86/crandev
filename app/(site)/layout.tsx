@@ -1,29 +1,7 @@
-import dynamic from "next/dynamic";
 import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
 import { Footer } from "@/components/layout/Footer";
 import { Grain } from "@/components/layout/Grain";
 import { Header } from "@/components/layout/Header";
-
-/**
- * Design-comparison control, development only.
- *
- * The import lives inside the dead branch on purpose. A static import at the
- * top plus a NODE_ENV check in the JSX does NOT keep it out of the bundle —
- * the JSX gets dead-coded but the module stays, which is exactly what shipped
- * on the first attempt. Putting the dynamic() call in the eliminated branch
- * removes the reference itself.
- *
- * It belongs HERE rather than in the root layout: the flags it cycles are the
- * hero shape and the ambient background, neither of which the admin portal
- * has. Mounted at the root it floated over the portal's own screens, offering
- * to restyle a hero that is not on them.
- */
-const DevVariantPicker =
-  process.env.NODE_ENV === "production"
-    ? null
-    : dynamic(() =>
-        import("@/components/ui/DevVariantPicker").then((m) => m.DevVariantPicker),
-      );
 
 /**
  * The marketing chrome.
@@ -51,7 +29,6 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       <div className="flex-1">{children}</div>
       <Footer />
       <Grain />
-      {DevVariantPicker ? <DevVariantPicker /> : null}
     </>
   );
 }
