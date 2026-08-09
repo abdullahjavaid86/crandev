@@ -1,4 +1,5 @@
 import { ReadingPanel } from "@/components/layout/ReadingPanel";
+import { StructuredData } from "@/components/layout/StructuredData";
 import { ShipLog, type ShipLogSection } from "@/components/layout/ShipLog";
 import { Brands } from "@/components/sections/Brands";
 import { Contact } from "@/components/sections/Contact";
@@ -75,6 +76,10 @@ const SECTIONS: ShipLogSection[] = [
 export default function Home() {
   return (
     <main className="relative">
+      {/* Machine-readable identity for search results. Server-rendered, no
+          client cost, and holds only claims that are true today. */}
+      <StructuredData />
+
       {/*
         The rail lives inside <main> so its sticky container spans exactly the
         content area and nothing else. Absolutely positioned and zero-width, so

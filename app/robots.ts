@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { siteOrigin } from "@/lib/seo";
 
 /**
  * There was no robots route at all, so /robots.txt 404'd. That was survivable
@@ -8,13 +9,12 @@ import type { MetadataRoute } from "next";
  * crawler has fetched the page. Disallowing the path stops the fetch.
  */
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/admin", "/admin/"],
     },
-    sitemap: `${base}/sitemap.xml`,
+    sitemap: `${siteOrigin}/sitemap.xml`,
   };
 }

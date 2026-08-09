@@ -122,6 +122,15 @@ jobs:
             fail=1
           fi
 
+          # The origin is resolved in ONE place. An inline
+          # `?? "http://localhost:3000"` in robots.ts and sitemap.ts shipped a
+          # production sitemap advertising localhost, and a robots.txt whose
+          # Sitemap directive pointed at it — invisible unless you fetch them.
+          if grep -rn "localhost:3000" app components --include="*.ts" --include="*.tsx" 2>/dev/null; then
+            echo "::error::Hardcoded localhost origin. Import siteOrigin/siteUrl from lib/seo.ts, which falls back to the Vercel production domain."
+            fail=1
+          fi
+
           # Font preloads compete with the stylesheet, and the stylesheet is
           # what blocks FCP. Fonts use display:swap so they never block paint.
           # Three preloads cost 188ms of FCP on a 1.6Mbps link.
