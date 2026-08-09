@@ -2,14 +2,14 @@ import "./globals.css";
 
 import { Bricolage_Grotesque, Inter_Tight, JetBrains_Mono } from "next/font/google";
 
+import { Analytics } from "@vercel/analytics/next";
+import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
 import { Footer } from "@/components/layout/Footer";
-import dynamic from "next/dynamic";
-
 import { Grain } from "@/components/layout/Grain";
 import { Header } from "@/components/layout/Header";
 import type { Metadata } from "next";
-import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
 import { ThemeScript } from "@/components/layout/ThemeScript";
+import dynamic from "next/dynamic";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
@@ -68,6 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         {/* flex-1 so a short page still pins the footer to the bottom. */}
         <div className="flex-1">{children}</div>
+        <Analytics />
         <Footer />
         <Grain />
         {DevVariantPicker ? <DevVariantPicker /> : null}

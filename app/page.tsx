@@ -1,6 +1,7 @@
 import { ReadingPanel } from "@/components/layout/ReadingPanel";
 import { ShipLog, type ShipLogSection } from "@/components/layout/ShipLog";
 import { Brands } from "@/components/sections/Brands";
+import { Contact } from "@/components/sections/Contact";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { Hero } from "@/components/sections/Hero";
 import { Process } from "@/components/sections/Process";
@@ -96,6 +97,7 @@ export default function Home() {
       <Testimonials />
       <Brands />
       <Process />
+      <Contact />
       <CtaBand />
     </main>
   );
