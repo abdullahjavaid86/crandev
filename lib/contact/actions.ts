@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { collections, getDb } from "@/lib/db/client";
+import { HONEYPOT_FIELD } from "./honeypot";
 import { ContactInput, type ContactState } from "./schema";
 
 /**
@@ -37,12 +38,21 @@ export async function submitContact(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
-  // Honeypot. A real person never sees this field, so anything in it is a bot.
-  // Answered with success rather than an error: telling a bot it was detected
-  // only tells it what to change.
-  if (String(formData.get("website") ?? "").length > 0) {
-    return { status: "success" };
-  }
+  /**
+   * Honeypot. A person never sees this field, so anything in it is PROBABLY a
+   * bot — and "probably" is why this no longer discards the submission.
+   *
+   * It used to return success and write nothing. That is indistinguishable
+   * from the form working, and it is exactly what a password manager or an
+   * over-eager autofill produces when it decides an off-screen text input
+   * wants a value: the sender is told "That is with us" and the message is
+   * destroyed. On a site whose entire job is getting a technical buyer to make
+   * contact, silently dropping their message is the worst bug available.
+   *
+   * So the submission is stored and FLAGGED instead. The bot still learns
+   * nothing — the response is unchanged — and no real message is ever lost.
+   */
+  const suspectedBot = String(formData.get(HONEYPOT_FIELD) ?? "").trim().length > 0;
 
   const submitted = {
     name: String(formData.get("name") ?? ""),
@@ -98,6 +108,9 @@ export async function submitContact(
       address,
       source: "home-contact",
       createdAt: new Date(),
+      // Set only when the honeypot tripped. Absent on an ordinary submission,
+      // so existing documents and queries are unaffected.
+      ...(suspectedBot ? { suspectedBot: true } : {}),
     });
 
     return { status: "success" };

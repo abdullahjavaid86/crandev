@@ -25,6 +25,12 @@ export interface ContactRow {
   status: SubmissionStatus;
   createdAt: Date;
   noteCount: number;
+  /**
+   * The honeypot was filled. Probably a bot — but only probably, which is why
+   * the submission is stored rather than discarded, and why this has to be
+   * visible: an unmarked flagged row reads as a genuine lead.
+   */
+  suspectedBot: boolean;
 }
 
 export interface ContactPage {
@@ -98,6 +104,7 @@ export async function listContacts({
           : DEFAULT_STATUS,
         createdAt: d.createdAt instanceof Date ? d.createdAt : new Date(0),
         noteCount: counts.get(id) ?? 0,
+        suspectedBot: d.suspectedBot === true,
       };
     }),
     total,

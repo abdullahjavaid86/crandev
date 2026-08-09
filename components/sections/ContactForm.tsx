@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Field, controlStyles } from "@/components/ui/Field";
 import { submitContact } from "@/lib/contact/actions";
 import { BUDGET_BANDS } from "@/lib/contact/bands";
+import { HONEYPOT_FIELD } from "@/lib/contact/honeypot";
 import type { ContactState } from "@/lib/contact/schema";
 import { cn } from "@/lib/utils";
 
@@ -82,18 +83,26 @@ export function ContactForm({ className }: { className?: string }) {
       className={cn("flex flex-col gap-6", className)}
     >
       {/* Honeypot: off-screen rather than display:none, which some bots skip,
-          and hidden from assistive tech and the tab order. */}
+          and hidden from assistive tech and the tab order.
+
+          The `data-*` attributes are the documented opt-outs for 1Password,
+          LastPass and Dashlane. `autoComplete="off"` alone is a suggestion
+          browsers routinely ignore, and a password manager filling this field
+          used to destroy the message silently. */}
       <div
         aria-hidden="true"
         className="absolute left-[-9999px] h-px w-px overflow-hidden"
       >
-        <label htmlFor="website">Leave this empty</label>
+        <label htmlFor={HONEYPOT_FIELD}>Leave this empty</label>
         <input
-          id="website"
-          name="website"
+          id={HONEYPOT_FIELD}
+          name={HONEYPOT_FIELD}
           type="text"
           tabIndex={-1}
           autoComplete="off"
+          data-1p-ignore
+          data-lpignore="true"
+          data-form-type="other"
         />
       </div>
 
