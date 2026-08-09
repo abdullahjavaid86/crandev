@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import { collections, getDb } from "@/lib/db/client";
 import { requireAdmin } from "./guard";
 import { notesCollection } from "./collections";
+import { listNotes, type NoteRow } from "./notes";
 import { SUBMISSION_STATUSES, type SubmissionStatus } from "./types";
 
 /**
@@ -19,6 +20,18 @@ import { SUBMISSION_STATUSES, type SubmissionStatus } from "./types";
  */
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
+
+/**
+ * Notes for one submission, loaded when the modal opens.
+ *
+ * An action rather than a prop because server-rendering every row's notes to
+ * populate a dialog almost nobody opens would be a query per row on every page
+ * view. The row already carries `noteCount`, which is all the table needs.
+ */
+export async function fetchContactNotes(contactId: string): Promise<NoteRow[]> {
+  await requireAdmin();
+  return listNotes("contact", contactId);
+}
 
 const MAX_NOTE = 4000;
 
