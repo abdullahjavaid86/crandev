@@ -65,10 +65,26 @@ export function Field({
         required,
       })}
 
-      {/* Announced when it appears, without stealing focus. */}
-      <p role="status" aria-live="polite" className="min-h-5 text-small text-fg">
-        {error}
-      </p>
+      {/*
+        Two elements, deliberately.
+
+        The live region is always in the DOM — a region inserted at the same
+        moment as its message is unreliably announced, which is why this used
+        to be rendered unconditionally. But it is `sr-only`, so it reserves no
+        space and consumes no flex gap.
+
+        The visible error renders only when there is one. Previously it was
+        always present with `min-h-5`, so every field held open a line for an
+        error that was not there, plus a gap slot on each side.
+      */}
+      <span aria-live="polite" className="sr-only">
+        {error ?? ""}
+      </span>
+      {error ? (
+        <p id={errorId} className="text-small text-fg">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

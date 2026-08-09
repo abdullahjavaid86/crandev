@@ -164,15 +164,16 @@ export function ContactForm({ className }: { className?: string }) {
       {/* Announced when it appears, without stealing focus from a reader who
           is mid-sentence. tabIndex allows the effect above to move focus here
           when the failure belongs to no single field. */}
-      <p
-        ref={errorRef}
-        tabIndex={-1}
-        role="status"
-        aria-live="polite"
-        className="min-h-5 text-small text-fg"
-      >
+      {/* Persistent live region, no layout cost. See Field for why it is
+          split from the visible message. */}
+      <span aria-live="polite" className="sr-only">
         {state.status === "error" ? state.message : ""}
-      </p>
+      </span>
+      {state.status === "error" ? (
+        <p ref={errorRef} tabIndex={-1} className="text-small text-fg">
+          {state.message}
+        </p>
+      ) : null}
 
       <div>
         {/* The verb survives the state change — "Send" becomes "Sending", not
