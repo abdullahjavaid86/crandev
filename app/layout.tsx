@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeScript } from "@/components/layout/ThemeScript";
-import dynamic from "next/dynamic";
 
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
@@ -28,22 +27,6 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
 });
-
-/**
- * Design-comparison control, development only.
- *
- * The import lives inside the dead branch on purpose. A static import at the
- * top plus a NODE_ENV check in the JSX does NOT keep it out of the bundle —
- * the JSX gets dead-coded but the module stays, which is exactly what shipped
- * on the first attempt. Putting the dynamic() call in the eliminated branch
- * removes the reference itself.
- */
-const DevVariantPicker =
-  process.env.NODE_ENV === "production"
-    ? null
-    : dynamic(() =>
-        import("@/components/ui/DevVariantPicker").then((m) => m.DevVariantPicker),
-      );
 
 export const metadata: Metadata = {
   title: "CraneDev — software that ships",
@@ -91,7 +74,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Analytics />
         <SpeedInsights />
-        {DevVariantPicker ? <DevVariantPicker /> : null}
       </body>
     </html>
   );
