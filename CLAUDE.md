@@ -38,7 +38,9 @@ Everything below serves that job.
 **Constraints — do not violate without asking:**
 
 - **Server first.** Server Components by default; `'use client'` only at an interactive leaf. Mutations go through Server Actions, never a client-side write. Anything that _can_ run on the server does.
-- **MongoDB stores submitted data only** — contact queries, meeting requests, job applications. It is not a CMS and never serves page content. No auth, no user accounts, no admin UI.
+- **MongoDB stores submitted data and admin accounts.** Submissions (contact, meetings, applications) and the accounts that triage them. It is still **not a CMS and never serves page content** — that is JSON. Reads of submission data happen only inside the admin portal, never on a public route.
+- **The admin portal is part of this app**, under `app/(admin)/admin/*`, behind real authentication. See the `admin-portal` skill for the auth architecture; the short version is that `proxy.ts` is UX and `requireAdmin()` is the authorization boundary.
+- **An admin surface ships with the feature that needs it.** If a website feature captures data, its triage screen is part of that feature's definition of done, not a later project.
 - **Site content is JSON**, read at build time and validated by a zod schema. Never fetch page content from Mongo.
 - **UI primitives: shadcn or Radix, on demand.** Reach for them where the behaviour is genuinely hard to get right — dialog, popover, tooltip, select, focus management. Do not pull one in for a button or a card; those stay hand-built. **Never MUI, Chakra, DaisyUI, or any kit that ships its own design language.**
   - shadcn copies source into our repo rather than adding a black box, which is why it is allowed. Adopt it for **behaviour and accessibility only** — strip its default palette and restyle against our tokens (§4). A shadcn component still carrying `--background`/`--foreground` or stock greys has not been adopted, it has been pasted.
