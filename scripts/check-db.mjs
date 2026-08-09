@@ -39,7 +39,25 @@ try {
     counts[name] = await db.collection(name).countDocuments({}, { limit: 1000 });
   }
   console.log(`✓ connected to "${dbName}"`);
+  console.log("  host:", new URL(uri.replace("mongodb+srv://", "https://")).host);
   console.log("  documents:", counts);
+
+  // The newest submission, so "is it writing?" and "am I looking in the right
+  // place?" can be told apart. Message body is omitted — this prints to a
+  // terminal and may be shared.
+  const latest = await db
+    .collection("contact")
+    .find({}, { projection: { name: 1, source: 1, createdAt: 1 } })
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .toArray();
+  if (latest[0]) {
+    const { name, source, createdAt } = latest[0];
+    const age = Math.round((Date.now() - new Date(createdAt).getTime()) / 60000);
+    console.log(`  latest contact: "${name}" via ${source}, ${age} min ago`);
+  } else {
+    console.log("  latest contact: none — nothing has been written to this database");
+  }
   await client.close();
 } catch (err) {
   console.error("✗ could not connect:", err.message);
