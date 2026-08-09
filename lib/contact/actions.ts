@@ -44,13 +44,15 @@ export async function submitContact(
     return { status: "success" };
   }
 
-  const parsed = ContactInput.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    company: formData.get("company"),
-    message: formData.get("message"),
-    budget: formData.get("budget"),
-  });
+  const submitted = {
+    name: String(formData.get("name") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    company: String(formData.get("company") ?? ""),
+    message: String(formData.get("message") ?? ""),
+    budget: String(formData.get("budget") ?? ""),
+  };
+
+  const parsed = ContactInput.safeParse(submitted);
 
   if (!parsed.success) {
     const fieldErrors: Partial<Record<keyof ContactInput, string>> = {};
@@ -64,6 +66,7 @@ export async function submitContact(
       status: "error",
       message: "Check the highlighted fields.",
       fieldErrors,
+      values: submitted,
     };
   }
 
@@ -85,6 +88,7 @@ export async function submitContact(
           status: "error",
           message:
             "That is several messages in a short time. Write to us directly instead and we will pick it up.",
+          values: submitted,
         };
       }
     }
@@ -114,6 +118,7 @@ export async function submitContact(
       status: "error",
       message:
         "That did not send. Try again, or write to us directly and we will pick it up.",
+      values: submitted,
     };
   }
 }

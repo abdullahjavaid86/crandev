@@ -30,6 +30,16 @@ export function ContactForm({ className }: { className?: string }) {
   const fieldErrors = state.status === "error" ? (state.fieldErrors ?? {}) : {};
 
   /**
+   * React 19 resets an uncontrolled form once its action resolves, which wipes
+   * everything typed on a validation failure — and §7 forbids clearing what
+   * the user typed. Restoring through `defaultValue` works WITH that reset
+   * rather than against it: a form reset restores inputs to their defaultValue,
+   * so the values the action echoed back become the values the reset lands on.
+   * It also survives with JavaScript off, which a client-side ref would not.
+   */
+  const prior = state.status === "error" ? (state.values ?? {}) : {};
+
+  /**
    * Move focus to the first invalid control, or to the error summary when the
    * failure is not field-specific. Without this a keyboard user submits, the
    * page appears unchanged, and the reason is somewhere they are not.
@@ -93,6 +103,7 @@ export function ContactForm({ className }: { className?: string }) {
             <input
               {...f}
               name="name"
+              defaultValue={prior.name ?? ""}
               type="text"
               autoComplete="name"
               maxLength={80}
@@ -106,6 +117,7 @@ export function ContactForm({ className }: { className?: string }) {
             <input
               {...f}
               name="email"
+              defaultValue={prior.email ?? ""}
               type="email"
               inputMode="email"
               autoComplete="email"
@@ -120,6 +132,7 @@ export function ContactForm({ className }: { className?: string }) {
             <input
               {...f}
               name="company"
+              defaultValue={prior.company ?? ""}
               type="text"
               autoComplete="organization"
               maxLength={80}
@@ -130,7 +143,12 @@ export function ContactForm({ className }: { className?: string }) {
 
         <Field label="Budget" required error={fieldErrors.budget}>
           {(f) => (
-            <select {...f} name="budget" defaultValue="" className={controlStyles}>
+            <select
+              {...f}
+              name="budget"
+              defaultValue={prior.budget ?? ""}
+              className={controlStyles}
+            >
               <option value="" disabled>
                 Select a band
               </option>
@@ -154,6 +172,7 @@ export function ContactForm({ className }: { className?: string }) {
           <textarea
             {...f}
             name="message"
+            defaultValue={prior.message ?? ""}
             rows={5}
             maxLength={2000}
             className={cn(controlStyles, "min-h-32 resize-y")}

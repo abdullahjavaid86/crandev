@@ -80,7 +80,7 @@ Applies to contact, schedule-a-meeting, careers application, and anything else t
 - On error: focus the first invalid field, set `aria-invalid`, link the message with `aria-describedby`, and announce it in an `aria-live="polite"` region.
 - **Split the live region from the visible message.** A live region has to be in the DOM _before_ its text to be announced reliably — but that is not a reason to reserve space for it. Keep a permanent `sr-only` region for the announcement and render the visible error **only when there is one**. An always-present error line with `min-h-*` holds open a row per field, and as a flex child it eats a `gap` slot on each side; on a five-field form that was ~96px of dead space under the last input.
 - On success: replace the form with a designed success state that says what happens next and by when. Do not just toast and leave the form sitting there.
-- Never clear what the user typed on a failed submit.
+- **Never clear what the user typed on a failed submit — and React 19 will do this for you unless you stop it.** A `<form action={…}>` resets its uncontrolled inputs once the action resolves, so a validation error silently wipes everything typed. Have the action echo the submitted values back in its error state and set them as `defaultValue`. That works _with_ the reset (a reset restores inputs to their defaultValue) and still works with JavaScript off, which a client-side ref does not. Never echo a password back.
 - Honeypot field for spam, visually hidden and `aria-hidden`, never a CAPTCHA.
 
 **Fields**
@@ -99,6 +99,7 @@ Applies to contact, schedule-a-meeting, careers application, and anything else t
 - A spinner where a skeleton belongs.
 - A form with no error state, no success state, or no `aria-live` announcement.
 - An empty error slot reserving vertical space. Collapse it; keep the live region `sr-only`.
+- A form whose fields empty themselves after a failed submit. That is React 19's reset, not the user's browser.
 - A form that trusts client-side validation, or an action with no server-side zod parse.
 
 ## Related

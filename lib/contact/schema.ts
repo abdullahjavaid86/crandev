@@ -47,4 +47,13 @@ export type ContactState =
       message: string;
       /** Keyed by field name, for inline errors and focus. */
       fieldErrors?: Partial<Record<keyof ContactInput, string>>;
+      /**
+       * What was submitted, echoed back so the form can restore it.
+       *
+       * React 19 resets an uncontrolled form once its action resolves — which
+       * silently wipes everything typed on a validation failure. Restoring via
+       * `defaultValue` works WITH that reset (a form reset restores inputs to
+       * their defaultValue) and keeps working with JavaScript off.
+       */
+      values?: Partial<Record<keyof ContactInput, string>>;
     };
