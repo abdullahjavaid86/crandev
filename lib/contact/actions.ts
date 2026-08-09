@@ -98,9 +98,18 @@ export async function submitContact(
 
     return { status: "success" };
   } catch (error) {
-    // The real error stays server-side. What reaches the client says what to
-    // do next and nothing about the database (§7.3).
-    console.error("contact submission failed", error);
+    // A missing MONGODB_URI is an operator error, not a user error, and the
+    // two are indistinguishable from the browser — both show the same vague
+    // sentence. Label it unmistakably in the log so "nothing arrived" is not
+    // mistaken for a silent failure. `yarn db:check` tests it directly.
+    const misconfigured =
+      error instanceof Error && error.message.includes("MONGODB_URI");
+    console.error(
+      misconfigured
+        ? "[contact] NOT CONFIGURED — MONGODB_URI is unset, so nothing was written. See DEPLOYMENT.md §2 or run `yarn db:check`."
+        : "[contact] submission failed",
+      error,
+    );
     return {
       status: "error",
       message:
