@@ -8,6 +8,24 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DevVariantPicker } from "@/components/ui/DevVariantPicker";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 
+/**
+ * Fonts. All three use `display: swap`, so NONE of them blocks first paint —
+ * text renders in the fallback and swaps when the file lands.
+ *
+ * That is why only the display face is preloaded. A preload is a
+ * high-priority fetch competing with the stylesheet, and the stylesheet is the
+ * thing that actually blocks FCP. Three preloads put 125KB of fonts in front
+ * of a 10KB stylesheet: measured on a 1.6Mbps link, the CSS took 377ms to
+ * arrive and FCP was 764ms. Preloading only the display face: 576ms.
+ * Preloading none: 488ms.
+ *
+ * The display face keeps its preload because it is the headline — without it
+ * the largest text on the page sits in a fallback for ~1.7s on a slow link and
+ * then visibly changes. 88ms of FCP is worth not doing that to the brand
+ * moment. Body and mono swap early enough not to be noticed, and `next/font`
+ * matches the fallback metrics, so the swap costs 0.0001 CLS (measured).
+ */
+
 /** Display face — headlines only. Variable weight 600–700 in use. */
 const display = Bricolage_Grotesque({
   variable: "--font-display-src",
@@ -20,6 +38,7 @@ const body = Inter_Tight({
   variable: "--font-body-src",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
 /** Utility face — eyebrows, section numbers, metadata. Reads as machine output. */
@@ -27,6 +46,7 @@ const mono = JetBrains_Mono({
   variable: "--font-mono-src",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {

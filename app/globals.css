@@ -87,6 +87,7 @@
   --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --d-micro: 180ms;
   --d-base: 500ms;
+  --d-reveal: 800ms;
 
   /* Admin rail width. A variable rather than two sets of utilities because
      the rail and the content offset MUST agree — one number, read by both,
@@ -173,8 +174,53 @@ html[data-sidebar="icons"] {
   }
 }
 
+/* The above-the-fold entrance. TRANSFORM ONLY — deliberately not the opacity
+   and blur that <Reveal> uses below the fold.
+
+   An element at `opacity: 0` is ignored for LCP, and a 6px blur on body text
+   is unreadable anyway, so fading the hero in means the largest text on the
+   page does not count as painted until the fade finishes. Measured: the hero
+   subcopy never registered as an LCP candidate at all while it faded, and the
+   metric fell through to a commit-ticker line at 5.9s.
+
+   Moving text without hiding it fixes the metric because it fixes the actual
+   experience — the copy is readable in the first frame and then settles. */
+@keyframes rise-in {
+  from {
+    transform: translateY(24px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* The masked headline line, rising inside its overflow-hidden box. Transform
+   only — no opacity — so the text counts for LCP from the first frame even
+   while it is still travelling. */
+@keyframes line-in {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
 @theme inline {
   --animate-marquee: marquee 60s linear infinite;
+
+  /* Above-the-fold entrances. CSS rather than motion, and that is a
+     PERFORMANCE decision, not a style one: a JS-driven reveal starts at
+     `opacity: 0` and only becomes visible once React has hydrated, and LCP
+     ignores an element at zero opacity. The hero subcopy was the LCP element
+     on the deployed site and landed at 2.36s against a 0.93s FCP — the whole
+     gap was waiting for JavaScript. These start at first paint instead.
+
+     Below the fold, keep using <Reveal> — it is scroll-triggered, so it
+     cannot be on the critical path and motion's viewport handling is worth
+     having. See the motion-system skill. */
+  --animate-rise-in: rise-in var(--d-reveal) var(--e-out) both;
+  --animate-line-in: line-in var(--d-reveal) var(--e-out) both;
 
   --color-surface: var(--surface);
   --color-raised: var(--raised);
@@ -306,6 +352,10 @@ html[data-sidebar="icons"] {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* Staggers become zero too. Without this an entrance with a 0.35s delay
+       still holds the element hidden for 0.35s under reduced motion — the
+       travel is gone but the waiting is not. */
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

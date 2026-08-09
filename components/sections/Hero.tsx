@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { MaskedText } from "@/components/motion/MaskedText";
-import { Reveal } from "@/components/motion/Reveal";
+import { RiseIn } from "@/components/motion/RiseIn";
 import { WireSolid } from "@/components/motion/WireSolid";
 import { buttonStyles } from "@/components/ui/buttonStyles";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -78,17 +78,19 @@ export function Hero() {
 
       <Container className="relative">
         <div className="md:max-w-[60%]">
-          <Reveal>
+          <RiseIn>
             <Eyebrow index="00">CraneDev</Eyebrow>
-          </Reveal>
+          </RiseIn>
 
           <MaskedText as="h1" lines={HEADLINE} className="mt-6 max-w-[18ch]" />
 
-          <Reveal delay={0.15}>
+          {/* The LCP element on this page. It must paint without waiting for
+              hydration — see RiseIn. */}
+          <RiseIn delay={0.15}>
             <p className="mt-6 max-w-[52ch] text-muted">{SUBCOPY}</p>
-          </Reveal>
+          </RiseIn>
 
-          <Reveal delay={0.25}>
+          <RiseIn delay={0.25}>
             {/* The one accent element on this viewport-height of scroll. */}
             <Link
               href={primaryCta.href}
@@ -96,14 +98,14 @@ export function Hero() {
             >
               {primaryCta.label}
             </Link>
-          </Reveal>
+          </RiseIn>
 
-          <Reveal delay={0.35}>
+          <RiseIn delay={0.35}>
             <CommitTicker
               commits={PLACEHOLDER_COMMITS}
               className="mt-12 max-w-[34rem]"
             />
-          </Reveal>
+          </RiseIn>
         </div>
       </Container>
     </section>
