@@ -9,6 +9,9 @@ interface MaskedTextProps {
   lines: string[];
   className?: string;
   as?: "h1" | "h2" | "p";
+  /** Forwarded to the heading element, so a section's `aria-labelledby` has
+   *  something to point at. */
+  id?: string;
 }
 
 /**
@@ -34,11 +37,11 @@ interface MaskedTextProps {
  * motion is handled globally in `globals.css`, which collapses both duration
  * and delay, so the lines simply appear in place.
  */
-export function MaskedText({ lines, className, as = "h2" }: MaskedTextProps) {
+export function MaskedText({ lines, className, as = "h2", id }: MaskedTextProps) {
   const Heading = as;
 
   return (
-    <Heading className={cn(className)}>
+    <Heading id={id} className={cn(className)}>
       {/* The full string stays available to assistive tech as one phrase; the
           animated spans are decorative duplicates. */}
       <span className="sr-only">{lines.join(" ")}</span>
