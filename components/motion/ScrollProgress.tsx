@@ -8,12 +8,10 @@ interface ScrollProgressProps {
 }
 
 /**
- * A 2px cyan bar tracking page scroll.
- *
- * This is the Ship Log's mobile form (§4.5) — below `lg` there is no gutter to
- * pin a rail to, so the same information arrives as a bar under the header,
- * with the active section's hash riding in its own eyebrow. The consumer sets
- * `lg:hidden`; the primitive stays placement-agnostic.
+ * The page's scroll indicator: a 2px accent bar across the very top, at every
+ * width. It sits above the header rather than under it, which is why its
+ * z-index is one step higher — the header is a floating glass panel now, and a
+ * bar behind it would disappear under the blur.
  *
  * Scale, never width — animating width relayouts the page every frame.
  */
@@ -34,7 +32,7 @@ export function ScrollProgress({ className }: ScrollProgressProps) {
       aria-hidden="true"
       style={{ scaleX: isReduced ? scrollYProgress : smoothed }}
       className={cn(
-        "fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-accent",
+        "fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-accent",
         className,
       )}
     />

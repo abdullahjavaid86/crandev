@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { MaskedText } from "@/components/motion/MaskedText";
 import { RiseIn } from "@/components/motion/RiseIn";
-import { WireSolid } from "@/components/motion/WireSolid";
 import { buttonStyles } from "@/components/ui/buttonStyles";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { primaryCta } from "@/lib/nav";
@@ -51,12 +50,11 @@ const PLACEHOLDER_COMMITS: Commit[] = [
 
 /**
  * The thesis. One masked headline, one line of subcopy, one CTA — which is the
- * page's single accent element (§4.1) — with the wireframe solid behind it and
- * the commit ticker carrying the proof.
+ * page's single accent element (§4.1) — and the commit ticker carrying the
+ * proof.
  *
- * No ambient glows here: the site-wide ScrollBackground (§4.6) already owns
- * them, and a second pair in the hero would double the blurred layers for no
- * visible gain.
+ * Nothing ambient here: the site-wide Scene (§4.6) owns the background, and a
+ * second moving layer in the hero would compete with it for no visible gain.
  *
  * A server component. Every moving part below is a client leaf.
  */
@@ -67,15 +65,6 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="relative overflow-hidden py-16 md:py-24"
     >
-      {/* Base: sits behind the text, faint, so a 360px screen still reads copy
-          first. md moves it out to the right where it has room to be seen. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-40 md:right-0 md:left-auto md:w-1/2 md:opacity-100"
-      >
-        <WireSolid className="max-w-[26rem] md:max-w-[34rem]" />
-      </div>
-
       <Container className="relative">
         <div className="md:max-w-[60%]">
           <RiseIn>

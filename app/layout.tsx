@@ -5,7 +5,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { DevVariantPicker } from "@/components/ui/DevVariantPicker";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 import { siteUrl } from "@/lib/seo";
 
@@ -84,10 +83,10 @@ export const metadata: Metadata = {
 /**
  * The one root layout: document, fonts, theme, and the analytics beacons.
  *
- * It deliberately renders NO chrome. Header, Footer, BackgroundLayer and Grain
- * belong to the marketing site and live in `app/(site)/layout.tsx`; the admin
- * portal (`app/(admin)/layout.tsx`) is a sibling nested layout under this same
- * root and renders none of them. A nested layout cannot un-render what its
+ * It deliberately renders NO chrome. Header, Footer, Scene and Grain belong to
+ * the marketing site and live in `app/(site)/layout.tsx`; the admin portal
+ * (`app/(admin)/layout.tsx`) is a sibling nested layout under this same root
+ * and renders none of them. A nested layout cannot un-render what its
  * parent already emitted, so anything not wanted by every route in the app has
  * to sit one level down from here.
  */
@@ -96,10 +95,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       /**
-       * ThemeScript runs before hydration and writes four things to this
-       * element that the server HTML cannot contain: the `dark` class,
-       * `style.colorScheme`, `data-bg` and `data-shape`. React sees the
-       * difference and warns on every load.
+       * ThemeScript runs before hydration and writes to this element what the
+       * server HTML cannot contain: the `dark` class and `style.colorScheme`.
+       * React sees the difference and warns on every load.
        *
        * That mismatch is the mechanism working, not a bug: the whole point of
        * resolving the theme pre-paint is that the client knows something the
@@ -121,13 +119,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Analytics />
         <SpeedInsights />
-        {/*
-          Ships in production on purpose, while D9 is open: the choice of
-          background and hero shape is being made on the deployed site, not
-          on localhost. It excludes itself from /admin. Remove it — and the
-          losing variants — the moment D9 is decided.
-        */}
-        <DevVariantPicker />
       </body>
     </html>
   );

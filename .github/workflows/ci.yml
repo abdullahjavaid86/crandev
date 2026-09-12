@@ -89,8 +89,16 @@ jobs:
 
           # Colour tokens renamed to roles when light mode landed. A component
           # referencing a deleted token silently gets no colour.
-          if grep -rnE 'var\(--(void|carbon|graphite|ice|mist|hairline|cyan)\)' app components lib hooks 2>/dev/null; then
-            echo "::error::Retired colour token. Use the role tokens: surface/raised/inset/line/fg/muted/accent."
+          if grep -rnE 'var\(--(void|carbon|graphite|ice|mist|hairline|cyan|ion|field-a|field-b|field-c|lattice-line|lattice-node|glass-tint|glass-tint-soft)\)' app components lib hooks 2>/dev/null; then
+            echo "::error::Retired colour token. Use the role tokens: surface/raised/inset/line/fg/muted/accent, the glass tokens, or the scene tokens."
+            fail=1
+          fi
+
+          # The scene is the one consumer of three. Importing it anywhere else
+          # would pull 600KB into that module's chunk — the whole reason the
+          # scene is loaded from an idle callback is that it does not.
+          if grep -rln 'from "three' app components hooks lib | grep -v '^lib/scene/'; then
+            echo "::error::three imported outside lib/scene/. The scene is the one consumer."
             fail=1
           fi
 
@@ -107,18 +115,6 @@ jobs:
           # <Reveal> starts hidden and only animates after hydration.
           if grep -qn 'components/motion/Reveal' components/sections/Hero.tsx; then
             echo "::error::Hero imports Reveal. Above the fold use RiseIn — Reveal cannot paint before hydration."
-            fail=1
-          fi
-
-          # Every blurred ambient field must be promoted to its own compositor
-          # layer. Transforming a blur(120px) element otherwise re-runs the
-          # blur every frame: 640ms worst interaction vs 48ms, measured.
-          # The style declaration, not the prose: the doc comment names the
-          # blur too, and counting that made the guard fail on its own docs.
-          blurs=$(grep -c 'filter: "blur(120px)"' components/layout/ScrollBackground.tsx || true)
-          promoted=$(grep -c 'willChange' components/layout/ScrollBackground.tsx || true)
-          if [ "$blurs" -ne "$promoted" ]; then
-            echo "::error::ScrollBackground has $blurs blurred fields but $promoted promoted. Each needs willChange, or interaction latency collapses."
             fail=1
           fi
 
@@ -139,13 +135,6 @@ jobs:
             echo "::error::$preloads fonts preloaded on /. Only the display face should be; the rest swap."
             fail=1
           fi
-
-          # There was a third guard here: the variant picker must not reach the
-          # production bundle. It ships deliberately now, while D9 is open and
-          # the choice is being made on the deployed site. Removed rather than
-          # left failing. If the production gate ever returns, so does this —
-          # and note that the picker must be mounted in the ROOT layout for the
-          # gate to work at all.
 
           if [ "$fail" -eq 0 ]; then echo "guards passed"; fi
           exit "$fail"
