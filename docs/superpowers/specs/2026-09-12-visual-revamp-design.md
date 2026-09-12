@@ -12,11 +12,11 @@ Reference points: Linear, Raycast, Apple marketing pages. A lot of air, one sans
 
 Decisions taken with the owner (2026-09-12):
 
-| Question | Decision |
-| --- | --- |
-| Accent | One soft indigo blue. The teal and the secondary "ion" blue go. |
-| Type | Geist Sans for headlines and body. Geist Mono only for commit shas and stat figures. |
-| three.js | One ambient full-page scene: shader gradient plus three frosted panes that drift and tilt on scroll. |
+| Question   | Decision                                                                                                               |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Accent     | One soft indigo blue. The teal and the secondary "ion" blue go.                                                        |
+| Type       | Geist Sans for headlines and body. Geist Mono only for commit shas and stat figures.                                   |
+| three.js   | One ambient full-page scene: shader gradient plus three frosted panes that drift and tilt on scroll.                   |
 | Side rails | Remove the Ship Log rail and the reading panel. Single centred column. Commit feed stays in the hero as a static list. |
 
 ## Tokens (`app/globals.css`)
@@ -36,7 +36,9 @@ Decisions taken with the owner (2026-09-12):
 background: var(--glass-fill);
 border: 1px solid var(--line);
 backdrop-filter: blur(24px) saturate(160%);
-box-shadow: 0 1px 0 0 var(--glass-catch) inset, 0 20px 50px -24px var(--glass-drop);
+box-shadow:
+  0 1px 0 0 var(--glass-catch) inset,
+  0 20px 50px -24px var(--glass-drop);
 border-radius: var(--r-md);
 ```
 
@@ -86,12 +88,12 @@ Accent discipline holds: one accent element per viewport-height of scroll.
 
 ## Milestone rows
 
-| # | Task |
-| --- | --- |
-| 7.1 | Tokens, fonts, glass recipe, primitives (Eyebrow, Card, Badge, Button, Field) |
+| #   | Task                                                                                                 |
+| --- | ---------------------------------------------------------------------------------------------------- |
+| 7.1 | Tokens, fonts, glass recipe, primitives (Eyebrow, Card, Badge, Button, Field)                        |
 | 7.2 | Shell: header, scroll line, footer, `Scene` with `three`, deletions of the old backgrounds and rails |
-| 7.3 | Hero with the "Recently shipped" panel |
-| 7.4 | Home body: Proof, Services, Work, Testimonials, Brands, Process, Contact, CTA |
-| 7.5 | Cleanup of dead modules, docs and skills, CI guards, tracker |
+| 7.3 | Hero with the "Recently shipped" panel                                                               |
+| 7.4 | Home body: Proof, Services, Work, Testimonials, Brands, Process, Contact, CTA                        |
+| 7.5 | Cleanup of dead modules, docs and skills, CI guards, tracker                                         |
 
 Each row is one commit on `feature/fast-track` after the quality gate.

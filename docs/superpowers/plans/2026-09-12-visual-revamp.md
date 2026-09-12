@@ -35,11 +35,13 @@
 ### Task 1: Tokens, fonts, glass recipe, primitives [M7.1]
 
 **Files:**
+
 - Modify: `app/globals.css`, `app/layout.tsx`
 - Modify: `components/ui/Eyebrow.tsx`, `components/ui/Badge.tsx`, `components/ui/Card.tsx`, `components/ui/buttonStyles.ts`, `components/ui/Field.tsx` (only `controlStyles`), `components/ui/StatFigure.tsx`
 - Modify (mechanical, keep build green): every caller of `<Eyebrow index="…">` — `components/sections/{Brands,Proof,Hero,Work,Process,Contact,Testimonials,ServiceStack,Services}.tsx` — remove the `index` attribute only. `app/(admin)/admin/StatTile.tsx` passes `highlight` to `Card` — remove that prop there.
 
 **Interfaces:**
+
 - Produces: CSS utility `glass` (Tailwind `@utility`) = the one glass recipe (background, backdrop-filter, box-shadow only; radius and border stay separate utilities). Usage pattern for a card: `rounded-md border border-line bg-raised md:glass`. Header and modals may use `glass` unprefixed (they are the two blurred surfaces allowed below `md`).
 - Produces: tokens `--scene-a`, `--scene-b`, `--scene-c`, `--scene-pane` (themed), consumed by Task 2.
 - Produces: `Card` props `{ glass?: boolean } & React.ComponentProps<"div">` — server component, no cursor light, no `highlight` prop.
@@ -52,23 +54,33 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
 /** The one sans. Headlines and body are the same family at different weights. */
-const sans = Geist({ variable: "--font-sans-src", subsets: ["latin"], display: "swap" });
+const sans = Geist({
+  variable: "--font-sans-src",
+  subsets: ["latin"],
+  display: "swap",
+});
 /** Only for real machine data: commit shas, stat figures. */
-const mono = Geist_Mono({ variable: "--font-mono-src", subsets: ["latin"], display: "swap", preload: false });
+const mono = Geist_Mono({
+  variable: "--font-mono-src",
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+});
 ```
+
 Apply `${sans.variable} ${mono.variable}` on `<html>`. Update the doc comment: one preload (the sans), mono swaps. In `globals.css` `@theme inline`, set `--font-display: var(--font-sans-src); --font-body: var(--font-sans-src); --font-mono: var(--font-mono-src);` and replace every `var(--font-display-src)` / `var(--font-body-src)` in the base layer with `var(--font-sans-src)`. Grep `app components lib` for `font-display-src|font-body-src` and fix every hit (`app/global-error.tsx` may reference them).
 
 - [ ] **Step 2: Tokens.** In `app/globals.css` `:root` (light) set exactly:
 
 ```css
---accent: #3b5bdb;      /* 5.5:1 as text on --surface; white ink on it is 5.7:1 */
+--accent: #3b5bdb; /* 5.5:1 as text on --surface; white ink on it is 5.7:1 */
 --accent-on: #ffffff;
 --accent-ink: #3b5bdb;
 --glass-fill: rgba(255, 255, 255, 0.65);
 --glass-catch: rgba(255, 255, 255, 0.9);
 --glass-drop: rgba(6, 7, 10, 0.1);
 --grain-opacity: 0.012;
---scene-a: #e8ecff;     /* pale indigo — brightest field; --muted on it is 5.1:1 */
+--scene-a: #e8ecff; /* pale indigo — brightest field; --muted on it is 5.1:1 */
 --scene-b: #fafbfc;
 --scene-c: #dce3f7;
 --scene-pane: rgba(255, 255, 255, 0.35);
@@ -78,9 +90,11 @@ Apply `${sans.variable} ${mono.variable}` on `<html>`. Update the doc comment: o
 --t-display: clamp(2.5rem, 1.6rem + 4vw, 5.5rem);
 --t-h2: clamp(1.75rem, 1.3rem + 2vw, 3rem);
 ```
+
 and in `.dark`:
+
 ```css
---accent: #6e82ff;      /* 6.0:1 as text on --surface; #06070A ink on it is 6.0:1 */
+--accent: #6e82ff; /* 6.0:1 as text on --surface; #06070A ink on it is 6.0:1 */
 --accent-on: #06070a;
 --accent-ink: #6e82ff;
 --glass-fill: rgba(18, 21, 30, 0.6);
@@ -92,6 +106,7 @@ and in `.dark`:
 --scene-c: #121a33;
 --scene-pane: rgba(232, 237, 245, 0.05);
 ```
+
 Delete from both themes: `--ion`, `--glass-tint`, `--glass-tint-soft`, `--field-a/b/c`, `--lattice-line`, `--lattice-node`, and `--color-ion` from `@theme inline`. Delete the `@property --lit` block (Card no longer uses it). Keep every other token. Update the comment block above the tokens to describe the new palette in one short paragraph (indigo accent, same hex for fill and ink per theme, glass tokens, scene tokens).
 
 - [ ] **Step 3: Type base.** In `@layer base`: `h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; }` (was 650 / -0.03em). `h1 { line-height: 1.0 }`. Body stays. `:focus-visible` ring stays on `--accent-ink`, `::selection` stays.
@@ -126,9 +141,12 @@ interface EyebrowProps {
 
 /** A small, quiet label above a heading. Sans, sentence case — never mono. */
 export function Eyebrow({ children, className }: EyebrowProps) {
-  return <p className={cn("text-small font-medium text-muted", className)}>{children}</p>;
+  return (
+    <p className={cn("text-small font-medium text-muted", className)}>{children}</p>
+  );
 }
 ```
+
 Then remove `index="…"` from every caller (grep `index="` in `components/sections` and `app`). Keep the label text.
 
 - [ ] **Step 6: Badge.** Pill, sans: classes `inline-flex items-center rounded-full border border-line bg-inset px-2.5 py-0.5 text-small text-muted`. Update its doc comment (no longer mono).
@@ -166,6 +184,7 @@ export function Card({ glass = false, className, children, ...props }: CardProps
   );
 }
 ```
+
 Remove the `highlight` prop from `app/(admin)/admin/StatTile.tsx`.
 
 - [ ] **Step 8: Buttons and fields.** In `buttonStyles.ts`: base gets `rounded-sm` (10px) instead of `rounded-md`; primary stays `bg-accent text-accent-on` with the existing color-mix glow; secondary becomes `border border-line bg-raised text-fg hover:bg-inset active:bg-inset`; ghost unchanged. In `Field.tsx` `controlStyles`: `rounded-sm` instead of `rounded-md`, rest unchanged.
@@ -175,10 +194,12 @@ Remove the `highlight` prop from `app/(admin)/admin/StatTile.tsx`.
 - [ ] **Step 10: Verify.** `yarn typecheck && yarn lint && yarn format:check && yarn build`. Then screenshot `/` at 1440 and 390, dark and light: confirm Geist renders, the accent button is indigo, no teal remains anywhere on the page (the old rail and backgrounds are still present and will be removed in Task 2 — that is expected). Also load `/admin/login` and confirm it renders with the new tokens.
 
 - [ ] **Step 11: Commit.**
+
 ```bash
 git add app/globals.css app/layout.tsx components/ui components/sections app/\(admin\)/admin/StatTile.tsx
 git commit -m "feat(tokens): indigo accent, Geist, glass recipe, quiet primitives [M7.1]"
 ```
+
 Body: why (the owner's 2026-09-12 direction: professional not robotic; contrast figures for the accent in both themes).
 
 ---
@@ -186,28 +207,37 @@ Body: why (the owner's 2026-09-12 direction: professional not robotic; contrast 
 ### Task 2: Shell — header, footer, scroll line, three.js scene, remove rails and old backgrounds [M7.2]
 
 **Files:**
+
 - Add deps: `yarn add three` and `yarn add -D @types/three` (state the versions installed in the commit body).
 - Create: `lib/scene/shaders.ts`, `lib/scene/createScene.ts`, `components/layout/Scene.tsx`
 - Modify: `components/layout/Header.tsx`, `components/layout/Footer.tsx`, `components/layout/ThemeScript.tsx`, `app/(site)/layout.tsx`, `app/(site)/page.tsx`, `app/layout.tsx`, `components/sections/Hero.tsx` (remove `WireSolid` only), `lib/nav.ts`, `.github/workflows/ci.yml`
 - Delete (`git rm`): `components/layout/ShipLog.tsx`, `hooks/useShipLog.ts`, `components/layout/ReadingPanel.tsx`, `components/motion/WireSolid.tsx`, `lib/shapes.ts`, `lib/lattice.ts`, `components/layout/LatticeBackground.tsx`, `components/layout/GridBackground.tsx`, `components/layout/ScrollBackground.tsx`, `components/layout/BackgroundLayer.tsx`, `components/ui/DevVariantPicker.tsx`, `hooks/useBackground.ts`, `hooks/useHeroShape.ts`. Keep `hooks/useDomFlag.ts` (the admin `SidebarToggle` uses it).
 
 **Interfaces:**
+
 - Consumes: `glass` utility, `--scene-*` tokens (Task 1).
 - Produces: `export function Scene(): JSX` (client) — mounted once in `app/(site)/layout.tsx` as the first child, replacing `<BackgroundLayer />`.
 - Produces: `lib/scene/createScene.ts`:
+
 ```ts
-export interface SceneColors { a: string; b: string; c: string; pane: string } // CSS colour strings
+export interface SceneColors {
+  a: string;
+  b: string;
+  c: string;
+  pane: string;
+} // CSS colour strings
 export interface SceneHandle {
-  setScroll(progress: number): void;   // 0..1 target; lerped internally
+  setScroll(progress: number): void; // 0..1 target; lerped internally
   setTheme(colors: SceneColors): void;
   setSize(width: number, height: number, pixelRatio: number): void;
-  renderOnce(): void;                  // one frame at the current state
-  start(): void;                       // rAF loop
+  renderOnce(): void; // one frame at the current state
+  start(): void; // rAF loop
   stop(): void;
-  dispose(): void;                     // renderer.dispose(), geometry/material dispose, forceContextLoss()
+  dispose(): void; // renderer.dispose(), geometry/material dispose, forceContextLoss()
 }
 export function createScene(canvas: HTMLCanvasElement): SceneHandle; // throws if WebGL is unavailable
 ```
+
 - Produces: `lib/nav.ts` gains `export const siteLinks = { email: "hello@cranedev.com", github: "https://github.com/cranedev" } as const;` (moved from Footer's `CONTACT`, still flagged as placeholders in a comment — D8). Task 4's Contact section consumes it.
 
 - [ ] **Step 1: Install.** `yarn add three` then `yarn add -D @types/three`. Confirm `yarn.lock` changed and no `package-lock.json` appeared.
@@ -248,6 +278,7 @@ export function createScene(canvas: HTMLCanvasElement): SceneHandle; // throws i
 - [ ] **Step 8: Footer.** Move `CONTACT` to `lib/nav.ts` as `siteLinks` (with the D8 placeholder comment) and import it. Column headings: `<h2 className="text-small font-medium text-fg">`. Wordmark link: `font-display text-body font-semibold tracking-[-0.02em]`. Legal line: replace the `Eyebrow` with `<p className="text-small text-muted">© {year} CraneDev · Remote</p>` and drop the Eyebrow import. Everything else unchanged.
 
 - [ ] **Step 9: CI.** In `.github/workflows/ci.yml` delete the `ScrollBackground` blur/willChange guard block (the file no longer exists; the `grep -c` on a missing file would break the step). Add to the retired-token regex: `ion|field-a|field-b|field-c|lattice-line|lattice-node|glass-tint|glass-tint-soft`. Add a guard: `three` may only be imported under `lib/scene/`:
+
 ```bash
 if grep -rln 'from "three' app components hooks lib | grep -v '^lib/scene/'; then
   echo "::error::three imported outside lib/scene/. The scene is the one consumer."
@@ -264,11 +295,13 @@ fi
 ### Task 3: Hero with the "Recently shipped" panel [M7.3]
 
 **Files:**
+
 - Rewrite: `components/sections/Hero.tsx`
 - Create: `components/sections/ShippedPanel.tsx` (server component)
 - Delete (`git rm`): `components/sections/CommitTicker.tsx`
 
 **Interfaces:**
+
 - Consumes: `RiseIn`, `MaskedText`, `buttonStyles`, `Eyebrow`, `Card`, `Container`, `primaryCta` from `lib/nav`.
 - Produces: `export interface Commit { sha: string; repo: string; message: string; when: string }` and `export function ShippedPanel({ commits, className }: { commits: readonly Commit[]; className?: string })`. M4.4 will feed real commits into the same prop.
 
@@ -277,16 +310,28 @@ fi
 - [ ] **Step 2: Hero.** Keep `PLACEHOLDER_COMMITS` (typed as `Commit[]` from `ShippedPanel`) and the two "must not ship" comments. Copy: `HEADLINE = ["Software that ships,", "and keeps shipping."]`; subcopy `"A senior team that takes systems from architecture to production, then stays on them. No handover to people who have never seen the code."`. Markup:
 
 ```tsx
-<section id="hero" aria-labelledby="hero-heading" className="relative py-20 md:flex md:min-h-[calc(100dvh-4rem)] md:items-center md:py-28">
+<section
+  id="hero"
+  aria-labelledby="hero-heading"
+  className="relative py-20 md:flex md:min-h-[calc(100dvh-4rem)] md:items-center md:py-28"
+>
   <Container className="md:grid md:grid-cols-12 md:items-center md:gap-10">
     <div className="md:col-span-7">
-      <RiseIn><Eyebrow>Senior software agency</Eyebrow></RiseIn>
+      <RiseIn>
+        <Eyebrow>Senior software agency</Eyebrow>
+      </RiseIn>
       <MaskedText as="h1" lines={HEADLINE} className="mt-5 max-w-[16ch]" />
-      <RiseIn delay={0.15}><p className="mt-6 max-w-[48ch] text-muted">{SUBCOPY}</p></RiseIn>
+      <RiseIn delay={0.15}>
+        <p className="mt-6 max-w-[48ch] text-muted">{SUBCOPY}</p>
+      </RiseIn>
       <RiseIn delay={0.25}>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href={primaryCta.href} className={buttonStyles("primary", "md")}>{primaryCta.label}</Link>
-          <Link href="/work" className={buttonStyles("secondary", "md")}>See the work</Link>
+          <Link href={primaryCta.href} className={buttonStyles("primary", "md")}>
+            {primaryCta.label}
+          </Link>
+          <Link href="/work" className={buttonStyles("secondary", "md")}>
+            See the work
+          </Link>
         </div>
       </RiseIn>
     </div>
@@ -296,6 +341,7 @@ fi
   </Container>
 </section>
 ```
+
 The `h1` keeps `id="hero-heading"` — check how `MaskedText` accepts an id; if it does not, add an optional `id` prop to `MaskedText` and forward it to the heading (one-line change). The secondary button is the only new element; the primary CTA remains the viewport's single accent element.
 
 - [ ] **Step 3: Verify.** Full gate. Browser at 1440 and 390 in both themes: headline in two lines on desktop, at most three at 390; panel below the copy on the phone, to the right on desktop; the hero paints its text immediately on a hard reload (no blank frame). `grep -n "components/motion/Reveal" components/sections/Hero.tsx` returns nothing.
@@ -307,11 +353,13 @@ The `h1` keeps `id="hero-heading"` — check how `MaskedText` accepts an id; if 
 ### Task 4: Home body — Proof, Services, Work, Testimonials, Brands, Process, Contact, CTA [M7.4]
 
 **Files:**
+
 - Modify: `components/sections/{Proof,Services,Work,Testimonials,Brands,Process,Contact,CtaBand}.tsx`, `components/ui/ProjectCard.tsx`, `components/ui/StatFigure.tsx` (only the `li` classes), `app/(site)/page.tsx` (only if imports change)
 - Create: `components/sections/ServiceList.tsx` (server component)
 - Delete (`git rm`): `components/sections/ServiceStack.tsx`, `components/sections/ProcessTimeline.tsx`
 
 **Interfaces:**
+
 - Consumes: `Card { glass }`, `Eyebrow`, `Badge`, `StaggerGroup`/`StaggerItem`, `Reveal`, `buttonStyles`, `siteLinks` from `lib/nav`, content loaders from `lib/content`.
 - Produces: `ProjectCard` gains `featured?: boolean`.
 
@@ -340,6 +388,7 @@ The `h1` keeps `id="hero-heading"` — check how `MaskedText` accepts an id; if 
 ### Task 5: Cleanup, docs, skills, tracker [M7.5]
 
 **Files:**
+
 - Modify: `CLAUDE.md`, `.claude/skills/design-system/SKILL.md`, `.claude/skills/motion-system/SKILL.md`, `.claude/skills/building-a-section/SKILL.md`, `.claude/skills/adding-a-page/SKILL.md`, `.claude/skills/quality-gate/SKILL.md`, `MILESTONES.md`, `.github/workflows/ci.yml` (only if a guard still references a deleted file)
 - Delete: any module with zero importers after Tasks 1–4 (check `components/motion/Parallax.tsx` and `components/ui/Modal.tsx`: Parallax is likely unused — delete it; Modal is reserved for M5.2 — keep it and say so in the tracker).
 
