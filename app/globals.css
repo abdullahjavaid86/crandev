@@ -208,11 +208,13 @@ html[data-sidebar="icons"] {
    radius and border are the separate rounded-* / border-line utilities, so a
    glass surface is `rounded-md border border-line bg-raised md:glass`.
    backdrop-filter is the most expensive thing on the page: below md only the
-   header and a modal may use it; every other surface stays solid bg-raised. */
+   header and a modal may use it; every other surface stays solid bg-raised.
+   No hand-written -webkit-backdrop-filter: Lightning CSS adds the prefix
+   itself, and when both were authored it kept only the prefixed one — Chrome
+   then reported `backdrop-filter: none` and no surface blurred at all. */
 @utility glass {
   background: var(--glass-fill);
   backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
   box-shadow:
     0 1px 0 0 var(--glass-catch) inset,
     0 20px 50px -24px var(--glass-drop);

@@ -22,18 +22,18 @@ Everything below serves that job.
 
 ## 2. Stack and hard constraints
 
-| Concern         | Choice                                                                                        |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| Package manager | **Yarn Berry 4.x** via corepack. Not npm.                                                     |
-| Framework       | Next.js (App Router), TypeScript, strict mode                                                 |
-| Styling         | Tailwind CSS (v4 if the installer scaffolds it)                                               |
-| Animation       | Framer Motion — npm package is **`motion`**, not `framer-motion`. Import from `motion/react`. |
-| Icons           | `lucide-react`                                                                                |
-| HTTP            | `axios` (single shared instance — never call `axios` directly from a component)               |
-| Fonts           | `next/font/google` only                                                                       |
-| Database        | MongoDB via the official `mongodb` driver — **not** Mongoose                                  |
-| Validation      | `zod` — one schema library for both JSON content and form input                               |
-| Content         | JSON under `content/`, parsed through a zod schema at the boundary                            |
+| Concern         | Choice                                                                                                                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package manager | **Yarn Berry 4.x** via corepack. Not npm.                                                                                                                                               |
+| Framework       | Next.js (App Router), TypeScript, strict mode                                                                                                                                           |
+| Styling         | Tailwind CSS (v4 if the installer scaffolds it)                                                                                                                                         |
+| Animation       | `motion` (default, stays the default) — npm package is **`motion`**, not `framer-motion`. Import from `motion/react`. `three` for exactly one thing, the ambient scene in `lib/scene/`. |
+| Icons           | `lucide-react`                                                                                                                                                                          |
+| HTTP            | `axios` (single shared instance — never call `axios` directly from a component)                                                                                                         |
+| Fonts           | `next/font/google` only                                                                                                                                                                 |
+| Database        | MongoDB via the official `mongodb` driver — **not** Mongoose                                                                                                                            |
+| Validation      | `zod` — one schema library for both JSON content and form input                                                                                                                         |
+| Content         | JSON under `content/`, parsed through a zod schema at the boundary                                                                                                                      |
 
 **Constraints — do not violate without asking:**
 
@@ -45,6 +45,7 @@ Everything below serves that job.
 - **UI primitives: shadcn or Radix, on demand.** Reach for them where the behaviour is genuinely hard to get right — dialog, popover, tooltip, select, focus management. Do not pull one in for a button or a card; those stay hand-built. **Never MUI, Chakra, DaisyUI, or any kit that ships its own design language.**
   - shadcn copies source into our repo rather than adding a black box, which is why it is allowed. Adopt it for **behaviour and accessibility only** — strip its default palette and restyle against our tokens (§4). A shadcn component still carrying `--background`/`--foreground` or stock greys has not been adopted, it has been pasted.
 - **Animation: `motion` is the default and stays the default.** Another library is permitted only where motion genuinely cannot do the job gracefully — state the specific thing it can't do before adding one. Never MUI-style breadth: one extra library, for one named reason, not a collection.
+- **`three` is imported only under `lib/scene/`.** It exists for the one fullscreen shader scene; nothing else may use it. No react-three-fiber, no drei — a plain `WebGLRenderer`, one draw call.
 - **No duplication.** Search for an existing component, hook, helper, type, or piece of logic before writing a new one. Extend what exists; do not fork a near-copy (§10).
 - No `<img>` — use `next/image`. No `<a>` for internal routes — use `next/link`.
 - Do not add a dependency without stating why in your message first.
@@ -70,7 +71,7 @@ yarn typecheck  # next typegen && tsc --noEmit
 
 ```
 app/
-  layout.tsx              # fonts, metadata, <Noise/>, global providers
+  layout.tsx              # fonts, metadata, <Scene/>, <Grain/>, global providers
   page.tsx                # home — composes sections, server component
   not-found.tsx           # real 404 in the interface's voice
   work/page.tsx           # all projects
@@ -83,17 +84,19 @@ app/
   careers/[slug]/page.tsx # role detail + application
   api/github/route.ts     # server-side proxy; token never reaches the client
 components/
-  sections/               # Hero, Proof, Services, Work, Testimonials, Brands,
-                          # Process, OpenSource, Contact, CtaBand, TeamGrid, Roles
-  ui/                     # Button, Card, Eyebrow, Badge, Marquee, Field
-  motion/                 # Reveal, StaggerGroup, MaskedText, Parallax, ScrollProgress
-  layout/                 # Header, Footer, Container, Noise, Grain, ShipLog
-hooks/                    # useShipLog, useCursorHighlight, … named for their owner
+  sections/               # Hero, ShippedPanel, Proof, Services, ServiceList, Work,
+                          # Testimonials, Brands, Process, OpenSource, Contact,
+                          # ContactForm, CtaBand, TeamGrid, Roles
+  ui/                     # Button, Card, Eyebrow, Badge, Field, Modal, ProjectCard, StatFigure, ThemeToggle
+  motion/                 # Reveal, RiseIn, StaggerGroup, MaskedText, ScrollProgress
+  layout/                 # Header, Footer, Container, Grain, Scene, ThemeScript
+hooks/                    # useTheme, useMediaQuery, … named for their owner
 lib/
   api/client.ts           # axios instance + interceptors
   api/github.ts           # typed GitHub calls
   motion.ts               # easing, durations, shared variants — SINGLE SOURCE
   nav.ts                  # one nav source; Header and Footer both consume it
+  scene/                  # createScene.ts, shaders.ts — the ambient three.js scene, framework-free, no directive
   utils.ts                # cn(), formatters
 content/                  # typed content, no CMS
   services.ts  work.ts  process.ts  team.ts
@@ -108,7 +111,7 @@ Rule: a component that renders more than ~120 lines of JSX gets split. A section
 
 ## 4. Design system
 
-The direction is fixed: **deep obsidian, neon cyan, restrained glass.** These tokens are not suggestions — derive every color from them and add no others.
+The direction is fixed: **quiet obsidian, one indigo, frosted glass.** These tokens are not suggestions — derive every color from them and add no others.
 
 ### 4.0 Two themes
 
@@ -125,16 +128,16 @@ The site supports **dark and light**. Dark is the signature; light is a first-cl
 | `--fg` text                | `#0E1017`       | `#E8EDF5`    |
 | `--muted` secondary        | `#5A6274`       | `#8A93A6`    |
 
-**The accent has two roles and they are not interchangeable.**
+**The accent has two roles and, per theme, they now share one hex.**
 
-- `--accent` is a **fill**. Cyan `#35F0DC` under `--accent-on` ink is 14:1 in both themes, so the fill is identical either way.
-- `--accent-ink` is for **text and borders**. Cyan as text on white is **1.43:1** — unusable. Light mode uses a darkened teal `#0A6B5E` at 6.4:1; dark mode collapses both roles back to the one signature cyan.
+- `--accent` is a **fill**: indigo `#3B5BDB` on light, `#6E82FF` on dark. `--accent-on` is the ink that sits on that fill — white on light, `#06070A` on dark — and clears 5.5:1 (light) / 6.0:1 (dark).
+- `--accent-ink` is for **text and borders** and holds the same hex as `--accent` in each theme. The two role names stay distinct in code because the fill and the ink may diverge again; they are not required to match forever, they just do right now.
 
-Get this wrong and light mode ships invisible text. Never use `--accent` where `--accent-ink` belongs.
+Never use `--accent-on` where `--accent-ink` belongs — `--accent-on` is tuned to sit on the fill, not on `--surface` or `--raised`.
 
 **Mechanism.** Class-based `.dark` on `<html>`, resolved **before paint** by `ThemeScript` in `<head>`. Precedence is stored choice > OS. Not a `prefers-color-scheme` media query — the toggle has to be able to win. No client provider wraps the tree; `useTheme` reads the DOM through `useSyncExternalStore`, and `ThemeToggle` is a leaf.
 
-**Glass and grain are themed too** — `--glass-tint`, `--glass-catch`, `--glass-drop`, `--grain-opacity`. On light, glass tints dark and the grain lightens to `0.02`.
+**Glass and grain are themed too** — `--glass-fill`, `--glass-catch`, `--glass-drop`, `--grain-opacity`. Grain is `0.02` dark / `0.012` light.
 
 **Contrast is checked in both themes**, and `--muted` is the one that fails first: the old `#8A93A6` is only 3.09:1 on white.
 
@@ -143,84 +146,83 @@ Get this wrong and light mode ships invisible text. Never use `--accent` where `
 Define in `globals.css` as CSS variables, expose to Tailwind via `@theme`.
 
 ```
---void      #06070A   page background, the deepest layer
---carbon    #0E1017   raised surfaces, cards
---graphite  #171A22   hover state, inset panels
---hairline  rgba(232, 237, 245, 0.08)   all borders, 1px, never heavier
---ice       #E8EDF5   primary text
---mist      #8A93A6   secondary text, captions
---cyan      #35F0DC   THE accent — signature only
---ion       #4C6FFF   secondary glow, gradient partner to cyan
+--surface       page background                                  #FAFBFC / #06070A
+--raised        cards, raised surfaces                            #FFFFFF / #0E1017
+--inset         hover state, inset panels                         #F1F3F6 / #171A22
+--line          hairline borders, 1px, never heavier               black 10% / ice 8%
+--line-strong   emphasised borders                                 black 22% / ice 22%
+--fg            primary text                                       #0E1017 / #E8EDF5
+--muted         secondary text, captions                           #5A6274 / #8A93A6
+--accent        the fill — one indigo, signature only               #3B5BDB / #6E82FF
+--accent-on     ink on the accent fill                              #FFFFFF / #06070A
+--accent-ink    accent text and borders                             #3B5BDB / #6E82FF
+--scene-a/b/c   the ambient scene's gradient colours                 see §4.6
+--scene-pane    the scene's glass-pane tint                          rgba(255,255,255,.22) / rgba(232,237,245,.07)
 ```
 
-Discipline on the accent: cyan appears on **one** element per viewport-height of scroll. It is for the thing you want clicked or read first. If two things glow, nothing glows. Body copy is never cyan. Borders are never cyan except on `:focus-visible` and the active nav item.
+Discipline on the accent: it appears on **one** element per viewport-height of scroll. It is for the thing you want clicked or read first. If two things glow, nothing glows. Body copy is never the accent. Borders never take it except on `:focus-visible` and the active nav item. Tailwind's stock palette colours (`cyan-400`, `indigo-500`, etc.) are never the accent — only the token.
 
 ### 4.2 Glass recipe
 
-One recipe, used consistently. Do not invent variants per section.
+One recipe, one Tailwind `@utility glass`, used consistently. Do not invent variants per section.
 
 ```css
-background: linear-gradient(
-  148deg,
-  rgba(232, 237, 245, 0.055),
-  rgba(232, 237, 245, 0.015)
-);
-border: 1px solid var(--hairline);
-backdrop-filter: blur(20px) saturate(140%);
+background: var(--glass-fill);
+border: 1px solid var(--line);
+backdrop-filter: blur(24px) saturate(160%);
 box-shadow:
-  0 1px 0 0 rgba(232, 237, 245, 0.06) inset,
-  /* top light catch */ 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  0 1px 0 0 var(--glass-catch) inset,
+  0 20px 50px -24px var(--glass-drop);
+border-radius: var(--r-md);
 ```
 
-Glass is only legible over something with variation. Every glass surface must sit above either the grain layer or a soft radial glow — otherwise it reads as flat grey and we've spent the blur budget for nothing.
+The usage pattern is `rounded-md border border-line bg-raised md:glass` — solid `--raised` on phones, blur from `md` up. `Header` and `Modal` use `glass` unprefixed; they are the two blurred surfaces the budget allows below `md`.
 
-Budget: **2 blurred surfaces per viewport below `md`, ~6 above.** Never stacked more than two deep, never on a full-page wrapper. `backdrop-filter` is the most expensive thing on this page and a mid-range Android GPU is where it shows. Below `md`, a glass surface that is not the sticky header or a modal falls back to solid `--carbon` with the same hairline border — visually near-identical against a dark ground, and free.
+Glass is only legible over something with variation. Every glass surface must sit above either the grain layer or the ambient scene — otherwise it reads as flat grey and we've spent the blur budget for nothing.
+
+Budget: **2 blurred surfaces per viewport below `md`, ~6 above.** Never stacked more than two deep, never on a full-page wrapper. `backdrop-filter` is the most expensive thing on this page and a mid-range Android GPU is where it shows. Below `md`, a glass surface that is not the header or a modal falls back to solid `--raised` with the same 1px `--line` border — visually near-identical, and free.
 
 ### 4.3 Typography
 
-Three roles, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS variables.
+Two font families, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS variables.
 
-- **Display — `Bricolage Grotesque`** (variable). Headlines only. Tight tracking (`-0.03em`), weight 600–700, `text-balance` on every headline.
-- **Body — `Inter Tight`**. Paragraphs, buttons, nav. Weight 400/500. Max measure `65ch`.
-- **Utility — `JetBrains Mono`**. Eyebrows, section numbers, stat labels, metadata, anything that should read as _machine output_. Always `uppercase`, `tracking-[0.18em]`, `text-xs`, `--mist`.
+- **Geist Sans** — `--font-display` and `--font-body` both resolve to it. Headlines and body share one family. Headings are weight 600, tracking `-0.02em`, `text-balance` on every headline, `h1` line-height `1.0`.
+- **Geist Mono** — `--font-mono`. Reserved for commit shas and stat figures only — nothing else. Not preloaded (`--font-mono-src`); Geist Sans is preloaded (`--font-display-src`) since it's the LCP-path face.
+- **Eyebrows are small sans labels in sentence case** — no mono, no uppercase, no index number.
 
-The mono utility face is a deliberate signal: this is a shop that reads logs. Use it for real metadata (repo names, dates, latency figures, stack labels) and never as decoration on prose.
+Scale (clamp, fluid): `display clamp(2.5rem, 1.6rem + 4vw, 5.5rem)` / `h2 clamp(1.75rem, 1.3rem + 2vw, 3rem)` / `h3 1.25–1.5rem` / `body 1.0625rem` / `small 0.875rem`. Line height: `1.0` display/h1, `1.1` h2, `1.65` body.
 
-Scale (clamp, fluid): `display 2.5–6.5rem` / `h2 1.75–3.5rem` / `h3 1.25–1.5rem` / `body 1.0625rem` / `small 0.875rem`. Line height: `0.95` display, `1.1` h2, `1.65` body.
-
-The display floor is `2.5rem`, not `3.5rem`. At 360px the container is 312px wide; a 56px condensed grotesque fits roughly seven characters per line, so a short headline becomes five ragged lines. 40px holds a real headline in two or three. Set the floor from the smallest screen, never from the largest.
+The display floor is `2.5rem`, not `3.5rem`. At 360px the container is 312px wide; a large condensed face at 56px fits roughly seven characters per line, so a short headline becomes five ragged lines. 40px holds a real headline in two or three. Set the floor from the smallest screen, never from the largest.
 
 ### 4.4 Space, radius, layout
 
 - Spacing on a 4px grid. **Section rhythm is `py-16 md:py-24` per section, which is the gap between two sections — 128px on mobile, 192px on desktop.**
   The rhythm is the SPACE BETWEEN sections, not the padding of one. Adjacent sections each contribute half; setting `py-40` per section produced 320px of dead air between every pair, which is what it looked like. Never fight this per-section.
 - Container: `max-w-[1240px] px-6 md:px-10`.
-- Radius: `--r-sm 8px`, `--r-md 14px`, `--r-lg 24px`. Nothing fully rounded except avatars and pills.
-- One faint full-page grain/noise overlay in `layout.tsx`: SVG `feTurbulence`, `opacity: 0.028`, `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the dark read as film rather than as `#000`.
+- Radius: `--r-sm 10px`, `--r-md 16px`, `--r-lg 24px`. Nothing fully rounded except avatars and pills.
+- One faint full-page grain overlay in `layout.tsx`: SVG `feTurbulence`, `opacity: var(--grain-opacity)` (`0.02` dark / `0.012` light), `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the surface read as film rather than as a flat fill.
 
 ### 4.5 The signature element
 
-**The Ship Log.** A thin vertical rail pinned to the left gutter on desktop that tracks scroll: it marks each section as a "commit" with a monospace hash, a timestamp, and a filled node that lights cyan as that section enters the viewport. In the hero it extends into a live commit ticker fed by the GitHub API (mocked at first, real later).
+**The ambient scene, plus the hero's "Recently shipped" panel.** `<Scene />` is a fixed, full-page `three.js` layer behind everything: a shader-drawn gradient with three frosted glass panes that drift and tilt on scroll. It replaces every other piece of chrome that used to compete for attention — there is no rail, no reading panel, no wireframe solid.
 
-This is the one memorable thing on the page. It earns the GitHub integration, it says "we ship" without the copy having to claim it, and it doubles as scroll progress. Build everything around it quietly — no other section gets a second scene-stealer.
+The hero's "Recently shipped" panel is the one place the page still reads as a shop that ships: a static glass card listing the last three commits (message, repo, relative time; sha in Geist Mono). It earns the GitHub integration (M4) without needing a rail or a rotating ticker to justify it.
 
-**Below `lg` there is no left gutter to pin to** — at 360px the container padding is 24px. The rail does not shrink; it changes form. Mobile gets a 2px scroll-progress bar fixed under the header, filling cyan, with the active section's mono hash and number sitting in the section's own eyebrow. Same information, same voice, no rail. The commit ticker stays in the hero on all sizes — it is content, not chrome, and it is the proof the section exists to deliver.
+This is the one memorable thing on the page. Build everything around it quietly — no other section gets a second scene-stealer. There is no separate mobile form for the signature element: the scene is fixed-position chrome on every size (static below `md`, per §4.6), and the shipped panel is hero content on every size, stacking below the copy on phones.
 
 ---
 
-### 4.6 The scroll-reactive background
+### 4.6 The scene
 
-One `fixed inset-0 -z-10` layer in `layout.tsx`, below content and below the grain. It is the only element in the site that responds continuously to scroll.
+`<Scene />` (`components/layout/Scene.tsx`, logic in `lib/scene/`) is the site's one continuously-animated layer, `fixed inset-0 -z-10`, below content and below the grain.
 
-- **One ambient driver.** The background owns a single page-level `useScroll()`, in this one component. No section adds its own ambient layer or its own page-progress read.
-  - Element-relative `useScroll({ target })` is fine where the effect genuinely is element-relative — that is what `Parallax` needs, and it cannot be derived from page progress.
-  - Motion reads scroll from a `ScrollTimeline` inside its single shared frameloop, not a listener per hook, so N `useScroll` calls are N cheap per-frame reads rather than N scroll listeners. The rule here is about not scattering ambient effects, not about listener count.
-- **Two or three large radial fields** in `--cyan` and `--ion` at very low opacity, `blur(120px)`, whose position and opacity map to scroll progress through `useTransform`. The hue shifts as sections pass; it never becomes a _different_ background.
-- **Transform and opacity only.** Never animate `background-image`, gradient stops, or `backdrop-filter`. Those repaint the whole viewport every frame.
-- **It is ambient, not a feature.** If you notice it while reading, it is too strong. It must never compete with the Ship Log rail or pull attention from a CTA.
-- **Below `md` it is static** — the fields render at their mid-scroll position and stop. Two full-viewport blurred layers tracking scroll on a mid-range phone is the most expensive thing we could ship.
-- **Reduced motion renders it static** at the same mid position. No exceptions.
-- Contrast is measured against the background at its _brightest_ scroll position, not its darkest.
+- **One draw call.** An orthographic camera and a fullscreen plane with a single `ShaderMaterial`. The fragment shader draws a slow domain-warped noise gradient in three theme colours (`--scene-a/b/c`) plus three rotated rounded-rectangle glass panes as signed-distance fields: inside a pane the gradient is sampled with a small UV offset (refraction) and lightened, and the pane edge gets a `fwidth`-scaled 1px rim highlight. No lights, no meshes beyond the quad, no react-three-fiber, no drei — that is what keeps it cheap.
+- **Loaded lazily.** `Scene.tsx` is a client component that imports `lib/scene/createScene.ts` inside an effect scheduled with `requestIdleCallback` (1500ms timeout, `setTimeout` fallback). `three` never enters the initial chunk and never competes with LCP.
+- **Themed via uniforms**, not CSS. `uColorA/B/C` and `uPane` are read from `getComputedStyle(document.documentElement)` on mount and again on a `MutationObserver` watching `html.class`.
+- **One ambient scroll driver.** A single passive scroll listener inside `Scene.tsx` feeds `uScroll` (0..1, lerped per frame). No section adds its own ambient layer or its own page-progress read — that responsibility lives here alone.
+- **Performance:** pixel ratio capped at 1.5; the render loop pauses on `visibilitychange`; resize is debounced 150ms. **Below `md` and under `prefers-reduced-motion` the scene renders one static frame at `uScroll = 0.5` and stops** — no exceptions. If `WebGLRenderer` construction throws, a static CSS gradient fallback underneath the canvas is what's left visible.
+- **Contrast** is checked against each theme's `--scene-*` tokens at the values they're set to, since that is the gradient's brightest point — not measured at runtime.
+- The bundle cost is measured after `yarn build` and recorded in `MILESTONES.md`.
 
 ## 4.7 Mobile first — the authoring rule
 
@@ -229,7 +231,7 @@ This is a mobile-first build. It is a rule about the order you write CSS in, not
 **Write the small-screen implementation as the unprefixed base. `md:` and `lg:` may only add.** If a breakpoint prefix has to _undo_ something the base declared, the base was written for desktop and is wrong. `flex-col md:flex-row` is right; `flex-row md:flex-row` with a mobile override underneath is not.
 
 - **Design at 360px first.** Decide what the section is when there is no room, then spend the extra width. A layout designed at 1440 and squeezed down always loses the wrong things.
-- **Everything desktop-only is an enhancement layered on top**: sticky card stacking, the Ship Log rail, magnetic pull, cursor-following highlights, parallax. Mobile is not a degraded desktop; it is the base case that must be complete on its own.
+- **Everything desktop-only is an enhancement layered on top**: the Services sticky-row split, magnetic pull, parallax, the scene's live scroll response. Mobile is not a degraded desktop; it is the base case that must be complete on its own.
 - **Touch has no hover.** Hover is the only feedback on cards and buttons today, so every interactive element must be legible and obviously interactive at rest. Gate hover affordances behind `@media (hover: hover)` and give touch a real `:active` state instead.
 - **Viewport units:** `dvh`, never `vh`. iOS Safari's collapsing toolbar makes `100vh` overflow.
 - **Safe areas:** `env(safe-area-inset-*)` on the sticky header, the mobile nav overlay, and anything else fixed.
@@ -272,7 +274,7 @@ export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 7. **`prefers-reduced-motion` is not optional.** `useReducedMotion()` at the top of every motion component; when true, collapse to a plain opacity fade with zero travel and kill all parallax and infinite loops.
 8. Client components only where motion lives. Mark `'use client'` on the motion primitive, keep the section wrapper a server component where possible.
 
-### 5.2 The four named techniques
+### 5.2 The three named techniques
 
 **Text masking** (`<MaskedText />`) — headline reveal. Split by _line_, not by character (per-character on a 60px headline is a gimmick and costs layout thrash). Each line sits in `overflow-hidden`; the inner span animates `y: '110%' → 0` with `dur.reveal`, `ease.out`, `0.08` stagger. Hero only, plus one section headline max.
 
@@ -280,12 +282,12 @@ export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 
 **Staggered grid** (`<StaggerGroup />`) — parent with `staggerChildren`, children consuming a shared `item` variant. For the work grid and the stat row. The parent triggers on viewport; children never have their own `whileInView`.
 
-**Card stacking** — the Services section. Each card is `sticky top-24` inside a tall parent; as the next card arrives, the previous scales to `0.94` and dims to `0.5` opacity via `useScroll` + `useTransform` on the container. On mobile this degrades to a plain vertical list — sticky stacking on a 700px viewport is unusable.
+**`three` is permitted for exactly one thing, the ambient scene in `lib/scene/`** (§4.6) — a fragment-shader gradient with refracting glass panes is not something `motion`, CSS, or SVG can produce. Nothing else may import it.
 
 ### 5.3 Micro-interactions
 
-- Buttons: `whileHover={{ y: -2 }}`, `whileTap={{ scale: 0.98 }}`, spring. Cyan glow via `box-shadow` transition, not a scale-up.
-- Cards: 1px border lightens on hover; a cursor-following radial highlight (`--mx/--my` CSS vars set from `onMouseMove`, throttled with `requestAnimationFrame`). Desktop pointer only — gate on `(hover: hover)`.
+- Buttons: `whileHover={{ y: -2 }}`, `whileTap={{ scale: 0.98 }}`, spring. Accent glow via `box-shadow` transition, not a scale-up.
+- Cards: 1px border lightens on hover. Desktop pointer only — gate on `(hover: hover)`.
 - Magnetic pull on the primary CTA only. One magnetic element on the whole site.
 - Page transitions: a 400ms opacity+`y` exit/enter via `AnimatePresence` in a client wrapper. Nothing more theatrical.
 
@@ -308,7 +310,7 @@ export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 | `/careers/[slug]` | Role detail + application                  |
 | `not-found`       | 404                                        |
 
-Every route: `metadata` with OG tags, one `h1`, reachable from `Header` or `Footer`, sections registered with the Ship Log rail, ending in the shared CTA band → footer. Per-page recipes live in the `adding-a-page` skill.
+Every route: `metadata` with OG tags, one `h1`, reachable from `Header` or `Footer`, ending in the shared CTA band → footer. Per-page recipes live in the `adding-a-page` skill.
 
 Error surfaces are real routes too: `app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx`, plus a segment-level `error.tsx` wherever a route can fail on its own.
 
@@ -330,18 +332,18 @@ The modal closes on `router.back()`, Escape, and backdrop click; it traps focus,
 
 Top to bottom. Each section states its animation so nothing is improvised.
 
-1. **Header** — sticky, transparent, blurs to glass past 40px scroll. Logo, 4 links, one cyan CTA. Mobile: full-screen overlay, links stagger in.
-2. **Hero** — the thesis. Left: masked-line headline stating what the agency does in concrete terms, one line of subcopy, primary CTA. Right/behind: the Ship Log commit ticker with the last 5 commits (repo, message, relative time) in mono, sliding up on an interval. Ambient: two slow-drifting radial glows (cyan, ion) at very low opacity, `blur(120px)`, animated with a long infinite `ease.inOut` loop. Kill the loop under reduced motion.
-3. **Proof strip** — 4 stats in mono (e.g. deploys shipped, median time-to-first-release, uptime, years). Count-up on view via `useMotionValue` + `animate`, no counter library. Staggered.
-4. **Services** — the card-stacking section. 3–4 cards: what it is, what you get, typical timeline. Lucide icon in a glass tile per card.
-5. **Work** — staggered grid, 4–6 case studies. Each card: cover image (`next/image`, `object-cover`, subtle scale-on-hover inside `overflow-hidden`), client name, one-line outcome with a real number, mono stack tags. Links to `/work/[slug]`, which opens as an animated modal on client-side navigation and as a full page on direct load (§6.2).
-6. **Testimonials** — 3 substantial quotes, each attributed to a real name, role, and company. An unattributed quote reads as fabricated to exactly this audience. Static grid or a manually-driven marquee; no auto-advancing carousel, no star ratings. Staggered reveal.
-7. **Brands / associations** — hairline-bordered logo strip. Monochrome at `--mist`, lifting to `--ice` on hover. Inline SVG or `next/image` with explicit dimensions. Label it honestly — "Teams we've shipped for" is a different claim from "Partners", and the wrong one is a credibility leak. Auto-scroll only if the logos exceed one row.
-8. **Process** — genuinely sequential, so numbering is legitimate here: `01 → 04` in mono, tied to the Ship Log rail. Reveal per step as it enters.
-9. **Open source / Ship Log expanded** — GitHub-fed: pinned repos with stars, language, last-pushed. This is the section the API work exists for.
-10. **Contact** — a real form (name, company, what you're building, budget range). Submits through a **Server Action** that re-validates with zod and writes to MongoDB. Client-side validation is a convenience, never the gate.
-11. **CTA band** — one per page, above the footer. It holds that page's single cyan element.
-12. **Footer** — hairline top border, nav columns, mono legal line, socials via lucide.
+1. **Header** — a full-width glass bar on phones; at `md` and up it becomes a floating glass panel inset from the top. Wordmark, 4 links, one accent CTA. A 2px accent scroll-progress line sits fixed at the top of the viewport on every size. Mobile: full-screen overlay, links stagger in.
+2. **Hero** — the thesis. Left: masked-line headline stating what the agency does in concrete terms, one line of subcopy, primary CTA ("Book a call") and secondary CTA ("See the work"). Right at `md`: the "Recently shipped" glass panel, a static list of the last three commits (message, repo, relative time; sha in Geist Mono). `RiseIn` (CSS transform only) drives the entrance; the hero never imports `Reveal` (CI guard).
+3. **Proof strip** — one glass band, 4 stats divided by hairlines (e.g. deploys shipped, median time-to-first-release, uptime, years), figures in Geist Sans 600 tabular. Count-up on view via `useMotionValue` + `animate`, no counter library. Staggered.
+4. **Services** — at `lg` a two-column split: sticky heading and intro on the left, four glass rows on the right (icon tile, title, summary, deliverable, timeline pill). Phone: heading then a plain list.
+5. **Work** — two-column grid at `md` (one column base); the first project spans both columns with a taller cover. Each card: cover image (`next/image`, `object-cover`, subtle scale-on-hover inside `overflow-hidden`), client name, one-line outcome with a real number, quiet stack tags. Links to `/work/[slug]`, which opens as an animated modal on client-side navigation and as a full page on direct load (§6.2).
+6. **Testimonials** — one full-width featured quote, then the remaining two side by side at `md`. Each attributed to a real name, role, and company. An unattributed quote reads as fabricated to exactly this audience. No auto-advancing carousel, no star ratings. Staggered reveal.
+7. **Brands / associations** — a marquee, no bordered box. Monochrome at `--muted`, lifting to `--fg` on hover. Inline SVG or `next/image` with explicit dimensions. Label it honestly — "Teams we've shipped for" is a different claim from "Partners", and the wrong one is a credibility leak. Auto-scroll only if the logos exceed one row.
+8. **Process** — a 2×2 grid at `md` of quiet numbered tiles: large light numeral, title, duration, detail. Reveal per tile as it enters via one `StaggerGroup`.
+9. **Open source** — GitHub-fed: pinned repos with stars, language, last-pushed. This is the section the API work exists for.
+10. **Contact** — copy and direct channels left, `ContactForm` inside a glass panel right at `lg`. Submits through a **Server Action** that re-validates with zod and writes to MongoDB. Client-side validation is a convenience, never the gate.
+11. **CTA band** — one per page, a full-width centred glass panel above the footer. It holds that page's single accent element.
+12. **Footer** — hairline top border, nav columns, a small sans legal line, socials via lucide.
 
 ---
 
@@ -426,7 +428,7 @@ Not negotiable, and not something to announce in the UI:
 
 - **Mobile first (§4.7).** Base styles are the small-screen implementation; breakpoints only add. Responsive from 360px up, with no upper bound that breaks.
 - Test at **360, 390, 768, 1024, 1280, 1440, 1920**, plus one phone in landscape. 360 and 390 are the ones that actually find bugs.
-- Visible `:focus-visible` ring (cyan, 2px, 2px offset) on every interactive element. Full keyboard path through the page.
+- Visible `:focus-visible` ring (accent, 2px, 2px offset) on every interactive element. Full keyboard path through the page.
 - Contrast: body text ≥ 4.5:1 against its actual backdrop — check `--mist` on glass, which is where dark themes usually fail.
 - Semantic landmarks, one `h1`, ordered headings. Decorative motion wrappers get `aria-hidden` where they add no meaning.
 - Images: `next/image`, explicit sizes, real `alt`.
@@ -458,11 +460,12 @@ Work in phases and stop for review after each. Do not scaffold all sections at o
 
 1. **M0 Foundations** — init, fonts, tokens in `globals.css`, `lib/motion.ts`, grain overlay, container, axios client. Blank page proving the tokens.
 2. **M1 Primitives** — `components/motion/*` + `ui/*`. Reduced motion verified before anything is built on top.
-3. **M2 Shell + Hero** — Header, Footer, nav source, Ship Log rail, Hero.
+3. **M2 Shell + Hero** — Header, Footer, nav source, Hero.
 4. **M3 Home body** — Proof, Services, Work, Testimonials, Brands, Process, Contact, CTA band.
 5. **M4 GitHub** — route handler, typed client, open-source section, live ticker, fallbacks.
 6. **M5 Routes** — `/work`, `/work/[slug]`, `/about`, `/team`, `/contact`, `/schedule`, `/careers`, `/careers/[slug]`, 404.
 7. **M6 Polish** — page transitions, metadata + OG, responsive pass, a11y pass, Lighthouse, Chanel pass.
+8. **M7 Visual revamp** — tokens, shell + scene, hero, home body, cleanup.
 
 ---
 
@@ -470,14 +473,16 @@ Work in phases and stop for review after each. Do not scaffold all sections at o
 
 Things that will get the work sent back:
 
-- Purple-to-blue gradient hero blobs. Tailwind's default `cyan-400` as the accent. Generic glow-on-everything.
+- Purple-to-blue gradient hero blobs. Any Tailwind palette colour as the accent. Generic glow-on-everything.
 - Re-triggering scroll animations (`once: false`).
 - Per-character text splitting on long headlines.
 - Animating `height`/`width`/`margin`.
 - Parallax on more than one element per section.
 - Emoji as icons — we have lucide.
 - `backdrop-filter` stacked more than two layers deep, or applied to full-page wrappers.
-- More than one cyan element competing in a single viewport.
+- More than one accent element competing in a single viewport.
+- A second `three` scene, or any `three` import outside `lib/scene/`.
+- Mono on anything that is not a commit sha or a stat figure.
 - Placeholder copy, `#` links, or `console.log` left in shipped sections.
 - Adding a dependency to solve something a 20-line component solves.
 

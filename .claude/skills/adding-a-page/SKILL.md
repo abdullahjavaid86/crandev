@@ -26,10 +26,9 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
 
 1. `app/<route>/page.tsx` — **default export**, server component, composes sections from `components/sections/`.
 2. Export `metadata` (or `generateMetadata` for dynamic routes): title, description, `openGraph`, `twitter`. Title pattern: `<Page> — <Agency>`. Description is one specific sentence, not the tagline.
-3. Add the route to the shared nav source so `Header` and `Footer` both pick it up. Active item gets the cyan border — the one place a cyan border is legal.
+3. Add the route to the shared nav source so `Header` and `Footer` both pick it up. Active item gets the accent border — the one place an accent border is legal.
 4. Reuse the section shell (`py-28 md:py-40`, `<Container>`). One `h1` on the page, headings ordered. Compose and check the page at 360px before looking at it wide.
-5. Register the page's sections with the Ship Log rail.
-6. Dynamic routes: `generateStaticParams()` from the typed content file, plus `notFound()` for an unknown slug.
+5. Dynamic routes: `generateStaticParams()` from the typed content file, plus `notFound()` for an unknown slug.
    **`params` and `searchParams` are async in Next 15+/16 — you must `await` them.** This is the single most common way code written from memory breaks on this stack:
 
    ```tsx
@@ -44,8 +43,8 @@ Each route is a full deliverable: real copy, correct metadata, keyboard path, an
 
    `cookies()` and `headers()` are async too, and awaiting any of them opts the segment into dynamic rendering. A page reading only typed content from `content/` should stay static — don't reach for them.
 
-7. Every page ends with the same CTA band → footer. One cyan element in that band.
-8. Run [quality-gate](../quality-gate/SKILL.md), then update `MILESTONES.md`.
+6. Every page ends with the same CTA band → footer. One accent element in that band.
+7. Run [quality-gate](../quality-gate/SKILL.md), then update `MILESTONES.md`.
 
 ## Route state files
 
@@ -63,27 +62,27 @@ Wrap a slow or uncacheable part in its own `<Suspense>` so the static shell pain
 
 Every route inherits these, so get them right once in `layout/`:
 
-- **Header** — transparent, blurring to glass past 40px. It is the one glass surface allowed below `md`. Honours `env(safe-area-inset-top)`.
+- **Header** — a full-width glass bar on phones; a floating glass panel inset from the top at `md` and up. It is one of the two glass surfaces allowed below `md`. Honours `env(safe-area-inset-top)`.
 - **Nav overlay** — full-screen at `100dvh` (never `100vh`), links staggering in. It **locks body scroll, traps focus, closes on Escape and on route change**, and returns focus to the trigger. The trigger is an icon button with an `aria-label` and `aria-expanded`.
 - **Footer** — single column on mobile, columns at `md`. Honours `env(safe-area-inset-bottom)`.
-- **Scroll progress** — below `lg` the Ship Log rail becomes a 2px cyan bar under the header. Do not build a per-page variant.
+- **Scroll progress** — a 2px accent line fixed at the top of the viewport, on every route and every size. Do not build a per-page variant.
 
 ## Page recipes
 
 **`/work` (Projects index)** — `<StaggerGroup />` over `content/work.ts`. Filter chips for stack or sector, driven by client-side state on a leaf component; filtering must not remount the grid. If there are fewer than 6 projects, ship the grid without filters rather than an empty filter bar.
 
 **`/work/[slug]` (Project details)** — the page a CTO reads before booking. Structure:
-`problem → what we built → how → measurable outcome`. Hero with client name and one-line outcome carrying a real number; mono metadata row (stack, duration, team size, year); the narrative in `65ch` prose; at least one real artifact (architecture sketch, screenshot, or metric); a pull-quote from the client if one exists; next/previous project links. No generic "challenges and solutions" headings.
+`problem → what we built → how → measurable outcome`. Hero with client name and one-line outcome carrying a real number; a quiet metadata row (stack, duration, team size, year) in Geist Sans, not mono; the narrative in `65ch` prose; at least one real artifact (architecture sketch, screenshot, or metric); a pull-quote from the client if one exists; next/previous project links. No generic "challenges and solutions" headings.
 
 **`/team`** — grid of real people (see [building-a-section](../building-a-section/SKILL.md)). Then a short "how we work" block. Never pad the grid with placeholder members; a three-person agency reads as honest, a fake eight-person one does not survive one call.
 
 **`/about`** — the origin, the operating principles, and what we decline to do. Saying what you don't take on is the most credible thing on this page. Prose in `65ch`, one masked headline max, no stock office photography.
 
-**`/contact`** — form plus the direct channels (email, GitHub, location, timezone) in mono. Set expectations explicitly: "We reply within one business day." See [data-and-forms](../data-and-forms/SKILL.md).
+**`/contact`** — form plus the direct channels (email, GitHub, location, timezone) as quiet sans text. Set expectations explicitly: "We reply within one business day." See [data-and-forms](../data-and-forms/SKILL.md).
 
 **`/schedule`** — booking. Self-hosted slot picker: availability from `content/availability.json`, a keyboard-navigable calendar, a timezone note derived from `Intl.DateTimeFormat().resolvedOptions().timeZone`, and a submit through a **Server Action** into the `meetings` collection ([data-persistence](../data-persistence/SKILL.md)). **Embedding a third-party scheduler is a dependency and a design-consistency decision — ask before adding one.**
 
-**`/careers`** — roles from `content/roles.ts`. Each row: title, mono metadata (level, location, comp band, stack). State the comp band; withholding it costs more senior applicants than it saves. Include how we hire, step by step, with real timings. If there are no open roles, say so and offer a way to be told when there are — never an empty list.
+**`/careers`** — roles from `content/roles.ts`. Each row: title, quiet metadata (level, location, comp band, stack). State the comp band; withholding it costs more senior applicants than it saves. Include how we hire, step by step, with real timings. If there are no open roles, say so and offer a way to be told when there are — never an empty list.
 
 **`/careers/[slug]`** — the role in full: what you'd own, what the first 90 days look like, what we expect you to already know, the interview loop, the band. Application form with a résumé/portfolio link field (URL, not upload — there is no blob storage), submitting through a Server Action into the `applications` collection.
 

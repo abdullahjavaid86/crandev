@@ -41,14 +41,14 @@ This is the section that fails most often. Check it at 360 **first**, not last.
 - [ ] **No horizontal page scroll at any width.** Verify, don't assume: `document.documentElement.scrollWidth <= window.innerWidth`.
 - [ ] Long unbroken strings (URLs, repo names, emails in mono) wrap or truncate rather than pushing the page wide.
 - [ ] **Base classes are the mobile layout.** No `md:`/`lg:` prefix exists only to undo something the base declared.
-- [ ] Sticky card-stacking is added at `lg`, not stripped below it. The mobile list stands on its own.
-- [ ] Ship Log rail is absent below `lg` and replaced by the 2px progress bar; no orphaned rail markup.
+- [ ] The Services two-column split is added at `lg`, not stripped below it. The mobile heading-then-list stands on its own.
+- [ ] The ambient scene renders one static frame below `md`; it is not animating on a phone.
 - [ ] Tap targets ≥ 44px, with ≥ 8px between adjacent ones.
 - [ ] Every interactive element is visibly interactive **without hover**, and has an `:active` state.
 - [ ] `dvh` everywhere, no `100vh`. Nav overlay does not overflow with the iOS toolbar showing.
 - [ ] `env(safe-area-inset-*)` respected on the header, nav overlay, and any fixed element. Check a notched viewport.
 - [ ] Every `next/image` has a real `sizes`. Confirm in DevTools that a 390px viewport is not fetching the 1920px asset.
-- [ ] At most 2 `backdrop-filter` surfaces below `md`.
+- [ ] **Blur budget:** at most 2 `backdrop-filter` (`glass`) surfaces per viewport below `md`, at most 6 above, never stacked more than two deep.
 - [ ] Horizontal scrollers use `overscroll-behavior-x: contain` and don't trap or hijack page scroll.
 - [ ] Text remains readable at 200% zoom without horizontal scroll.
 - [ ] No layout shift between skeleton and loaded content, at mobile width too.
@@ -63,11 +63,12 @@ This is the section that fails most often. Check it at 360 **first**, not last.
 ## System integrity
 
 - [ ] **Every color, radius, easing, and duration traces back to a token.** No raw hex, no magic duration, no off-grid spacing.
-- [ ] At most one accent element per viewport-height.
-- [ ] Glass uses the one recipe with themed vars, sits over grain or a field, and is not stacked more than two deep.
+- [ ] **One accent element per viewport-height of scroll.** No Tailwind palette colour is standing in for the accent.
+- [ ] Glass uses the one recipe (`bg-raised md:glass`) with themed vars, sits over grain or the ambient scene, and is not stacked more than two deep.
 - [ ] **Any translucent layer was checked in both themes** — alpha tuned on dark reads as nothing on light.
 - [ ] No `<img>`, no `<a>` for internal routes.
-- [ ] Nothing competes with the Ship Log rail.
+- [ ] `three` appears only under `lib/scene/`; no second scene, no second scroll-progress indicator competing with the ambient scene or the hero's "Recently shipped" panel.
+- [ ] Mono (`--font-mono`) is used only for commit shas and stat figures — not eyebrows, not metadata rows, not prose.
 
 ## Content
 
