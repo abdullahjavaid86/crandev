@@ -110,15 +110,30 @@ vec2 rotate(vec2 p, float angle) {
 vec3 pane(vec3 col, vec2 p, vec2 centre, float rot, vec2 halfSize) {
   float d = sdRoundBox(rotate(p - centre, -rot), halfSize, 0.06);
 
-  // The edge is softened over a hair's width so the pane does not alias; it is
-  // still an inside/outside test, not a glow.
-  float inside = 1.0 - smoothstep(0.0, 0.004, d);
-  vec3 refracted = gradientAt(p + 0.03 * normalize(p - centre));
-  col = mix(col, mix(refracted, uPane.rgb, uPane.a), inside);
+  // One pixel, at any resolution. A fixed constant is a fraction of the
+  // viewport HEIGHT, so it draws a 17px band on a tall display and a 10px one
+  // on a short one; the screen-space derivative of the distance field is the
+  // same hairline everywhere. Taken before the branch below, because
+  // derivatives are undefined inside non-uniform control flow.
+  float aa = fwidth(d);
 
-  // The only additive term in the shader, and it is one pixel wide: the light
+  float inside = 1.0 - smoothstep(0.0, aa, d);
+
+  // Four gradient evaluations per pixel is the whole frame budget spent on
+  // pixels that are not in a pane. The branch is coherent across large regions
+  // of the screen, so the GPU skips it wholesale rather than per lane.
+  if (inside > 0.0) {
+    // Guarded at the pane's exact centre, where the direction is undefined and
+    // normalize() would return NaN for that one pixel.
+    vec2 toCentre = p - centre;
+    vec3 refracted =
+      gradientAt(p + 0.03 * toCentre / max(length(toCentre), 1e-5));
+    col = mix(col, mix(refracted, uPane.rgb, uPane.a), inside);
+  }
+
+  // The only additive term in the shader, and it is a hairline: the light
   // catching the edge of the glass.
-  float rim = 1.0 - smoothstep(0.0, 0.006, abs(d));
+  float rim = 1.0 - smoothstep(0.0, aa, abs(d));
   return col + rim * 0.18 * uPane.rgb;
 }
 
@@ -131,30 +146,39 @@ void main() {
 
   // Scroll moves the panes apart and counter-rotates the middle one, so the
   // composition changes down the page without the background becoming a
-  // different background.
+  // different background. The half sizes are deliberately small: the scene is
+  // ambient, and a pane you read as a rectangle is a pane competing with the
+  // copy.
   float s = uScroll - 0.5;
   col = pane(
     col,
     p,
     vec2(-0.55, 0.35) + vec2(0.0, s * -0.7) + 0.02 * sin(uTime * 0.25),
     0.18 * -1.0 + s * 0.35,
-    vec2(0.42, 0.26)
+    vec2(0.294, 0.182)
   );
   col = pane(
     col,
     p,
     vec2(0.6, 0.05) + vec2(0.0, s * 0.5) + 0.02 * sin(uTime * 0.25 + 1.0),
     s * -0.35,
-    vec2(0.34, 0.48)
+    vec2(0.238, 0.336)
   );
   col = pane(
     col,
     p,
     vec2(-0.15, -0.55) + vec2(0.0, s * -0.4) + 0.02 * sin(uTime * 0.25 + 2.0),
     0.18 + s * 0.35,
-    vec2(0.5, 0.22)
+    vec2(0.35, 0.154)
   );
 
   gl_FragColor = vec4(col, 1.0);
+
+  // Colour management is on, so every uniform arriving from Color.set() is
+  // linear-sRGB while the framebuffer is read as sRGB. A built-in material
+  // calls this chunk for us; a raw ShaderMaterial gets linearToOutputTexel()
+  // defined in its prefix and never called, which renders --scene-a as #ced6ff
+  // instead of #e8ecff and drops --muted on it from 5.2:1 to 4.3:1.
+  #include <colorspace_fragment>
 }
 `;

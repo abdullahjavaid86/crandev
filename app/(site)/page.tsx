@@ -13,8 +13,9 @@ import { Work } from "@/components/sections/Work";
  * Home. Composes sections and nothing else — it declares no markup of its own
  * (§3).
  *
- * The CTA band is the repeated page ending rather than a section of the
- * argument, which is why it sits outside the run of numbered sections.
+ * The CTA band is the repeated page ending rather than a part of the
+ * argument, which is why it comes after the last section rather than being
+ * one of them.
  *
  * lib/content needs no side-effect import here — Proof, Services, Work,
  * Testimonials, Brands and Process all import it directly, so the zod schemas

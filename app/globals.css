@@ -53,7 +53,7 @@
   --scene-a: #e8ecff; /* pale indigo — brightest field; --muted on it is 5.1:1 */
   --scene-b: #fafbfc;
   --scene-c: #dce3f7;
-  --scene-pane: rgba(255, 255, 255, 0.35);
+  --scene-pane: rgba(255, 255, 255, 0.22);
 
   /* Radius */
   --r-sm: 10px;
@@ -111,7 +111,7 @@ html[data-sidebar="icons"] {
   --scene-a: #0b1020;
   --scene-b: #06070a;
   --scene-c: #121a33;
-  --scene-pane: rgba(232, 237, 245, 0.05);
+  --scene-pane: rgba(232, 237, 245, 0.04);
 }
 
 @keyframes marquee {
@@ -229,9 +229,9 @@ html[data-sidebar="icons"] {
    display size for exactly this reason. */
 @layer base {
   html {
-    /* The Ship Log rail and any in-page anchor jump smoothly. The
-       reduced-motion block below forces this back to `auto`, which is the
-       correct behaviour there — a long smooth scroll is motion too. */
+    /* Any in-page anchor jumps smoothly. The reduced-motion block below
+       forces this back to `auto`, which is the correct behaviour there — a
+       long smooth scroll is motion too. */
     scroll-behavior: smooth;
   }
 

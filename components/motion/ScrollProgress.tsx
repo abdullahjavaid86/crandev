@@ -1,11 +1,6 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
-import { cn } from "@/lib/utils";
-
-interface ScrollProgressProps {
-  className?: string;
-}
 
 /**
  * The page's scroll indicator: a 2px accent bar across the very top, at every
@@ -15,7 +10,7 @@ interface ScrollProgressProps {
  *
  * Scale, never width — animating width relayouts the page every frame.
  */
-export function ScrollProgress({ className }: ScrollProgressProps) {
+export function ScrollProgress() {
   const isReduced = useReducedMotion();
   const { scrollYProgress } = useScroll();
 
@@ -31,10 +26,7 @@ export function ScrollProgress({ className }: ScrollProgressProps) {
     <motion.div
       aria-hidden="true"
       style={{ scaleX: isReduced ? scrollYProgress : smoothed }}
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-accent",
-        className,
-      )}
+      className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-accent"
     />
   );
 }

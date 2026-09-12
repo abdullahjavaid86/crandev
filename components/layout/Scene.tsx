@@ -105,6 +105,10 @@ export function Scene() {
           document.removeEventListener("visibilitychange", onVisibility),
         );
 
+        // Renders before the loop's first rAF. The context is opaque
+        // (`alpha: false`), so without this the canvas composites one black
+        // frame over the fallback gradient.
+        scene.renderOnce();
         scene.start();
       } else {
         scene.setScroll(0.5);

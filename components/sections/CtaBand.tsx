@@ -13,7 +13,7 @@ import { primaryCta } from "@/lib/nav";
  * the whole flow — button, page title, confirmation (§8). Hardcoding "Book a
  * call" here is how those three drift apart.
  *
- * No Eyebrow: this is not a numbered section on the Ship Log rail.
+ * No Eyebrow: this is the page's ending, not one of its sections.
  *
  * A server component; `Reveal` is the only client leaf.
  */
