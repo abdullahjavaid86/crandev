@@ -3,32 +3,11 @@ import { cn } from "@/lib/utils";
 interface EyebrowProps {
   children: React.ReactNode;
   className?: string;
-  /** Ship Log section number, e.g. "02". Rendered before the label. */
-  index?: string;
 }
 
-/**
- * The mono utility face. Reads as machine output, which is the whole point —
- * it says "this shop reads logs" without the copy having to claim it.
- *
- * Real metadata only: section numbers, repo names, dates, stack labels,
- * latency figures. Never decoration on prose (§4.3).
- */
-export function Eyebrow({ children, className, index }: EyebrowProps) {
+/** A small, quiet label above a heading. Sans, sentence case — never mono. */
+export function Eyebrow({ children, className }: EyebrowProps) {
   return (
-    <p
-      className={cn(
-        "font-mono text-small tracking-[0.18em] text-muted uppercase",
-        className,
-      )}
-    >
-      {index ? (
-        <>
-          <span className="text-fg">{index}</span>
-          <span aria-hidden="true"> / </span>
-        </>
-      ) : null}
-      {children}
-    </p>
+    <p className={cn("text-small font-medium text-muted", className)}>{children}</p>
   );
 }

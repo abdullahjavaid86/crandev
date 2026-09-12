@@ -86,13 +86,7 @@ export function StatTile({
   className,
 }: StatTileProps) {
   const card = (
-    <Card
-      /* The cursor light is an affordance here, so it belongs only on the
-         tiles that actually go somewhere. On a static figure it invites a
-         click that does nothing. */
-      highlight={href !== undefined}
-      className={cn("h-full", paddings[size], className)}
-    >
+    <Card className={cn("h-full", paddings[size], className)}>
       <div className={cn("flex h-full flex-col gap-3", flows[size])}>
         <div>
           <Eyebrow>{label}</Eyebrow>

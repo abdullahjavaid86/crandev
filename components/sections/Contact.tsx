@@ -16,7 +16,7 @@ export function Contact() {
       <Container>
         <div className="md:max-w-[65ch]">
           <Reveal>
-            <Eyebrow index="07">Contact</Eyebrow>
+            <Eyebrow>Contact</Eyebrow>
             <h2 id="contact-heading" className="mt-6 max-w-[22ch]">
               Tell us what you are building.
             </h2>

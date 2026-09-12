@@ -28,7 +28,7 @@ export function Testimonials() {
     >
       <Container>
         <Reveal>
-          <Eyebrow index="04">Testimonials</Eyebrow>
+          <Eyebrow>Testimonials</Eyebrow>
           <h2 id="testimonials-heading" className="mt-6 max-w-[20ch]">
             What clients say after we hand over.
           </h2>

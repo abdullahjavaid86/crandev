@@ -79,7 +79,7 @@ export function Hero() {
       <Container className="relative">
         <div className="md:max-w-[60%]">
           <RiseIn>
-            <Eyebrow index="00">CraneDev</Eyebrow>
+            <Eyebrow>CraneDev</Eyebrow>
           </RiseIn>
 
           <MaskedText as="h1" lines={HEADLINE} className="mt-6 max-w-[18ch]" />

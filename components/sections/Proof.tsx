@@ -22,7 +22,7 @@ export function Proof() {
     <section id="proof" aria-labelledby="proof-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="01">Proof</Eyebrow>
+          <Eyebrow>Proof</Eyebrow>
           <h2 id="proof-heading" className="mt-6 max-w-[20ch]">
             Numbers from production, not from a deck.
           </h2>

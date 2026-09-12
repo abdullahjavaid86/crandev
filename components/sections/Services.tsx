@@ -26,7 +26,7 @@ export function Services() {
     >
       <Container>
         <Reveal>
-          <Eyebrow index="02">Services</Eyebrow>
+          <Eyebrow>Services</Eyebrow>
           <h2 id="services-heading" className="mt-6 max-w-[24ch]">
             How we work, and what each engagement leaves you with.
           </h2>

@@ -36,7 +36,7 @@ export function Work() {
     <section id="work" aria-labelledby="work-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="03">Selected work</Eyebrow>
+          <Eyebrow>Selected work</Eyebrow>
           <h2 id="work-heading" className="mt-6 max-w-[20ch]">
             {HEADLINE}
           </h2>

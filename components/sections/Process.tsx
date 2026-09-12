@@ -25,7 +25,7 @@ export function Process() {
     <section id="process" aria-labelledby="process-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="06">Process</Eyebrow>
+          <Eyebrow>Process</Eyebrow>
           <h2 id="process-heading" className="mt-6 max-w-[20ch]">
             How a project runs.
           </h2>

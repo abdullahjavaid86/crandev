@@ -56,7 +56,7 @@ export function Brands() {
     <section id="brands" aria-labelledby="brands-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="05">Clients</Eyebrow>
+          <Eyebrow>Clients</Eyebrow>
           <h2 id="brands-heading" className="mt-6 max-w-[20ch]">
             Teams we&rsquo;ve shipped for.
           </h2>
