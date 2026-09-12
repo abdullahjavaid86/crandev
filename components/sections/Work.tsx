@@ -52,15 +52,24 @@ export function Work() {
           as="ul"
           className="mt-12 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-2"
         >
-          {projects.map((project, index) => (
-            <StaggerItem
-              key={project.slug}
-              as="li"
-              className={index === 0 ? "h-full md:col-span-2" : "h-full"}
-            >
-              <ProjectCard project={project} featured={index === 0} />
-            </StaggerItem>
-          ))}
+          {projects.map((project, index) => {
+            /* The lead card is always full width. So is the last one when the
+               cards after the lead are an odd count — otherwise the final pair
+               row is half empty and the grid ends on an orphan. */
+            const wide =
+              index === 0 ||
+              (index === projects.length - 1 && (projects.length - 1) % 2 === 1);
+
+            return (
+              <StaggerItem
+                key={project.slug}
+                as="li"
+                className={wide ? "h-full md:col-span-2" : "h-full"}
+              >
+                <ProjectCard project={project} featured={wide} />
+              </StaggerItem>
+            );
+          })}
         </StaggerGroup>
 
         {/* The grid shows a selection; this is where the rest of it lives. */}
