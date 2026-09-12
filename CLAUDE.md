@@ -71,7 +71,8 @@ yarn typecheck  # next typegen && tsc --noEmit
 
 ```
 app/
-  layout.tsx              # fonts, metadata, <Scene/>, <Grain/>, global providers
+  layout.tsx              # fonts, metadata, ThemeScript, global providers — no chrome
+  (site)/layout.tsx       # <Scene/>, <Header/>, <Footer/>, <Grain/> — the marketing chrome
   page.tsx                # home — composes sections, server component
   not-found.tsx           # real 404 in the interface's voice
   work/page.tsx           # all projects
@@ -187,7 +188,7 @@ Budget: **2 blurred surfaces per viewport below `md`, ~6 above.** Never stacked 
 Two font families, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS variables.
 
 - **Geist Sans** — `--font-display` and `--font-body` both resolve to it. Headlines and body share one family. Headings are weight 600, tracking `-0.02em`, `text-balance` on every headline, `h1` line-height `1.0`.
-- **Geist Mono** — `--font-mono`. Reserved for commit shas and stat figures only — nothing else. Not preloaded (`--font-mono-src`); Geist Sans is preloaded (`--font-display-src`) since it's the LCP-path face.
+- **Geist Mono** — `--font-mono`. Reserved for commit shas and stat figures only — nothing else. Not preloaded (`--font-mono-src`); Geist Sans is preloaded (`--font-sans-src`) since it's the LCP-path face. `@theme` maps `--font-display` and `--font-body` to `--font-sans-src`.
 - **Eyebrows are small sans labels in sentence case** — no mono, no uppercase, no index number.
 
 Scale (clamp, fluid): `display clamp(2.5rem, 1.6rem + 4vw, 5.5rem)` / `h2 clamp(1.75rem, 1.3rem + 2vw, 3rem)` / `h3 1.25–1.5rem` / `body 1.0625rem` / `small 0.875rem`. Line height: `1.0` display/h1, `1.1` h2, `1.65` body.
@@ -200,7 +201,7 @@ The display floor is `2.5rem`, not `3.5rem`. At 360px the container is 312px wid
   The rhythm is the SPACE BETWEEN sections, not the padding of one. Adjacent sections each contribute half; setting `py-40` per section produced 320px of dead air between every pair, which is what it looked like. Never fight this per-section.
 - Container: `max-w-[1240px] px-6 md:px-10`.
 - Radius: `--r-sm 10px`, `--r-md 16px`, `--r-lg 24px`. Nothing fully rounded except avatars and pills.
-- One faint full-page grain overlay in `layout.tsx`: SVG `feTurbulence`, `opacity: var(--grain-opacity)` (`0.02` dark / `0.012` light), `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the surface read as film rather than as a flat fill.
+- One faint full-page grain overlay in `app/(site)/layout.tsx` (the marketing chrome, not the root `app/layout.tsx`): SVG `feTurbulence`, `opacity: var(--grain-opacity)` (`0.02` dark / `0.012` light), `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the surface read as film rather than as a flat fill.
 
 ### 4.5 The signature element
 
@@ -231,7 +232,7 @@ This is a mobile-first build. It is a rule about the order you write CSS in, not
 **Write the small-screen implementation as the unprefixed base. `md:` and `lg:` may only add.** If a breakpoint prefix has to _undo_ something the base declared, the base was written for desktop and is wrong. `flex-col md:flex-row` is right; `flex-row md:flex-row` with a mobile override underneath is not.
 
 - **Design at 360px first.** Decide what the section is when there is no room, then spend the extra width. A layout designed at 1440 and squeezed down always loses the wrong things.
-- **Everything desktop-only is an enhancement layered on top**: the Services sticky-row split, magnetic pull, parallax, the scene's live scroll response. Mobile is not a degraded desktop; it is the base case that must be complete on its own.
+- **Everything desktop-only is an enhancement layered on top**: the Services sticky-row split, magnetic pull, the scene's live scroll response. Mobile is not a degraded desktop; it is the base case that must be complete on its own.
 - **Touch has no hover.** Hover is the only feedback on cards and buttons today, so every interactive element must be legible and obviously interactive at rest. Gate hover affordances behind `@media (hover: hover)` and give touch a real `:active` state instead.
 - **Viewport units:** `dvh`, never `vh`. iOS Safari's collapsing toolbar makes `100vh` overflow.
 - **Safe areas:** `env(safe-area-inset-*)` on the sticky header, the mobile nav overlay, and anything else fixed.
@@ -477,7 +478,7 @@ Things that will get the work sent back:
 - Re-triggering scroll animations (`once: false`).
 - Per-character text splitting on long headlines.
 - Animating `height`/`width`/`margin`.
-- Parallax on more than one element per section.
+- More than one parallax effect in a single section, should one ever be added — none exists today.
 - Emoji as icons — we have lucide.
 - `backdrop-filter` stacked more than two layers deep, or applied to full-page wrappers.
 - More than one accent element competing in a single viewport.

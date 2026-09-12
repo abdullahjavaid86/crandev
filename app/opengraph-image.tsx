@@ -18,6 +18,9 @@ import { ImageResponse } from "next/og";
  * document, so there is no `globals.css` and no CSS variables to read. They
  * are the dark theme's `--surface`, `--fg`, `--muted` and `--accent`, and they
  * have to be updated by hand if those change.
+ *
+ * `#6E82FF` is the dark theme's `--accent` (see globals.css) — the indigo
+ * that replaced the retired cyan. Move it if `--accent` (dark) moves.
  */
 
 export const alt = "CraneDev — software that ships";
@@ -48,7 +51,7 @@ export default function Image() {
             width: 56,
             height: 56,
             borderRadius: 14,
-            background: "#35F0DC",
+            background: "#6E82FF",
             color: "#06070A",
             fontSize: 34,
             fontWeight: 700,
@@ -97,8 +100,8 @@ export default function Image() {
         </div>
       </div>
 
-      {/* Accent rule — the one cyan element, same rule as the site. */}
-      <div style={{ display: "flex", width: 160, height: 5, background: "#35F0DC" }} />
+      {/* Accent rule — the one accent element, same rule as the site. */}
+      <div style={{ display: "flex", width: 160, height: 5, background: "#6E82FF" }} />
     </div>,
     size,
   );

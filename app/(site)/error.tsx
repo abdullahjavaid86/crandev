@@ -1,5 +1,6 @@
 "use client";
 
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -18,9 +19,7 @@ export default function Error({ error, reset }: ErrorProps) {
   return (
     <main className="flex min-h-dvh flex-col justify-center px-6 py-28 md:px-10 md:py-40">
       <div className="mx-auto w-full max-w-[1240px]">
-        <p className="font-mono text-small tracking-[0.18em] text-muted uppercase">
-          Error
-        </p>
+        <Eyebrow>Error</Eyebrow>
 
         <h1 className="mt-6 max-w-[20ch]">Something on this page failed.</h1>
 
@@ -29,11 +28,7 @@ export default function Error({ error, reset }: ErrorProps) {
           we&rsquo;ll fix it.
         </p>
 
-        {error.digest ? (
-          <p className="mt-4 font-mono text-small tracking-[0.18em] text-muted uppercase">
-            Ref {error.digest}
-          </p>
-        ) : null}
+        {error.digest ? <Eyebrow className="mt-4">Ref {error.digest}</Eyebrow> : null}
 
         <div className="mt-10 flex flex-wrap gap-3">
           <button

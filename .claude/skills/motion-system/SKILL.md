@@ -42,7 +42,7 @@ export const viewport = { once: true, margin: "-12% 0px -8% 0px" } as const;
 5. **Hover uses springs. Scroll reveals use eased tweens.** Do not mix.
 6. **`prefers-reduced-motion` is not optional.** `useReducedMotion()` at the top of every motion component. When true: plain opacity fade, zero travel, no parallax, no infinite loops, no count-ups (render the final number).
 7. **`'use client'` at the leaf.** The motion primitive is a client component; the section wrapper stays a server component wherever it can.
-8. **Parallax on at most one element per section.**
+8. **At most one parallax effect per section, if one is ever added.** Nothing in the repo currently does element-relative parallax.
 
 ## The three named techniques
 
@@ -67,9 +67,9 @@ Build these once as primitives in `components/motion/`, then compose. Do not han
 Motion here is mobile-first like everything else: the base case runs on a phone, and the pointer-dependent effects are added at a breakpoint.
 
 - **Hover does not exist on touch.** Every hover affordance is gated on `@media (hover: hover)` and paired with a real `:active` state so a tap gives feedback. A card whose only interactivity signal is a hover border is invisible on a phone.
-- **Desktop-only enhancements:** magnetic pull, parallax, the Services sticky-row split.
+- **Desktop-only enhancements:** magnetic pull, the Services sticky-row split.
 - **The scene is the mobile perf risk.** A `three.js` draw call tracking scroll on a mid-range Android will drop frames. Below `md` and under `prefers-reduced-motion`, `Scene` renders one static frame at `uScroll = 0.5` and stops — no exceptions.
-- **Scroll reads are cheap; scattered ambient effects are not.** Motion reads scroll from a `ScrollTimeline` in one shared frameloop, so several `useScroll` calls are not several listeners. Element-relative `useScroll({ target })` is correct for `Parallax`. What is banned is a second ambient background or a per-section page-progress read — `Scene` owns the one passive scroll listener that drives ambient motion (§ The scene, below).
+- **Scroll reads are cheap; scattered ambient effects are not.** Motion reads scroll from a `ScrollTimeline` in one shared frameloop, so several `useScroll` calls are not several listeners. Element-relative `useScroll({ target })` is fine where the effect genuinely is element-relative — that's what a parallax effect would need, if one is ever added. What is banned is a second ambient background or a per-section page-progress read — `Scene` owns the one passive scroll listener that drives ambient motion (§ The scene, below).
 - **`dvh`, never `vh`**, for any motion tied to viewport height.
 - Reduced motion still overrides everything above.
 
@@ -125,7 +125,7 @@ not import `Reveal`.
 - `once: false` on a scroll reveal.
 - Per-character splitting on a long headline.
 - Animating `height`/`width`/`margin`.
-- A second parallax element in one section.
+- More than one parallax effect in a single section, should one ever be added.
 - A component that imports `motion/react` but not `lib/motion.ts`.
 - A motion component with no `useReducedMotion()` call.
 - `<Reveal>`, or any opacity-based entrance, on anything visible without scrolling.

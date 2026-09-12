@@ -11,7 +11,7 @@ The direction is fixed: **quiet obsidian, one indigo, frosted glass.** Every col
 
 **The unprefixed class is the mobile implementation. `md:` and `lg:` may only add.** A breakpoint prefix that undoes something the base declared means the base was written for desktop and is wrong.
 
-Design at 360px first: decide what the thing is when there is no room, then spend the extra width. Everything desktop-only — the Services sticky-row split, magnetic pull, parallax — is an enhancement layered on top of a base case that is already complete. The ambient scene and the "Recently shipped" panel are not desktop-only: the scene renders a static frame below `md`, and the panel is ordinary hero content that stacks on phones.
+Design at 360px first: decide what the thing is when there is no room, then spend the extra width. Everything desktop-only — the Services sticky-row split, magnetic pull — is an enhancement layered on top of a base case that is already complete. The ambient scene and the "Recently shipped" panel are not desktop-only: the scene renders a static frame below `md`, and the panel is ordinary hero content that stacks on phones.
 
 - `dvh`, never `vh`. iOS Safari's collapsing toolbar makes `100vh` overflow.
 - `env(safe-area-inset-*)` on the sticky header, the nav overlay, and anything fixed.
@@ -62,9 +62,9 @@ When adding a section, ask what already glows in this viewport. If something doe
 
 A colour that works on dark will not work on light by symmetry, and this bites hardest on anything semi-transparent — ambient washes, tinted overlays, glass.
 
-The scroll-background fields shipped invisible in light mode: a bright field at `0.14` alpha is a **2.8x luminance step** over near-black and **1.04x** over `#FAFBFC`. Same alpha, same colour, one theme sees it and the other sees nothing.
+The scene's glass panes are the live example: `--scene-pane` mixes its tint into the gradient at an alpha that has to be tuned per theme, because the same alpha reads as a small lift on light and a much larger one on a near-black dark field — the dark tuning that made the pane read as glass instead of a wireframe outline once pushed `--muted` over it down to 2.3:1, well under the 4.5:1 floor. `--glass-fill` has the same shape: light and dark need different alphas to land on the same visual weight against their own `--surface`.
 
-**Bake the alpha into a themed token** (`--field-a/b/c`), so light can use a deeper, more saturated hue at roughly double the alpha, and let the component animate only a relative `0..1` band on top. Never theme this by reading the theme in JS — that costs a flash on first paint.
+**Bake the alpha into the themed token** (`--scene-pane`, `--glass-fill`), so each theme ships the alpha that keeps its own contrast pairs passing, and never derive one theme's alpha from the other by a fixed ratio. Never theme this by reading the theme in JS — that costs a flash on first paint. Re-check contrast after every tuning pass on a token like this: the value that makes it visible enough is not automatically the value that keeps text on it readable, and the two pulls can be in real tension — see `app/globals.css`'s `--scene-pane` comment for the last measurement.
 
 ## Tailwind v4: CSS variables use PARENTHESES, not brackets
 

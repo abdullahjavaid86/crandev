@@ -1,5 +1,6 @@
 "use client";
 
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import { useEffect } from "react";
 import "./globals.css";
 
@@ -24,9 +25,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body className="min-h-dvh">
         <main className="flex min-h-dvh flex-col justify-center px-6 py-28 md:px-10">
           <div className="mx-auto w-full max-w-[1240px]">
-            <p className="font-mono text-small tracking-[0.18em] text-muted uppercase">
-              Error
-            </p>
+            <Eyebrow>Error</Eyebrow>
 
             <h1 className="mt-6 max-w-[20ch]">The site failed to load.</h1>
 
@@ -35,9 +34,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             </p>
 
             {error.digest ? (
-              <p className="mt-4 font-mono text-small tracking-[0.18em] text-muted uppercase">
-                Ref {error.digest}
-              </p>
+              <Eyebrow className="mt-4">Ref {error.digest}</Eyebrow>
             ) : null}
 
             <button

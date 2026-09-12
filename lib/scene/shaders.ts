@@ -103,9 +103,13 @@ vec2 rotate(vec2 p, float angle) {
  * One pane over whatever is already painted.
  *
  * Panes are composited in sequence rather than by max() of their masks. They
- * are placed so they do not overlap, which makes the two identical — and the
- * sequential form is what lets each pane keep its own refraction sample
- * instead of averaging three of them.
+ * CAN overlap — the scroll drift and counter-rotation in main() move them
+ * independently, and at some scroll positions two panes' rounded rects do
+ * intersect. Sequential compositing is what handles that correctly: a later
+ * pane refracts and tints the already-composited result of the earlier ones,
+ * instead of every overlapping pane sampling the same untouched background
+ * and one arbitrarily winning by z-order. It is also what lets each pane keep
+ * its own refraction sample rather than averaging three of them.
  */
 vec3 pane(vec3 col, vec2 p, vec2 centre, float rot, vec2 halfSize) {
   float d = sdRoundBox(rotate(p - centre, -rot), halfSize, 0.06);

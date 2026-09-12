@@ -111,7 +111,18 @@ html[data-sidebar="icons"] {
   --scene-a: #0b1020;
   --scene-b: #06070a;
   --scene-c: #121a33;
-  --scene-pane: rgba(232, 237, 245, 0.07);
+
+  /* Measured with an offscreen render of the production shader against
+     --scene-c (the darkest field, where a pane reads brightest): at 0.07
+     (the round-2 rim tuning) the pane interior composites to ~#565A5F and
+     --muted drops to 2.28:1. 0.014 is the highest alpha that keeps the
+     brightest interior pixel, across the full scroll range and several
+     viewport sizes, at >= 4.5:1 (measured 4.64:1) with the rim untouched —
+     dropping the rim instead of the alpha was tried and rejected, because a
+     pane with no rim in dark mode is the "wireframe rectangle" problem the
+     rim was added to fix (see shaders.ts). Light mode is untouched: it was
+     never the failing theme. */
+  --scene-pane: rgba(232, 237, 245, 0.014);
 }
 
 @keyframes marquee {
