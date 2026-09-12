@@ -52,13 +52,14 @@ Budget unchanged: two blurred surfaces per viewport below `md`, about six above,
 
 ## The scene (`components/layout/Scene.tsx`, `lib/scene/`)
 
-- Dependency: `three` only (0.186 at time of writing). No react-three-fiber, no drei. This is the one non-`motion` animation library and the reason is specific: a refractive glass material and a fragment-shader gradient cannot be produced by `motion`, CSS or SVG.
-- Loaded with `next/dynamic({ ssr: false })` from a small client wrapper, and only after first paint (`requestIdleCallback` with a timeout fallback), so it never competes with LCP.
-- Layers: (1) a fullscreen quad with a fragment shader drawing a slow domain-warped gradient in three theme colours; (2) three thin rounded panes with `MeshPhysicalMaterial` transmission, drifting and tilting as a function of smoothed scroll progress plus a very slow idle float.
-- Uniforms: `uTime`, `uScroll` (0..1, lerped each frame), theme colours read from CSS custom properties on mount and again when `html.class` changes (MutationObserver).
-- Scroll is read once inside the scene with a passive listener; this replaces the previous `ScrollBackground` as the page's single ambient scroll driver.
-- Performance: pixel ratio capped at 1.5; render loop paused when the tab is hidden; resize debounced; below `md` and under `prefers-reduced-motion` the scene renders one frame at mid-scroll and stops. If WebGL context creation fails, the wrapper renders a static CSS gradient instead.
-- Contrast: gradient amplitude is a named constant and is set so `--muted` on `--surface` stays ≥ 4.5:1 at the brightest scroll position, both themes.
+- Dependency: `three` only (0.186 at time of writing) plus `@types/three`. No react-three-fiber, no drei. This is the one non-`motion` animation library and the reason is specific: a fragment-shader gradient with refracting glass panes cannot be produced by `motion`, CSS or SVG.
+- **One draw call.** An `OrthographicCamera` and a fullscreen `PlaneGeometry` with a single `ShaderMaterial`. The fragment shader draws (1) a slow domain-warped noise gradient in three theme colours and (2) three rotated rounded-rectangle glass panes as signed-distance fields: inside a pane the gradient is sampled with a small UV offset (refraction) and lightened, and the pane edge gets a 1px rim highlight. No lights, no transmission pass, no meshes beyond the quad — this is what keeps it cheap on a mid-range GPU.
+- Uniforms: `uTime`, `uScroll` (0..1, lerped each frame), `uResolution`, `uColorA/B/C`, `uPane` (tint). Colours come from themed tokens `--scene-a`, `--scene-b`, `--scene-c`, `--scene-pane` read from `getComputedStyle(document.documentElement)` on mount and again when `html.class` changes (MutationObserver).
+- Loaded lazily: `Scene.tsx` is a client component that `await import("@/lib/scene/createScene")`s inside an effect scheduled with `requestIdleCallback` (timeout 1500ms; `setTimeout` fallback). Three never enters the initial chunk and never competes with LCP.
+- `lib/scene/createScene.ts` is framework-free and returns `{ setScroll, setTheme, setSize, renderOnce, start, stop, dispose }`.
+- Scroll is read once inside `Scene.tsx` with a passive listener; this is the page's single ambient scroll driver (replaces `ScrollBackground`).
+- Performance: pixel ratio capped at 1.5; loop paused on `visibilitychange`; resize debounced 150ms; below `md` and under `prefers-reduced-motion` the scene renders one frame at `uScroll = 0.5` and stops. If `WebGLRenderer` construction throws, the wrapper keeps its static CSS gradient fallback (already painted underneath the canvas).
+- Contrast: the gradient's brightest colour per theme is the `--scene-*` token itself, so `--muted` on it must stay ≥ 4.5:1 — that is checked when the tokens are set, not at runtime.
 - The bundle cost is measured after `yarn build` and recorded in `MILESTONES.md`.
 
 ## Home page
