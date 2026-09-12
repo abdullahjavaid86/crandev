@@ -111,7 +111,7 @@ html[data-sidebar="icons"] {
   --scene-a: #0b1020;
   --scene-b: #06070a;
   --scene-c: #121a33;
-  --scene-pane: rgba(232, 237, 245, 0.04);
+  --scene-pane: rgba(232, 237, 245, 0.07);
 }
 
 @keyframes marquee {

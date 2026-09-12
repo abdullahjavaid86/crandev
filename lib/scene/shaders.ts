@@ -132,9 +132,12 @@ vec3 pane(vec3 col, vec2 p, vec2 centre, float rot, vec2 halfSize) {
   }
 
   // The only additive term in the shader, and it is a hairline: the light
-  // catching the edge of the glass.
+  // catching the edge of the glass. Tied to the tint's own alpha so it can
+  // never outshine the fill — at a fixed amplitude the dark theme's near
+  // invisible fill left the rim as the only visible part of a pane, and a pane
+  // you see only the edge of is a wireframe rectangle, not glass.
   float rim = 1.0 - smoothstep(0.0, aa, abs(d));
-  return col + rim * 0.18 * uPane.rgb;
+  return col + rim * uPane.rgb * (0.6 * uPane.a);
 }
 
 void main() {
