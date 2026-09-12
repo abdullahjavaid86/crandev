@@ -6,8 +6,8 @@ import { StatFigure } from "@/components/ui/StatFigure";
 import { stats } from "@/lib/content";
 
 /**
- * The proof strip (§6.1.3). Four numbers in the mono utility face, each
- * counting up once as the strip is reached.
+ * The proof strip (§6.1.3). Four numbers on one banded surface, each counting
+ * up once as the strip is reached.
  *
  * A server component: the count-up lives in <StatFigure />, its own client
  * module. Keeping it here would have made the whole section client and pulled
@@ -15,7 +15,7 @@ import { stats } from "@/lib/content";
  *
  * No accent anywhere in here: the hero CTA owns the page's single glowing
  * element for this stretch of scroll (§4.1), so the figures carry weight
- * through size and the mono face instead of colour.
+ * through size and the banded surface instead of colour.
  */
 export function Proof() {
   return (
@@ -28,11 +28,13 @@ export function Proof() {
           </h2>
         </Reveal>
 
-        {/* Two columns at 360px: four figures across a phone would put a
-            3.5rem mono number in a 70px column. Four only once there is room. */}
+        {/* One band, two columns at 360px: four figures across a phone would
+            put an h2-sized number in a 70px column. Four only once there is
+            room, and the dividers arrive with the fourth column — the base
+            has none, so nothing at md undoes a base declaration. */}
         <StaggerGroup
           as="ul"
-          className="mt-14 grid grid-cols-2 gap-x-6 gap-y-10 md:mt-20 md:grid-cols-4"
+          className="mt-12 grid grid-cols-2 rounded-md border border-line bg-raised md:mt-16 md:grid-cols-4 md:divide-x md:divide-line md:glass"
         >
           {stats.map((stat) => (
             <StatFigure key={stat.label} stat={stat} />
