@@ -87,8 +87,8 @@ export function StatFigure({ stat }: StatFigureProps) {
   }, [count, format, inView, isReduced, stat.value]);
 
   return (
-    <StaggerItem as="li" className="border-t border-line pt-6">
-      <p className="font-mono text-h2 leading-none text-fg tabular-nums">
+    <StaggerItem as="li" className="p-6 md:p-8">
+      <p className="font-display text-h2 leading-none font-semibold text-fg tabular-nums">
         {/* The animated node is hidden from assistive tech and mirrored by the
             static string below it: a screen reader arriving mid-count would
             otherwise be read a number that is simply not true. */}

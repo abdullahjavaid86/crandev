@@ -1,16 +1,16 @@
-import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
 import { Footer } from "@/components/layout/Footer";
 import { Grain } from "@/components/layout/Grain";
 import { Header } from "@/components/layout/Header";
+import { Scene } from "@/components/layout/Scene";
 
 /**
  * The marketing chrome.
  *
  * This used to live in `app/layout.tsx`, which meant every route in the app —
- * including the admin portal — inherited Header, Footer, BackgroundLayer and
- * Grain with no way to opt out. A nested layout can add to its parent but can
- * never remove what the parent already rendered, so the chrome had to move
- * DOWN a level rather than be conditionally suppressed at the root.
+ * including the admin portal — inherited Header, Footer, Scene and Grain with
+ * no way to opt out. A nested layout can add to its parent but can never
+ * remove what the parent already rendered, so the chrome had to move DOWN a
+ * level rather than be conditionally suppressed at the root.
  *
  * The root layout keeps `<html>`/`<body>`, the fonts and the theme script, so
  * there is still exactly one root layout and the portal is a plain nested
@@ -23,7 +23,7 @@ import { Header } from "@/components/layout/Header";
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <BackgroundLayer />
+      <Scene />
       <Header />
       {/* flex-1 so a short page still pins the footer to the bottom. */}
       <div className="flex-1">{children}</div>

@@ -1,22 +1,8 @@
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
-import { Eyebrow } from "@/components/ui/Eyebrow";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { footerNav } from "@/lib/nav";
-
-/**
- * Contact and social endpoints.
- *
- * NEEDS CONFIRMING BEFORE LAUNCH — both values are placeholders. The mailbox
- * has not been verified, and the GitHub handle is a guess: `GITHUB_OWNER` in
- * .env.example is still blank, so nothing in the repo knows the real account.
- * Fix both here, in one place, once they are known.
- */
-const CONTACT = {
-  email: "hello@cranedev.com",
-  github: "https://github.com/cranedev",
-} as const;
+import { footerNav, siteLinks } from "@/lib/nav";
 
 /** Shared link recipe. min-h-11 keeps a 44px tap target on touch (§4.7), and
  *  Tailwind v4 wraps `hover:` in `@media (hover: hover)` so touch gets the
@@ -56,15 +42,15 @@ export function Footer() {
           <div className="md:max-w-xs">
             <Link
               href="/"
-              className="inline-flex min-h-11 items-center font-display text-h3 text-fg"
+              className="inline-flex min-h-11 items-center font-display text-body font-semibold tracking-[-0.02em] text-fg"
             >
               CraneDev
             </Link>
             <p className="mt-2 max-w-[34ch] text-small text-muted">
               A senior software team building and maintaining production systems.
             </p>
-            <a href={`mailto:${CONTACT.email}`} className={cn(linkStyles, "mt-2")}>
-              {CONTACT.email}
+            <a href={`mailto:${siteLinks.email}`} className={cn(linkStyles, "mt-2")}>
+              {siteLinks.email}
             </a>
           </div>
 
@@ -73,19 +59,12 @@ export function Footer() {
           <div className="grid gap-10 md:auto-cols-fr md:grid-flow-col md:gap-16">
             {footerNav.map((group) => (
               <nav key={group.heading} aria-label={group.heading}>
-                {/* One heading level for every column, deliberately in the
-                    display face. text-h3 (20→24px) is the ceiling this layout
-                    allows, and the size is the same at every breakpoint —
-                    there is nothing for `md:` to add, because the *narrowest*
-                    column is at md, not at 360. Measured: three auto-cols-fr
-                    columns give ~102px each at 768px, ~168px at 1024px and
-                    ~235px at the 1240px container cap, while "Company" set at
-                    text-h2 needs 166 / 192 / 249px — it spills its column at
-                    both ends of the range. At text-h3 it needs ~107px at most
-                    and sits on one line everywhere, which is the point: base
-                    styles supply the face and tracking, and the
-                    `overflow-wrap: normal` there stops the mid-word break. */}
-                <h2 className="font-display text-h3 text-fg">{group.heading}</h2>
+                {/* One heading level for every column, at body-adjacent size.
+                    The column is the narrowest at md — three auto-cols-fr
+                    tracks give ~102px each at 768px — so a heading that reads
+                    as a label rather than a headline is what fits, and it is
+                    the same size at every breakpoint. */}
+                <h2 className="text-small font-medium text-fg">{group.heading}</h2>
                 <ul className="mt-1">
                   {group.items.map((item) => (
                     <li key={item.href}>
@@ -101,9 +80,7 @@ export function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col gap-4 border-t border-line pt-8 md:mt-20 md:flex-row md:items-center md:justify-between">
-          {/* Real metadata, so the mono face is earned (§4.3): a year and a
-              location. Reuses Eyebrow rather than restating the mono recipe. */}
-          <Eyebrow>{`© ${year} CraneDev · Remote`}</Eyebrow>
+          <p className="text-small text-muted">{`© ${year} CraneDev · Remote`}</p>
 
           <nav aria-label="Elsewhere">
             <ul className="flex items-center gap-4">
@@ -112,7 +89,7 @@ export function Footer() {
                     icon to import — so the link carries a visible label and
                     ArrowUpRight marks it as leaving the site. */}
                 <a
-                  href={CONTACT.github}
+                  href={siteLinks.github}
                   target="_blank"
                   rel="noreferrer"
                   className={cn(linkStyles, "gap-1")}

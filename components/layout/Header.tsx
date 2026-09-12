@@ -2,16 +2,10 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Menu, X } from "lucide-react";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useScroll,
-  type Variants,
-} from "motion/react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useId, useState, useSyncExternalStore } from "react";
+import { useCallback, useId, useState } from "react";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { buttonStyles } from "@/components/ui/buttonStyles";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -22,20 +16,15 @@ import { cn } from "@/lib/utils";
 import { Container } from "./Container";
 
 /**
- * Scroll depth at which the header stops being transparent and becomes glass
- * (§6.1). Not a duration or a colour, so it has no token — it is a spec'd
- * threshold and lives here as the one named constant.
- */
-const GLASS_AT = 40;
-
-/**
- * Sticky site header. Base is the phone: wordmark, theme toggle, menu button.
- * `md:` ADDS the nav row and the CTA; nothing here is undone at a breakpoint
- * (§4.7).
+ * Sticky site header — a glass panel from the first pixel, floating clear of
+ * the content at `md:` and sitting flush as a full-width bar below it.
  *
- * Client because of the scroll read and the menu state, and that is all it
- * does — every visual part it composes (ThemeToggle, buttonStyles,
- * ScrollProgress, Container) already exists (§10).
+ * Base is the phone: wordmark, theme toggle, menu button. `md:` ADDS the nav
+ * row, the CTA, the inset and the radius; nothing here is undone at a
+ * breakpoint (§4.7).
+ *
+ * Client only because of the menu state — every visual part it composes
+ * (ThemeToggle, buttonStyles, ScrollProgress) already exists (§10).
  */
 export function Header() {
   const pathname = usePathname();
@@ -60,29 +49,6 @@ export function Header() {
   const setOpen = useCallback(
     (next: boolean) => setOpenedOn(next ? pathname : null),
     [pathname],
-  );
-
-  /**
-   * Motion reads scroll once, in its one shared frameloop (§4.6), so this
-   * subscribes to that motion value as an external store rather than adding a
-   * second scroll listener. Only a boolean crosses into React: the store
-   * notifies every frame, the snapshot changes twice, and the header re-renders
-   * exactly on those two frames — it never animates on a continuous value.
-   *
-   * Reading through `useSyncExternalStore` is also what gets a restored
-   * mid-page scroll right. The value is correct on the first client render, so
-   * a refresh at 800px does not need a change event that may already have
-   * fired, and the server snapshot is `false` so nothing mismatches.
-   */
-  const { scrollY } = useScroll();
-  const subscribe = useCallback(
-    (onStoreChange: () => void) => scrollY.on("change", onStoreChange),
-    [scrollY],
-  );
-  const scrolled = useSyncExternalStore(
-    subscribe,
-    () => scrollY.get() > GLASS_AT,
-    () => false,
   );
 
   /**
@@ -118,30 +84,17 @@ export function Header() {
      * Root renders no DOM, so wrapping the header costs nothing.
      */
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <header className="sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
+      <header className="sticky top-0 z-40 pt-[env(safe-area-inset-top)] md:top-3 md:px-6 lg:px-10">
         {/*
-          The glass lives on its own layer so the header can go from
-          transparent to glass without ever animating `backdrop-filter`
-          (§5 performance): the tint, hairline, and light-catch cross-fade on
-          `opacity`, and the blur is a class that is simply absent until it is
-          needed. Absent, not faded — a blurred layer at `opacity: 0` still
-          costs the GPU, and below `md` this header is one of only two blurred
-          surfaces allowed on screen (§4.2).
-        */}
-        <div
-          aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute inset-0 border-b border-line",
-            "bg-[linear-gradient(148deg,var(--glass-tint),var(--glass-tint-soft))]",
-            "shadow-[0_1px_0_0_var(--glass-catch)_inset,0_24px_60px_-24px_var(--glass-drop)]",
-            "transition-opacity duration-(--d-micro) ease-out-soft",
-            scrolled
-              ? "opacity-100 backdrop-blur-[20px] backdrop-saturate-[140%]"
-              : "opacity-0",
-          )}
-        />
+          The glass bar. It is one of the two blurred surfaces a phone is
+          allowed (§4.2), and it is blurred from the first pixel — no
+          transparent-to-glass switch, so `backdrop-filter` is never animated
+          or faded and the header never changes shape under the reader.
 
-        <Container className="relative flex h-16 items-center gap-2 md:h-20 md:gap-4">
+          Not wrapped in `Container`: the gutter is on the <header> at md and
+          the max width is here, so a Container inside would gutter twice.
+        */}
+        <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-2 border-b border-line px-6 glass md:h-14 md:gap-4 md:rounded-md md:border md:px-4">
           <Wordmark />
 
           {/* The desktop row is the enhancement; the base has no nav at all. */}
@@ -156,18 +109,16 @@ export function Header() {
                   className={cn(
                     "relative inline-flex min-h-11 items-center px-3 text-small font-medium",
                     "transition-colors duration-(--d-micro)",
-                    current
-                      ? "text-accent-ink"
-                      : "text-muted hover:text-fg active:text-fg",
+                    current ? "text-fg" : "text-muted hover:text-fg active:text-fg",
                   )}
                 >
                   {link.label}
                   {/*
                     The active nav item is the one place a border may take the
                     accent (§4.1) — and it takes `--accent-ink`, never
-                    `--accent`, because cyan on a light ground is 1.43:1 and
-                    would vanish in light mode. 1px, and absolutely positioned
-                    so lighting up a link never shifts the row.
+                    `--accent`, because the fill on a light ground is 1.43:1
+                    and would vanish in light mode. 1px, and absolutely
+                    positioned so lighting up a link never shifts the row.
                   */}
                   {current ? (
                     <span
@@ -217,13 +168,10 @@ export function Header() {
               <Menu aria-hidden="true" className="size-5" />
             </button>
           </Dialog.Trigger>
-        </Container>
+        </div>
       </header>
 
-      {/* Below `lg` this bar IS the Ship Log (§4.5) — the rail has no gutter to
-          pin to, so the same progress arrives as 2px under the header. The
-          primitive owns its placement; the consumer only owns the breakpoint. */}
-      <ScrollProgress className="lg:hidden" />
+      <ScrollProgress />
 
       <AnimatePresence>
         {open ? (
@@ -292,7 +240,7 @@ export function Header() {
                             onClick={() => setOpen(false)}
                             aria-current={current ? "page" : undefined}
                             className={cn(
-                              "flex min-h-11 items-center rounded-r-md border-l py-3 pl-5 text-h3 font-medium",
+                              "flex min-h-11 items-center rounded-r-md border-l py-3 pl-5 text-h3 font-semibold tracking-[-0.02em]",
                               "transition-colors duration-(--d-micro) active:bg-inset",
                               // Same rule as the desktop row: the accent
                               // border is legal here and only as --accent-ink.
@@ -343,7 +291,7 @@ function Wordmark({ onNavigate }: { onNavigate?: () => void }) {
     <Link
       href="/"
       onClick={onNavigate}
-      className="mr-auto inline-flex min-h-11 items-center font-display text-h3 font-semibold tracking-[-0.03em] text-fg"
+      className="mr-auto inline-flex min-h-11 items-center font-display text-body font-semibold tracking-[-0.02em] text-fg"
     >
       CraneDev
     </Link>

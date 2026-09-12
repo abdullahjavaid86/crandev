@@ -18,7 +18,7 @@ import { LoginForm } from "./LoginForm";
  * two is an infinite redirect.
  *
  * A server component with a single client leaf, same as the marketing site.
- * The shell — no Header, Footer, Ship Log, background or grain — belongs to
+ * The shell — no Header, Footer, scene or grain — belongs to
  * `app/(admin)/layout.tsx`; this page only owns the centred column.
  *
  * No `<main>` here: the admin layout already renders one around `children`, and

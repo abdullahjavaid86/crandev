@@ -56,7 +56,7 @@ export function Brands() {
     <section id="brands" aria-labelledby="brands-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="05">Clients</Eyebrow>
+          <Eyebrow>Clients</Eyebrow>
           <h2 id="brands-heading" className="mt-6 max-w-[20ch]">
             Teams we&rsquo;ve shipped for.
           </h2>
@@ -65,7 +65,7 @@ export function Brands() {
         <Reveal delay={0.1}>
           <div
             className={cn(
-              "mt-12 overflow-hidden rounded-lg border border-line bg-raised md:mt-16",
+              "mt-12 overflow-hidden md:mt-16",
               // The fade width matches the track's padding, so names are never
               // dimmed at rest — only as they pass under the edge.
               "[mask-image:linear-gradient(to_right,transparent,black_1.5rem,black_calc(100%_-_1.5rem),transparent)]",

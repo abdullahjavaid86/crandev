@@ -55,12 +55,13 @@ export function ContactForm({ className }: { className?: string }) {
 
   if (state.status === "success") {
     return (
-      <div
-        className={cn("rounded-md border border-line bg-raised p-6 md:p-8", className)}
-      >
+      <div className={className}>
         {/* The success state replaces the form rather than sitting beside it,
             and says what happens next and by when — a toast that leaves the
-            filled-in form on screen reads as "did that send?" */}
+            filled-in form on screen reads as "did that send?"
+
+            No surface of its own: the form is rendered inside a Card, so a
+            second bordered, padded box here would be a box inside a box. */}
         <div className="flex items-start gap-3">
           <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-fg" />
           <div>

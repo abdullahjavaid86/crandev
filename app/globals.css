@@ -14,7 +14,18 @@
    Tokens — the single source of truth. CLAUDE.md §4.
    Names are ROLES, not colours. `--carbon` can't be light, but
    `--raised` can, and every component reads roles.
-   ───────────────────────────────────────────────────────────── */
+
+   The owner's 2026-09-12 direction: an indigo accent instead of
+   teal/cyan, and it reads as ONE colour rather than two — each
+   theme uses the same hex for both the fill and the text/border
+   role, because the indigo is already legible as text at the
+   weight each theme picked (5.5:1 light, 6.0:1 dark), unlike the
+   old cyan which needed a darkened stand-in for text on light.
+   Glass tokens (`--glass-fill/catch/drop`) and the scene tokens
+   (`--scene-a/b/c/pane`, consumed by the Task 2 background) are
+   themed the same way as everything else — the alpha and hue live
+   in the token, not the component, so one recipe serves both
+   themes. */
 
 :root {
   /* Light — the default. Dark overrides below. */
@@ -27,57 +38,32 @@
   --fg: #0e1017; /* primary text */
   --muted: #5a6274; /* secondary text — 5.9:1 on --surface */
 
-  /* The accent has TWO roles and they are not interchangeable.
-     --accent is a FILL. Cyan under dark ink is 14:1 in both themes.
-     --accent-ink is for TEXT and BORDERS. Cyan as text on white is
-     1.43:1, so light mode uses a darkened teal at 6.4:1. */
-  --accent: #35f0dc;
-  --accent-on: #06070a; /* ink that sits ON --accent */
-  --accent-ink: #0a6b5e;
-  --ion: #3a55d9;
+  /* Indigo, one hex for both roles: 5.5:1 as text on --surface, and white
+     ink on it as a fill is 5.7:1. */
+  --accent: #3b5bdb;
+  --accent-on: #ffffff; /* ink that sits ON --accent */
+  --accent-ink: #3b5bdb;
 
-  --glass-tint: rgba(6, 7, 10, 0.04);
-  --glass-tint-soft: rgba(6, 7, 10, 0.015);
-  --glass-catch: rgba(255, 255, 255, 0.7);
-  --glass-drop: rgba(6, 7, 10, 0.12);
-  --grain-opacity: 0.02;
+  --glass-fill: rgba(255, 255, 255, 0.65);
+  --glass-catch: rgba(255, 255, 255, 0.9);
+  --glass-drop: rgba(6, 7, 10, 0.1);
+  --grain-opacity: 0.012;
 
-  /* Scroll-background fields. The ALPHA lives here, not in the component,
-     because the two themes need very different amounts of it: a bright field
-     at 0.14 over near-black is a 2.8x luminance step, and the same field over
-     #FAFBFC is 1.04x — invisible. Light therefore uses deeper, more saturated
-     hues at roughly double the alpha. The component only animates a relative
-     opacity band on top, so scroll variation stays identical in both themes. */
-  --field-a: radial-gradient(
-    circle at center,
-    rgba(15, 185, 166, 0.42) 0%,
-    transparent 68%
-  );
-  --field-b: radial-gradient(
-    circle at center,
-    rgba(58, 85, 217, 0.36) 0%,
-    transparent 68%
-  );
-  --field-c: radial-gradient(
-    circle at center,
-    rgba(10, 107, 94, 0.34) 0%,
-    transparent 66%
-  );
-
-  /* Lattice background. Thin 1px lines need more alpha than a huge blurred
-     field to register at all, and on a light ground they must DARKEN. */
-  --lattice-line: rgba(6, 7, 10, 0.13);
-  --lattice-node: rgba(6, 7, 10, 0.22);
+  /* Scene fields, consumed by the Task 2 three.js background. */
+  --scene-a: #e8ecff; /* pale indigo — brightest field; --muted on it is 5.1:1 */
+  --scene-b: #fafbfc;
+  --scene-c: #dce3f7;
+  --scene-pane: rgba(255, 255, 255, 0.22);
 
   /* Radius */
-  --r-sm: 8px;
-  --r-md: 14px;
+  --r-sm: 10px;
+  --r-md: 16px;
   --r-lg: 24px;
 
   /* Fluid type — floors set from 360px, not from the desktop end.
      A 56px display at 360px fits ~7 characters per line. */
-  --t-display: clamp(2.5rem, 1.35rem + 5.1vw, 6.5rem);
-  --t-h2: clamp(1.75rem, 1.24rem + 2.27vw, 3.5rem);
+  --t-display: clamp(2.5rem, 1.6rem + 4vw, 5.5rem);
+  --t-h2: clamp(1.75rem, 1.3rem + 2vw, 3rem);
   --t-h3: clamp(1.25rem, 1.18rem + 0.32vw, 1.5rem);
   --t-body: 1.0625rem;
   --t-small: 0.875rem;
@@ -111,57 +97,32 @@ html[data-sidebar="icons"] {
   --fg: #e8edf5;
   --muted: #8a93a6;
 
-  /* On dark the accent can be text — 14:1 on --surface — so both roles
-     collapse back to the one signature cyan. */
-  --accent: #35f0dc;
+  /* One hex again: 6.0:1 as text on --surface, and #06070A ink on it as a
+     fill is 6.0:1. */
+  --accent: #6e82ff;
   --accent-on: #06070a;
-  --accent-ink: #35f0dc;
-  --ion: #4c6fff;
+  --accent-ink: #6e82ff;
 
-  --glass-tint: rgba(232, 237, 245, 0.055);
-  --glass-tint-soft: rgba(232, 237, 245, 0.015);
-  --glass-catch: rgba(232, 237, 245, 0.06);
-  --glass-drop: rgba(0, 0, 0, 0.7);
-  --grain-opacity: 0.028;
+  --glass-fill: rgba(18, 21, 30, 0.6);
+  --glass-catch: rgba(232, 237, 245, 0.07);
+  --glass-drop: rgba(0, 0, 0, 0.55);
+  --grain-opacity: 0.02;
 
-  --field-a: radial-gradient(
-    circle at center,
-    rgba(53, 240, 220, 0.24) 0%,
-    transparent 68%
-  );
-  --field-b: radial-gradient(
-    circle at center,
-    rgba(76, 111, 255, 0.22) 0%,
-    transparent 68%
-  );
-  --field-c: radial-gradient(
-    circle at center,
-    rgba(53, 240, 220, 0.2) 0%,
-    transparent 66%
-  );
+  --scene-a: #0b1020;
+  --scene-b: #06070a;
+  --scene-c: #121a33;
 
-  --lattice-line: rgba(232, 237, 245, 0.11);
-  --lattice-node: rgba(232, 237, 245, 0.2);
-}
-
-/* The 0→1 driver for the card's cursor-light hover state (Card.tsx).
-   It has to be REGISTERED: an unregistered custom property is not
-   interpolable, so `--lit` would jump 0→1 at the halfway point and the light
-   would snap on instead of rising. Registered, one transition drives every
-   derived value at once — the light layer's opacity, the radius of its
-   gradient and of its mask, and the depth shadow — with a single paint
-   invalidation per frame rather than four transitions racing each other.
-
-   `inherits: true` because the card sets it and the light layer inside reads
-   it; the child re-inherits the animating value every frame for free.
-
-   @property is Chrome 85 / Safari 16.4 / Firefox 128 — inside Tailwind v4's
-   own support baseline. Where it is missing the hover state still applies, it
-   just arrives instantly, which is also exactly what reduced motion asks for. */
-@property --lit {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
+  /* Measured with an offscreen render of the production shader against
+     --scene-c (the darkest field, where a pane reads brightest): at 0.07
+     (the round-2 rim tuning) the pane interior composites to ~#565A5F and
+     --muted drops to 2.28:1. 0.014 is the highest alpha that keeps the
+     brightest interior pixel, across the full scroll range and several
+     viewport sizes, at >= 4.5:1 (measured 4.64:1) with the rim untouched —
+     dropping the rim instead of the alpha was tried and rejected, because a
+     pane with no rim in dark mode is the "wireframe rectangle" problem the
+     rim was added to fix (see shaders.ts). Light mode is untouched: it was
+     never the failing theme. */
+  --scene-pane: rgba(232, 237, 245, 0.014);
 }
 
 @keyframes marquee {
@@ -232,13 +193,12 @@ html[data-sidebar="icons"] {
   --color-accent: var(--accent);
   --color-accent-on: var(--accent-on);
   --color-accent-ink: var(--accent-ink);
-  --color-ion: var(--ion);
 
   /* next/font sets --font-*-src on <html>. Theme keys must NOT share those
      names — a self-reference is a cycle, and Tailwind resolves a cycle by
      dropping the utility, silently falling back to its default stack. */
-  --font-display: var(--font-display-src);
-  --font-body: var(--font-body-src);
+  --font-display: var(--font-sans-src);
+  --font-body: var(--font-sans-src);
   --font-mono: var(--font-mono-src);
 
   --radius-sm: var(--r-sm);
@@ -255,6 +215,22 @@ html[data-sidebar="icons"] {
   --ease-in-out-soft: var(--e-in-out);
 }
 
+/* The one glass recipe (CLAUDE.md §4.2). Background, blur and shadow only —
+   radius and border are the separate rounded-* / border-line utilities, so a
+   glass surface is `rounded-md border border-line bg-raised md:glass`.
+   backdrop-filter is the most expensive thing on the page: below md only the
+   header and a modal may use it; every other surface stays solid bg-raised.
+   No hand-written -webkit-backdrop-filter: Lightning CSS adds the prefix
+   itself, and when both were authored it kept only the prefixed one — Chrome
+   then reported `backdrop-filter: none` and no surface blurred at all. */
+@utility glass {
+  background: var(--glass-fill);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    0 1px 0 0 var(--glass-catch) inset,
+    0 20px 50px -24px var(--glass-drop);
+}
+
 /* ─────────────────────────────────────────────────────────────
    Base
    ───────────────────────────────────────────────────────────── */
@@ -266,9 +242,9 @@ html[data-sidebar="icons"] {
    display size for exactly this reason. */
 @layer base {
   html {
-    /* The Ship Log rail and any in-page anchor jump smoothly. The
-       reduced-motion block below forces this back to `auto`, which is the
-       correct behaviour there — a long smooth scroll is motion too. */
+    /* Any in-page anchor jumps smoothly. The reduced-motion block below
+       forces this back to `auto`, which is the correct behaviour there — a
+       long smooth scroll is motion too. */
     scroll-behavior: smooth;
   }
 
@@ -280,32 +256,34 @@ html[data-sidebar="icons"] {
   body {
     background: var(--surface);
     color: var(--fg);
-    font-family: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sans-src), ui-sans-serif, system-ui, sans-serif;
     font-size: var(--t-body);
     line-height: 1.65;
     /* Long repo names and URLs in mono must never widen the page. */
     overflow-wrap: break-word;
   }
 
-  /* Display face. text-balance keeps headlines from orphaning a word.
-     Wrapping rule for anything set in the display face: A SINGLE WORD NEVER
+  /* Headlines and body share the one sans (Geist) at different weights now —
+     there is no separate display face to switch to, only the weight and
+     tracking change. text-balance keeps headlines from orphaning a word.
+     Wrapping rule for anything set in the display role: A SINGLE WORD NEVER
      BREAKS — "Company" stays "Company", never "Compan / y". A MULTI-WORD
      heading may still wrap, but only between words ("Talk to us" over two
      lines is fine). `body` above keeps overflow-wrap: break-word, so long
      unbroken strings — repo names, URLs, emails in the mono face — are still
-     contained and cannot widen the page. This only exempts the display face,
+     contained and cannot widen the page. This only exempts the display role,
      where a mid-word break is always a bug rather than a rescue. */
   h1,
   h2,
   h3 {
-    font-family: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 650;
-    letter-spacing: -0.03em;
+    font-family: var(--font-sans-src), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
-  /* The wrapping rule follows the face, not the tag — an element that opts
-     into the display face with `font-display` gets it too, whatever it is. */
+  /* The wrapping rule follows the role, not the tag — an element that opts
+     into the display role with `font-display` gets it too, whatever it is. */
   h1,
   h2,
   h3,
@@ -317,7 +295,7 @@ html[data-sidebar="icons"] {
 
   h1 {
     font-size: var(--t-display);
-    line-height: 0.95;
+    line-height: 1;
   }
 
   h2 {

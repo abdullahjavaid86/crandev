@@ -6,10 +6,10 @@ import { requireAdminOrNull } from "@/lib/admin/guard";
 /**
  * Admin portal chrome.
  *
- * No Header, no Footer, no BackgroundLayer, no Grain, no Ship Log — the portal
- * is a tool, not the marketing site. That is achieved by the root layout
- * rendering none of those: they live in `app/(site)/layout.tsx`, which this
- * group is a sibling of. There is no `<html>`/`<body>` here; `app/layout.tsx`
+ * No Header, no Footer, no Scene, no Grain — the portal is a tool, not the
+ * marketing site. That is achieved by the root layout rendering none of
+ * those: they live in `app/(site)/layout.tsx`, which this group is a sibling
+ * of. There is no `<html>`/`<body>` here; `app/layout.tsx`
  * is still the one root layout and owns the document, the fonts and the theme
  * script, so both themes work in here for free.
  *

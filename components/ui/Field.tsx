@@ -91,7 +91,7 @@ export function Field({
 
 /** Shared control styling so input, textarea and select can't drift apart. */
 export const controlStyles = cn(
-  "min-h-11 w-full rounded-md border border-line bg-raised px-4 py-3",
+  "min-h-11 w-full rounded-sm border border-line bg-raised px-4 py-3",
   "text-fg placeholder:text-muted",
   "transition-colors duration-(--d-micro) hover:border-line-strong",
   "aria-[invalid=true]:border-line-strong",

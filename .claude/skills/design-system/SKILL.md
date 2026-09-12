@@ -1,17 +1,17 @@
 ---
 name: design-system
-description: Use when writing or reviewing ANY visual code in this repo — Tailwind classes, globals.css, colors, glass surfaces, typography, spacing, radius, shadows, borders, the grain overlay, or the Ship Log rail. Read BEFORE the first line of markup. Triggers on "style", "color", "theme", "glass", "card", "border", "font", "heading", "spacing", "layout", "dark", "accent", "cyan", "looks off", "make it prettier".
+description: Use when writing or reviewing ANY visual code in this repo — Tailwind classes, globals.css, colors, glass surfaces, typography, spacing, radius, shadows, borders, the grain overlay, or the ambient scene. Read BEFORE the first line of markup. Triggers on "style", "color", "theme", "glass", "card", "border", "font", "heading", "spacing", "layout", "dark", "accent", "looks off", "make it prettier".
 ---
 
 # Design System
 
-The direction is fixed: **deep obsidian, neon cyan, restrained glass.** Every color, radius, and shadow derives from the tokens below. A raw hex or an off-scale value in a component file is a bug, not a shortcut.
+The direction is fixed: **quiet obsidian, one indigo, frosted glass.** Every color, radius, and shadow derives from the tokens below. A raw hex or an off-scale value in a component file is a bug, not a shortcut.
 
 ## Mobile first — read this before the first class name
 
 **The unprefixed class is the mobile implementation. `md:` and `lg:` may only add.** A breakpoint prefix that undoes something the base declared means the base was written for desktop and is wrong.
 
-Design at 360px first: decide what the thing is when there is no room, then spend the extra width. Everything desktop-only — sticky stacking, the Ship Log rail, magnetic pull, cursor highlights, parallax — is an enhancement layered on top of a base case that is already complete.
+Design at 360px first: decide what the thing is when there is no room, then spend the extra width. Everything desktop-only — the Services sticky-row split, magnetic pull — is an enhancement layered on top of a base case that is already complete. The ambient scene and the "Recently shipped" panel are not desktop-only: the scene renders a static frame below `md`, and the panel is ordinary hero content that stacks on phones.
 
 - `dvh`, never `vh`. iOS Safari's collapsing toolbar makes `100vh` overflow.
 - `env(safe-area-inset-*)` on the sticky header, the nav overlay, and anything fixed.
@@ -23,29 +23,29 @@ Design at 360px first: decide what the thing is when there is no room, then spen
 
 Declared once in `app/globals.css`, exposed to Tailwind via `@theme`. Never redeclared per component. **Both themes are first-class**: `.dark` on `<html>` swaps the values, so a token name can never mention a colour.
 
-| Utility                              | Role                   | Light           | Dark            |
-| ------------------------------------ | ---------------------- | --------------- | --------------- |
-| `bg-surface`                         | page background        | `#FAFBFC`       | `#06070A`       |
-| `bg-raised`                          | cards, raised surfaces | `#FFFFFF`       | `#0E1017`       |
-| `bg-inset`                           | hover, inset panels    | `#F1F3F6`       | `#171A22`       |
-| `border-line` / `border-line-strong` | every border, 1px      | black 10% / 22% | ice 8% / 22%    |
-| `text-fg`                            | primary text           | `#0E1017`       | `#E8EDF5`       |
-| `text-muted`                         | secondary, captions    | `#5A6274`       | `#8A93A6`       |
-| `bg-accent` + `text-accent-on`       | the accent **fill**    | cyan + dark ink | cyan + dark ink |
-| `text-accent-ink`                    | accent **text/border** | `#0A6B5E`       | `#35F0DC`       |
-| `--ion`                              | secondary glow         | `#3A55D9`       | `#4C6FFF`       |
+| Utility                                 | Role                   | Light           | Dark         |
+| --------------------------------------- | ---------------------- | --------------- | ------------ |
+| `bg-surface`                            | page background        | `#FAFBFC`       | `#06070A`    |
+| `bg-raised`                             | cards, raised surfaces | `#FFFFFF`       | `#0E1017`    |
+| `bg-inset`                              | hover, inset panels    | `#F1F3F6`       | `#171A22`    |
+| `border-line` / `border-line-strong`    | every border, 1px      | black 10% / 22% | ice 8% / 22% |
+| `text-fg`                               | primary text           | `#0E1017`       | `#E8EDF5`    |
+| `text-muted`                            | secondary, captions    | `#5A6274`       | `#8A93A6`    |
+| `bg-accent`                             | the accent **fill**    | `#3B5BDB`       | `#6E82FF`    |
+| `text-accent-on`                        | ink **on** the fill    | `#FFFFFF`       | `#06070A`    |
+| `text-accent-ink` / `border-accent-ink` | accent **text/border** | `#3B5BDB`       | `#6E82FF`    |
 
-Radius: `rounded-sm` 8px, `rounded-md` 14px, `rounded-lg` 24px. Nothing fully rounded except avatars and pills.
+Radius: `rounded-sm` 10px, `rounded-md` 16px, `rounded-lg` 24px. Nothing fully rounded except avatars and pills.
 
-Also themed: `--glass-tint`, `--glass-catch`, `--glass-drop`, `--grain-opacity`.
+Also themed: `--glass-fill`, `--glass-catch`, `--glass-drop`, `--grain-opacity` (`0.02` dark / `0.012` light), and the scene tokens `--scene-a/b/c` + `--scene-pane` (§ Signature element, below).
 
 ## The accent's two roles — the thing that breaks light mode
 
-`--accent` is a **fill**. `--accent-ink` is for **text and borders**. They are not interchangeable.
+`--accent` is a **fill**. `--accent-ink` is for **text and borders**. They currently hold the same hex per theme, but the two names stay distinct because the fill and the ink are allowed to diverge again — do not collapse them into one variable in code.
 
-Cyan `#35F0DC` as text on white is **1.43:1** — invisible. As a fill under dark ink it is 14:1 in both themes. So light mode keeps the cyan fill and swaps the _ink_ role to a darkened teal at 6.4:1; dark mode collapses both roles back to the one cyan.
+Indigo `#3B5BDB` (light) / `#6E82FF` (dark) as text on `--surface` clears 5.5:1 and 6.0:1. `--accent-on` — the ink that sits **on top of** the fill, white on light and `#06070A` on dark — is a different token from `--accent-ink` and is tuned for a different background. Using `text-accent-on` for body text or a border reads correctly on the fill and fails everywhere else.
 
-**Using `bg-accent`/`text-accent` where `text-accent-ink` belongs ships unreadable text to every light-mode visitor, and it looks fine on your dark screen.**
+**Using `text-accent-on` where `text-accent-ink` belongs ships unreadable or mismatched text, and it may still look fine sitting directly on the button it was tuned for.**
 
 ## Accent discipline
 
@@ -54,7 +54,7 @@ The accent appears on **one element per viewport-height of scroll** — the thin
 - If two things glow, nothing glows.
 - Body copy never takes the accent.
 - Borders never take it, except `:focus-visible` and the active nav item.
-- Tailwind's stock `cyan-400` is not our accent. Use the token.
+- Tailwind's stock palette colours (`cyan-400`, `indigo-500`, whatever) are not our accent. Use the token.
 
 When adding a section, ask what already glows in this viewport. If something does, your new element does not.
 
@@ -62,9 +62,9 @@ When adding a section, ask what already glows in this viewport. If something doe
 
 A colour that works on dark will not work on light by symmetry, and this bites hardest on anything semi-transparent — ambient washes, tinted overlays, glass.
 
-The scroll-background fields shipped invisible in light mode: a bright field at `0.14` alpha is a **2.8x luminance step** over near-black and **1.04x** over `#FAFBFC`. Same alpha, same colour, one theme sees it and the other sees nothing.
+The scene's glass panes are the live example: `--scene-pane` mixes its tint into the gradient at an alpha that has to be tuned per theme, because the same alpha reads as a small lift on light and a much larger one on a near-black dark field — the dark tuning that made the pane read as glass instead of a wireframe outline once pushed `--muted` over it down to 2.3:1, well under the 4.5:1 floor. `--glass-fill` has the same shape: light and dark need different alphas to land on the same visual weight against their own `--surface`.
 
-**Bake the alpha into a themed token** (`--field-a/b/c`), so light can use a deeper, more saturated hue at roughly double the alpha, and let the component animate only a relative `0..1` band on top. Never theme this by reading the theme in JS — that costs a flash on first paint.
+**Bake the alpha into the themed token** (`--scene-pane`, `--glass-fill`), so each theme ships the alpha that keeps its own contrast pairs passing, and never derive one theme's alpha from the other by a fixed ratio. Never theme this by reading the theme in JS — that costs a flash on first paint. Re-check contrast after every tuning pass on a token like this: the value that makes it visible enough is not automatically the value that keeps text on it readable, and the two pulls can be in real tension — see `app/globals.css`'s `--scene-pane` comment for the last measurement.
 
 ## Tailwind v4: CSS variables use PARENTHESES, not brackets
 
@@ -84,61 +84,57 @@ Both themes, every time. `--muted` is the token that fails first — the dark-mo
 
 ## Glass recipe
 
-One recipe. Do not invent a variant per section.
+One recipe, one Tailwind `@utility glass`. Do not invent a variant per section.
 
 ```css
-background: linear-gradient(148deg, var(--glass-tint), var(--glass-tint-soft));
+background: var(--glass-fill);
 border: 1px solid var(--line);
-backdrop-filter: blur(20px) saturate(140%);
+backdrop-filter: blur(24px) saturate(160%);
 box-shadow:
   0 1px 0 0 var(--glass-catch) inset,
-  /* top light catch */ 0 24px 60px -24px var(--glass-drop);
+  0 20px 50px -24px var(--glass-drop);
+border-radius: var(--r-md);
 ```
 
-Every value is themed. On light the tint darkens and the catch lightens — the recipe is one shape, not one set of numbers.
+**Usage pattern: `rounded-md border border-line bg-raised md:glass`.** Solid `bg-raised` on phones, the blurred `glass` utility from `md` up — this is how every card, row, and panel in the home body is built. `Header` and `Modal` use `glass` unprefixed; they're the two blurred surfaces the mobile budget allows.
+
+Every value is themed. On light the fill lightens and the catch dims — the recipe is one shape, not one set of numbers.
 
 Two conditions, both required:
 
-1. **Glass needs something to refract.** Every glass surface sits above the grain layer or a soft radial glow. Over a flat `--surface` it reads as a grey rectangle and you spent the blur budget for nothing.
+1. **Glass needs something to refract.** Every glass surface sits above the grain layer or the ambient scene. Over a flat `--surface` it reads as a grey rectangle and you spent the blur budget for nothing.
 2. **Budget: 2 blurred surfaces per viewport below `md`, ~6 above.** Never stacked more than two deep, never on a full-page wrapper. `backdrop-filter` is the most expensive thing on this page, and a mid-range Android GPU is where it shows.
 
-Below `md`, any glass surface that is not the sticky header or a modal falls back to solid `bg-raised` with the same 1px `border-line`. The difference is nearly invisible and the cost drops to zero.
+Below `md`, any glass surface that is not the header or a modal falls back to solid `bg-raised` with the same 1px `border-line`. The difference is nearly invisible and the cost drops to zero.
 
 ## Typography
 
-Three roles, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS variables. No `<link>` tags.
+Two font families, loaded with `next/font/google`, `display: 'swap'`, exposed as CSS variables. No `<link>` tags.
 
-- **Display — Bricolage Grotesque** (variable). Headlines only. `tracking-[-0.03em]`, weight 600–700, `text-balance` on every headline.
-- **Body — Inter Tight**. Paragraphs, buttons, nav. Weight 400/500. Max measure `65ch`.
-- **Utility — JetBrains Mono**. Eyebrows, section numbers, stat labels, metadata. Always `uppercase tracking-[0.18em] text-small` in `text-muted`.
+- **Geist Sans** — `--font-display` and `--font-body` both resolve to it. Headings and body share one family: weight 600, tracking `-0.02em`, `text-balance` on every headline, `h1` line-height `1.0`.
+- **Geist Mono** — `--font-mono`. Reserved for commit shas and stat figures only. Not preloaded — Geist Sans is (it's the LCP-path face).
+- **Eyebrows are small sans labels in sentence case.** No mono, no uppercase, no index number.
 
-The mono face is a signal, not decoration: it means _machine output_. Use it for repo names, dates, latency figures, stack labels, role IDs, timestamps. Never on prose.
+Fluid scale via `clamp()`: display `clamp(2.5rem, 1.6rem + 4vw, 5.5rem)` · h2 `clamp(1.75rem, 1.3rem + 2vw, 3rem)` · h3 `1.25–1.5rem` · body `1.0625rem` · small `0.875rem`.
+Line height: `1.0` display/h1 · `1.1` h2 · `1.65` body.
 
-Fluid scale via `clamp()`: display `2.5–6.5rem` · h2 `1.75–3.5rem` · h3 `1.25–1.5rem` · body `1.0625rem` · small `0.875rem`.
-Line height: `0.95` display · `1.1` h2 · `1.65` body.
-
-**Set the floor from the smallest screen.** At 360px the container is 312px wide; a 56px condensed grotesque fits about seven characters per line, so a short headline breaks into five ragged lines. 40px holds it in two or three.
+**Set the floor from the smallest screen.** At 360px the container is 312px wide; a large face at 56px fits about seven characters per line, so a short headline breaks into five ragged lines. 40px holds it in two or three.
 
 ## Space and layout
 
 - 4px grid. No `p-[13px]`.
 - Section rhythm: `py-16 md:py-24`. **This is the gap BETWEEN two sections** — adjacent sections each contribute half, so the visible space is 128px mobile / 192px desktop. Reading it as per-section padding doubles every gap. Do not fight it per section.
 - Container: `max-w-[1240px] px-6 md:px-10`. One container component, used everywhere.
-- Grain overlay lives once in `app/layout.tsx`: SVG `feTurbulence` at `var(--grain-opacity)`, `pointer-events-none`, `fixed inset-0 z-50`. It is what makes the dark read as film rather than `#000`, and it lightens on the light theme.
+- Radius: `rounded-sm` 10px, `rounded-md` 16px, `rounded-lg` 24px.
+- Grain overlay lives once in `app/layout.tsx`: SVG `feTurbulence` at `var(--grain-opacity)` (`0.02` dark / `0.012` light), `pointer-events-none`, `fixed inset-0 z-50`. It's what makes the surface read as film rather than a flat fill.
 
-## The signature element — Ship Log
+## The signature element — the scene
 
-A thin vertical rail in the left gutter on desktop that tracks scroll. Each section is a "commit": monospace hash, timestamp, and a node that takes the accent as the section enters the viewport. In the hero it extends into a live commit ticker fed by the GitHub route handler.
+`<Scene />` (`components/layout/Scene.tsx`, logic in `lib/scene/`) is a fixed, full-page `three.js` layer behind everything: one draw call — an orthographic camera, a fullscreen plane, one `ShaderMaterial` — drawing a slow domain-warped gradient plus three frosted glass panes that drift and tilt with scroll. This is the one memorable thing on the site.
 
-This is the one memorable thing on the site. **No other section gets a second scene-stealer.** Before adding a bold new visual idea, check it does not compete with the rail.
+The hero's "Recently shipped" glass panel is the other half of the signature: a static list of the last three commits (message, repo, relative time; sha in Geist Mono). **No other section gets a second scene-stealer.** Before adding a bold new visual idea, check it does not compete with either of these.
 
-**The rail parks above the footer — it is `sticky`, not `fixed`.** Fixed chrome scrolls straight over the footer. The rail lives inside `<main>` in an absolutely positioned, zero-width container spanning only the content area, with `sticky top-1/2` inside it, so it stops at the end of the last section on its own. No IntersectionObserver, no fade, no JS.
-
-The first attempt at this hid the rail with an observer instead, and needed the clearance measured to avoid a visible overlap during the fade. Parking is better than hiding: the information stays on screen, and CSS enforces the boundary exactly rather than approximately. **Prefer a sticky container over fixed positioning plus a visibility hack for any side chrome.**
-
-**Below `lg` the rail changes form rather than shrinking** — there is no gutter to pin to at 360px. Mobile gets a 2px cyan scroll-progress bar fixed under the header, and the active section's mono hash and number ride in that section's own eyebrow. Same information, same voice, no rail. The hero commit ticker stays on every size; it is content, not chrome.
-
-The rail persists across routes (see [adding-a-page](../adding-a-page/SKILL.md)) — every page registers its sections with it rather than inventing its own progress indicator.
+`three` is imported only under `lib/scene/`. `Scene.tsx` loads it lazily via `requestIdleCallback`, so it never enters the initial chunk. Below `md` and under `prefers-reduced-motion` the scene renders one static frame and stops — no exceptions, and no separate mobile "form" to design, since the fallback state already exists on every size. See [motion-system](../motion-system/SKILL.md) for the scroll-driver and performance rules.
 
 ## Reject on sight
 
@@ -149,6 +145,8 @@ The rail persists across routes (see [adding-a-page](../adding-a-page/SKILL.md))
 - A hardcoded hex, rem, or shadow that does not trace to a token.
 - A `md:` or `lg:` class that undoes the base rather than adding to it.
 - `100vh`, a `next/image` with no `sizes`, or a hover-only affordance with no touch equivalent.
+- Mono anywhere but a commit sha or a stat figure.
+- A second `three` scene, or a `three` import outside `lib/scene/`.
 
 ## Related
 

@@ -1,7 +1,8 @@
-import { BackgroundLayer } from "@/components/layout/BackgroundLayer";
 import { Footer } from "@/components/layout/Footer";
 import { Grain } from "@/components/layout/Grain";
 import { Header } from "@/components/layout/Header";
+import { Scene } from "@/components/layout/Scene";
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -23,13 +24,11 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
-      <BackgroundLayer />
+      <Scene />
       <Header />
       <main className="flex flex-1 flex-col justify-center px-6 py-28 md:px-10 md:py-40">
         <div className="mx-auto w-full max-w-[1240px]">
-          <p className="font-mono text-small tracking-[0.18em] text-muted uppercase">
-            404
-          </p>
+          <Eyebrow>404</Eyebrow>
 
           <h1 className="mt-6 max-w-[18ch]">This page doesn&rsquo;t exist.</h1>
 

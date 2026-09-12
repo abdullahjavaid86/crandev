@@ -109,9 +109,9 @@ export function Modal({
                 exit={{ opacity: 0 }}
                 transition={{ duration: dur.base, ease: ease.out }}
                 // The page ground pulled over the content, plus a modest blur.
-                // This is the modal's ONE blurred layer: the panel above takes
-                // the glass tint and light-catch without a second
-                // backdrop-filter, so the blur never stacks (§4.2).
+                // With the glass panel above it that is two blurred layers,
+                // which is the ceiling §4.2 allows and the reason nothing else
+                // in this component blurs.
                 className="fixed inset-0 z-50 bg-surface/80 backdrop-blur-sm"
               />
             </Dialog.Overlay>
@@ -125,10 +125,11 @@ export function Modal({
                   // edge, capped so the page behind stays visible.
                   "fixed inset-x-0 bottom-0 z-50 flex max-h-[90dvh] flex-col overflow-hidden",
                   "rounded-t-lg border border-line",
-                  // The one glass recipe (§4.2), over an opaque raised base so
-                  // body copy keeps its contrast in both themes.
-                  "bg-raised bg-[linear-gradient(148deg,var(--glass-tint),var(--glass-tint-soft))]",
-                  "shadow-[0_1px_0_0_var(--glass-catch)_inset,0_24px_60px_-24px_var(--glass-drop)]",
+                  // The one glass recipe (§4.2), unprefixed: a modal is one of
+                  // the two blurred surfaces a phone is allowed. No `bg-raised`
+                  // underneath it — `glass` sets the `background` shorthand and
+                  // would override the colour at every width anyway.
+                  "glass",
                   // md ADDS the desktop dialog: a top edge and auto margins
                   // centre the panel, which is why nothing here uses a
                   // translate — motion owns `transform` for the whole panel.

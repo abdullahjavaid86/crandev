@@ -1,6 +1,9 @@
+import Link from "next/link";
+
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { buttonStyles } from "@/components/ui/buttonStyles";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { projects } from "@/lib/content";
@@ -21,8 +24,10 @@ const SUBCOPY =
  * no primitives of its own, because `/work` and the detail modal render the
  * same `ProjectCard` (§10).
  *
- * Mobile first (§4.7): one column is the base implementation, `md:` and `lg:`
- * only add tracks. Nothing at a breakpoint undoes the base.
+ * Mobile first (§4.7): one column is the base implementation, `md:` only adds
+ * the second track and the lead card's full-width span. Two columns, never
+ * three — a third track on a single-column page makes each cover too small to
+ * carry the photograph it is there for.
  *
  * One orchestrated moment: the heading block reveals, then the grid staggers.
  * `StaggerGroup` owns the viewport trigger; the cards carry no `whileInView`
@@ -36,7 +41,7 @@ export function Work() {
     <section id="work" aria-labelledby="work-heading" className="py-16 md:py-24">
       <Container>
         <Reveal>
-          <Eyebrow index="03">Selected work</Eyebrow>
+          <Eyebrow>Selected work</Eyebrow>
           <h2 id="work-heading" className="mt-6 max-w-[20ch]">
             {HEADLINE}
           </h2>
@@ -45,14 +50,34 @@ export function Work() {
 
         <StaggerGroup
           as="ul"
-          className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-12 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-2"
         >
-          {projects.map((project) => (
-            <StaggerItem key={project.slug} as="li" className="h-full">
-              <ProjectCard project={project} />
-            </StaggerItem>
-          ))}
+          {projects.map((project, index) => {
+            /* The lead card is always full width. So is the last one when the
+               cards after the lead are an odd count — otherwise the final pair
+               row is half empty and the grid ends on an orphan. */
+            const wide =
+              index === 0 ||
+              (index === projects.length - 1 && (projects.length - 1) % 2 === 1);
+
+            return (
+              <StaggerItem
+                key={project.slug}
+                as="li"
+                className={wide ? "h-full md:col-span-2" : "h-full"}
+              >
+                <ProjectCard project={project} featured={wide} />
+              </StaggerItem>
+            );
+          })}
         </StaggerGroup>
+
+        {/* The grid shows a selection; this is where the rest of it lives. */}
+        <div className="mt-10 flex justify-center">
+          <Link href="/work" className={buttonStyles("secondary", "md")}>
+            All work
+          </Link>
+        </div>
       </Container>
     </section>
   );

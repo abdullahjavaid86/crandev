@@ -49,6 +49,20 @@ export const footerNav: { heading: string; items: NavItem[] }[] = [
 ];
 
 /**
+ * Contact and social endpoints. Footer and the Contact section both read from
+ * here, for the same reason the routes do.
+ *
+ * NEEDS CONFIRMING BEFORE LAUNCH (D8) — both values are placeholders. The
+ * mailbox has not been verified, and the GitHub handle is a guess:
+ * `GITHUB_OWNER` in .env.example is still blank, so nothing in the repo knows
+ * the real account. Fix both here, in one place, once they are known.
+ */
+export const siteLinks = {
+  email: "hello@cranedev.com",
+  github: "https://github.com/cranedev",
+} as const;
+
+/**
  * Active-state test. `/` must match exactly or every route lights up; deeper
  * routes match on prefix so /work/[slug] keeps "Work" active — including when
  * the detail view is showing as an intercepted modal (§6.2).

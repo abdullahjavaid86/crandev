@@ -7,7 +7,7 @@ import { useCallback, useSyncExternalStore } from "react";
  * first client render, then the real value — so nothing hydration-mismatches.
  *
  * Shared by every "desktop only" enhancement: parallax, sticky card stacking,
- * cursor-following highlights, the Ship Log rail.
+ * cursor-following highlights, the animated scene.
  */
 export function useMediaQuery(query: string): boolean {
   const subscribe = useCallback(
